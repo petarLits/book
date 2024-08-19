@@ -21,7 +21,9 @@ class _LoginPageState extends State<LoginPage> {
   Widget _buildBody() {
     return Form(
       child: Column(
-        children: [Container()],
+        children: [
+          Container(),
+        ],
       ),
     );
   }

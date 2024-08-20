@@ -4,7 +4,6 @@ import 'package:book/login/view/sign_up_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
-
 class LoginPage extends StatefulWidget {
   @override
   State<LoginPage> createState() => _LoginPageState();
@@ -14,7 +13,7 @@ class _LoginPageState extends State<LoginPage> {
   final _formKey = GlobalKey<FormState>();
   late String emailValue;
   late String passwordValue;
-  bool passwordVisible = true;
+  bool passwordInvisible = false;
 
   @override
   Widget build(BuildContext context) {
@@ -23,7 +22,7 @@ class _LoginPageState extends State<LoginPage> {
         centerTitle: true,
         automaticallyImplyLeading: false,
         backgroundColor: AppColors.primaryColor,
-        title: Text(AppLocalizations.of(context)!.loginTitle ?? ''),
+        title: Text(AppLocalizations.of(context)?.loginTitle ?? ''),
       ),
       body: _buildBody(),
     );
@@ -60,15 +59,15 @@ class _LoginPageState extends State<LoginPage> {
             margin: EdgeInsets.only(left: 24, right: 24),
             child: Column(
               children: [
-                Text('Welcome'),
-                Text('Sign in to continue'),
+                Text(AppLocalizations.of(context)?.welcome ?? ''),
+                Text(AppLocalizations.of(context)?.loginSubtitle ?? ''),
                 SizedBox(height: 30),
                 TextFormField(
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return 'Enter email';
+                      return AppLocalizations.of(context)?.emptyEmail ?? '';
                     } else if (validateEmail(value) == false) {
-                      return 'Invalid email input';
+                      return AppLocalizations.of(context)?.emailError ?? '';
                     }
                     return null;
                   },
@@ -77,7 +76,7 @@ class _LoginPageState extends State<LoginPage> {
                   },
                   decoration: InputDecoration(
                     border: OutlineInputBorder(),
-                    labelText: 'Email',
+                    labelText: AppLocalizations.of(context)?.email ?? '',
                   ),
                 ),
                 SizedBox(
@@ -86,7 +85,7 @@ class _LoginPageState extends State<LoginPage> {
                 TextFormField(
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return 'Enter password';
+                      return AppLocalizations.of(context)?.emptyPassword ?? '';
                     }
                     return null;
                   },
@@ -96,14 +95,14 @@ class _LoginPageState extends State<LoginPage> {
                   decoration: InputDecoration(
                       suffixIcon: IconButton(
                         onPressed: () {
-                          passwordVisible = !passwordVisible;
+                          passwordInvisible = !passwordInvisible;
                           setState(() {});
                         },
                         icon: Icon(Icons.visibility),
                       ),
                       border: OutlineInputBorder(),
-                      labelText: 'Password'),
-                  obscureText: passwordVisible,
+                      labelText: AppLocalizations.of(context)?.password ?? ''),
+                  obscureText: !passwordInvisible,
                 ),
                 SizedBox(
                   height: 20,
@@ -122,7 +121,8 @@ class _LoginPageState extends State<LoginPage> {
                           );
                         }
                       },
-                      child: Text('Login'),
+                      child:
+                          Text(AppLocalizations.of(context)?.loginButton ?? ''),
                       style: ElevatedButton.styleFrom(
                         fixedSize: Size(200, 50),
                       ),
@@ -145,7 +145,7 @@ class _LoginPageState extends State<LoginPage> {
                         );
                       },
                       child: Text(
-                        'New user? Sign up',
+                        AppLocalizations.of(context)?.signUpButton ?? '',
                         style: TextStyle(decoration: TextDecoration.underline),
                       ),
                     ),

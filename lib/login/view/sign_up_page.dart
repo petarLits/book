@@ -1,5 +1,6 @@
 import 'package:book/app_colors.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class SignUp extends StatefulWidget {
   @override
@@ -13,8 +14,8 @@ class _SignUpState extends State<SignUp> {
   late String emailValue;
   late String passwordValue;
   late String confirmPasswordValue;
-  bool passwordVisible = true;
-  bool confirmPasswordVisible = true;
+  bool passwordInvisible = false;
+  bool confirmPasswordInvisible = false;
 
   @override
   Widget build(BuildContext context) {
@@ -22,7 +23,7 @@ class _SignUpState extends State<SignUp> {
       appBar: AppBar(
         automaticallyImplyLeading: true,
         centerTitle: true,
-        title: Text('Register'),
+        title: Text(AppLocalizations.of(context)?.register ?? ''),
         backgroundColor: AppColors.primaryColor,
       ),
       body: _buildBody(),
@@ -66,7 +67,8 @@ class _SignUpState extends State<SignUp> {
                   TextFormField(
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return 'Enter First Name';
+                        return AppLocalizations.of(context)?.emptyFirstName ??
+                            '';
                       }
                       return null;
                     },
@@ -76,14 +78,15 @@ class _SignUpState extends State<SignUp> {
                     maxLength: 24,
                     decoration: InputDecoration(
                       border: OutlineInputBorder(),
-                      labelText: 'First Name',
+                      labelText: AppLocalizations.of(context)?.firstName ?? '',
                     ),
                   ),
                   SizedBox(height: 30),
                   TextFormField(
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return 'Enter Last Name';
+                        return AppLocalizations.of(context)?.emptyLastName ??
+                            '';
                       }
                       return null;
                     },
@@ -92,7 +95,7 @@ class _SignUpState extends State<SignUp> {
                     },
                     decoration: InputDecoration(
                       border: OutlineInputBorder(),
-                      labelText: 'Last Name',
+                      labelText: AppLocalizations.of(context)?.lastName ?? '',
                     ),
                     maxLength: 24,
                   ),
@@ -103,14 +106,15 @@ class _SignUpState extends State<SignUp> {
                     },
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return 'Enter email';
+                        return AppLocalizations.of(context)?.emptyEmail ?? '';
                       } else if (validateEmail(emailValue) == false) {
-                        return 'Invalid email input';
+                        return AppLocalizations.of(context)?.emailError ?? '';
                       }
                       return null;
                     },
                     decoration: InputDecoration(
-                        border: OutlineInputBorder(), labelText: 'Email'),
+                        border: OutlineInputBorder(),
+                        labelText: AppLocalizations.of(context)?.email ?? ''),
                   ),
                   SizedBox(height: 30),
                   TextFormField(
@@ -119,19 +123,30 @@ class _SignUpState extends State<SignUp> {
                     },
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return 'Enter password';
+                        return AppLocalizations.of(context)?.emptyPassword ??
+                            '';
                       } else if (!value.contains(RegExp(r'[A-Z]'))) {
-                        return "Password must contain at least one uppercase letter";
+                        return AppLocalizations.of(context)
+                                ?.passwordUppercaseError ??
+                            '';
                       } else if (!value.contains(RegExp(r'[a-z]'))) {
-                        return "Password must contain at least one lowercase letter";
+                        return AppLocalizations.of(context)
+                                ?.passwordLowercaseError ??
+                            '';
                       } else if (!value.contains(RegExp(r'[0-9]'))) {
-                        return "Password must contain at least one numeric character";
+                        return AppLocalizations.of(context)
+                                ?.passwordNumericError ??
+                            '';
                       } else if (!value
                           .contains(RegExp(r'[!@#\$%^&*()<>?/|}{~:]'))) {
-                        return "Password must contain at least one special character";
+                        return AppLocalizations.of(context)
+                                ?.passwordSpecialCharacterError ??
+                            '';
                       }
                       if (value.length < 8) {
-                        return "Password must be at least 8 characters long";
+                        return AppLocalizations.of(context)
+                                ?.passwordLengthError ??
+                            '';
                       } else {
                         return null;
                       }
@@ -140,14 +155,15 @@ class _SignUpState extends State<SignUp> {
                     decoration: InputDecoration(
                         suffixIcon: IconButton(
                           onPressed: () {
-                            passwordVisible = !passwordVisible;
+                            passwordInvisible = !passwordInvisible;
                             setState(() {});
                           },
                           icon: Icon(Icons.visibility),
                         ),
                         border: OutlineInputBorder(),
-                        labelText: 'Password'),
-                    obscureText: passwordVisible,
+                        labelText:
+                            AppLocalizations.of(context)?.password ?? ''),
+                    obscureText: !passwordInvisible,
                   ),
                   SizedBox(height: 30),
                   TextFormField(
@@ -156,9 +172,12 @@ class _SignUpState extends State<SignUp> {
                     },
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return 'Confirm password';
+                        return AppLocalizations.of(context)?.confirmPassword ??
+                            '';
                       } else if (value != passwordValue) {
-                        return 'Passwords do not match';
+                        return AppLocalizations.of(context)
+                                ?.confirmPasswordError ??
+                            '';
                       } else {
                         return null;
                       }
@@ -166,15 +185,17 @@ class _SignUpState extends State<SignUp> {
                     decoration: InputDecoration(
                         suffixIcon: IconButton(
                           onPressed: () {
-                            confirmPasswordVisible = !confirmPasswordVisible;
+                            confirmPasswordInvisible = !confirmPasswordInvisible;
                             setState(() {});
                           },
                           icon: Icon(Icons.visibility),
                         ),
                         border: OutlineInputBorder(),
-                        labelText: 'Confirm password'),
+                        labelText:
+                            AppLocalizations.of(context)?.confirmPassword ??
+                                ''),
                     maxLength: 16,
-                    obscureText: confirmPasswordVisible,
+                    obscureText: !confirmPasswordInvisible,
                   ),
                   SizedBox(height: 30),
                   Row(
@@ -186,7 +207,8 @@ class _SignUpState extends State<SignUp> {
                             Navigator.pop(context);
                           }
                         },
-                        child: Text('Sign Up'),
+                        child: Text(
+                            AppLocalizations.of(context)?.registerButton ?? ''),
                         style: ElevatedButton.styleFrom(
                           fixedSize: Size(200, 50),
                         ),

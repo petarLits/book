@@ -1,3 +1,25 @@
 {
-  "loginTitle": "Sign in"
+  "loginTitle": "Sign in",
+  "welcome": "Welcome",
+  "loginSubtitle": "Sign in to continue",
+  "emptyEmail": "Enter email",
+  "emailError": "Invalid email input",
+  "email": "Email",
+  "emptyPassword": "Enter password",
+  "password": "Password",
+  "loginButton": "Login",
+  "signUpButton": "New user? Sign up",
+  "register": "Register",
+  "firstName": "First Name",
+  "emptyFirstName": "Enter First Name",
+  "lastName": "Last Name",
+  "emptyLastName": "Enter Last Name",
+  "passwordUppercaseError": "Password must contain at least one uppercase letter",
+  "passwordLowercaseError": "Password must contain at least one lowercase letter",
+  "passwordNumericError": "Password must contain at least one numeric character",
+  "passwordSpecialCharacterError": "Password must contain at least one special character",
+  "passwordLengthError": "Password must be at least 8 characters long",
+  "confirmPassword": "Confirm Password",
+  "confirmPasswordError": "Passwords are not matching",
+  "registerButton": "Register"
 }

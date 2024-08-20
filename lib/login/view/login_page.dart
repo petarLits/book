@@ -22,7 +22,7 @@ class _LoginPageState extends State<LoginPage> {
         centerTitle: true,
         automaticallyImplyLeading: false,
         backgroundColor: AppColors.primaryColor,
-        title: Text(AppLocalizations.of(context)?.loginTitle ?? ''),
+        title: Text(AppLocalizations.of(context)!.loginTitle),
       ),
       body: _buildBody(),
     );
@@ -59,15 +59,15 @@ class _LoginPageState extends State<LoginPage> {
             margin: EdgeInsets.only(left: 24, right: 24),
             child: Column(
               children: [
-                Text(AppLocalizations.of(context)?.welcome ?? ''),
-                Text(AppLocalizations.of(context)?.loginSubtitle ?? ''),
+                Text(AppLocalizations.of(context)!.welcome),
+                Text(AppLocalizations.of(context)!.loginSubtitle),
                 SizedBox(height: 30),
                 TextFormField(
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return AppLocalizations.of(context)?.emptyEmail ?? '';
+                      return AppLocalizations.of(context)!.emptyEmail;
                     } else if (validateEmail(value) == false) {
-                      return AppLocalizations.of(context)?.emailError ?? '';
+                      return AppLocalizations.of(context)!.emailError;
                     }
                     return null;
                   },
@@ -76,7 +76,7 @@ class _LoginPageState extends State<LoginPage> {
                   },
                   decoration: InputDecoration(
                     border: OutlineInputBorder(),
-                    labelText: AppLocalizations.of(context)?.email ?? '',
+                    labelText: AppLocalizations.of(context)!.email,
                   ),
                 ),
                 SizedBox(
@@ -85,7 +85,7 @@ class _LoginPageState extends State<LoginPage> {
                 TextFormField(
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return AppLocalizations.of(context)?.emptyPassword ?? '';
+                      return AppLocalizations.of(context)!.emptyPassword;
                     }
                     return null;
                   },
@@ -101,7 +101,7 @@ class _LoginPageState extends State<LoginPage> {
                         icon: Icon(Icons.visibility),
                       ),
                       border: OutlineInputBorder(),
-                      labelText: AppLocalizations.of(context)?.password ?? ''),
+                      labelText: AppLocalizations.of(context)!.password),
                   obscureText: !passwordInvisible,
                 ),
                 SizedBox(
@@ -122,7 +122,7 @@ class _LoginPageState extends State<LoginPage> {
                         }
                       },
                       child:
-                          Text(AppLocalizations.of(context)?.loginButton ?? ''),
+                          Text(AppLocalizations.of(context)!.loginButton),
                       style: ElevatedButton.styleFrom(
                         fixedSize: Size(200, 50),
                       ),
@@ -145,7 +145,7 @@ class _LoginPageState extends State<LoginPage> {
                         );
                       },
                       child: Text(
-                        AppLocalizations.of(context)?.signUpButton ?? '',
+                        AppLocalizations.of(context)!.signUpButton,
                         style: TextStyle(decoration: TextDecoration.underline),
                       ),
                     ),

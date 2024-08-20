@@ -23,7 +23,7 @@ class _SignUpState extends State<SignUp> {
       appBar: AppBar(
         automaticallyImplyLeading: true,
         centerTitle: true,
-        title: Text(AppLocalizations.of(context)?.register ?? ''),
+        title: Text(AppLocalizations.of(context)!.register),
         backgroundColor: AppColors.primaryColor,
       ),
       body: _buildBody(),
@@ -67,8 +67,7 @@ class _SignUpState extends State<SignUp> {
                   TextFormField(
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return AppLocalizations.of(context)?.emptyFirstName ??
-                            '';
+                        return AppLocalizations.of(context)!.emptyFirstName;
                       }
                       return null;
                     },
@@ -78,15 +77,14 @@ class _SignUpState extends State<SignUp> {
                     maxLength: 24,
                     decoration: InputDecoration(
                       border: OutlineInputBorder(),
-                      labelText: AppLocalizations.of(context)?.firstName ?? '',
+                      labelText: AppLocalizations.of(context)!.firstName,
                     ),
                   ),
                   SizedBox(height: 30),
                   TextFormField(
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return AppLocalizations.of(context)?.emptyLastName ??
-                            '';
+                        return AppLocalizations.of(context)!.emptyLastName;
                       }
                       return null;
                     },
@@ -95,7 +93,7 @@ class _SignUpState extends State<SignUp> {
                     },
                     decoration: InputDecoration(
                       border: OutlineInputBorder(),
-                      labelText: AppLocalizations.of(context)?.lastName ?? '',
+                      labelText: AppLocalizations.of(context)!.lastName,
                     ),
                     maxLength: 24,
                   ),
@@ -106,15 +104,15 @@ class _SignUpState extends State<SignUp> {
                     },
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return AppLocalizations.of(context)?.emptyEmail ?? '';
+                        return AppLocalizations.of(context)!.emptyEmail;
                       } else if (validateEmail(emailValue) == false) {
-                        return AppLocalizations.of(context)?.emailError ?? '';
+                        return AppLocalizations.of(context)!.emailError;
                       }
                       return null;
                     },
                     decoration: InputDecoration(
                         border: OutlineInputBorder(),
-                        labelText: AppLocalizations.of(context)?.email ?? ''),
+                        labelText: AppLocalizations.of(context)!.email),
                   ),
                   SizedBox(height: 30),
                   TextFormField(
@@ -123,30 +121,24 @@ class _SignUpState extends State<SignUp> {
                     },
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return AppLocalizations.of(context)?.emptyPassword ??
-                            '';
+                        return AppLocalizations.of(context)!.emptyPassword;
                       } else if (!value.contains(RegExp(r'[A-Z]'))) {
-                        return AppLocalizations.of(context)
-                                ?.passwordUppercaseError ??
-                            '';
+                        return AppLocalizations.of(context)!
+                            .passwordUppercaseError;
                       } else if (!value.contains(RegExp(r'[a-z]'))) {
-                        return AppLocalizations.of(context)
-                                ?.passwordLowercaseError ??
-                            '';
+                        return AppLocalizations.of(context)!
+                            .passwordLowercaseError;
                       } else if (!value.contains(RegExp(r'[0-9]'))) {
-                        return AppLocalizations.of(context)
-                                ?.passwordNumericError ??
-                            '';
+                        return AppLocalizations.of(context)!
+                            .passwordNumericError;
                       } else if (!value
                           .contains(RegExp(r'[!@#\$%^&*()<>?/|}{~:]'))) {
-                        return AppLocalizations.of(context)
-                                ?.passwordSpecialCharacterError ??
-                            '';
+                        return AppLocalizations.of(context)!
+                            .passwordSpecialCharacterError;
                       }
                       if (value.length < 8) {
-                        return AppLocalizations.of(context)
-                                ?.passwordLengthError ??
-                            '';
+                        return AppLocalizations.of(context)!
+                            .passwordLengthError;
                       } else {
                         return null;
                       }
@@ -161,8 +153,7 @@ class _SignUpState extends State<SignUp> {
                           icon: Icon(Icons.visibility),
                         ),
                         border: OutlineInputBorder(),
-                        labelText:
-                            AppLocalizations.of(context)?.password ?? ''),
+                        labelText: AppLocalizations.of(context)!.password),
                     obscureText: !passwordInvisible,
                   ),
                   SizedBox(height: 30),
@@ -172,12 +163,10 @@ class _SignUpState extends State<SignUp> {
                     },
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return AppLocalizations.of(context)?.confirmPassword ??
-                            '';
+                        return AppLocalizations.of(context)!.confirmPassword;
                       } else if (value != passwordValue) {
-                        return AppLocalizations.of(context)
-                                ?.confirmPasswordError ??
-                            '';
+                        return AppLocalizations.of(context)!
+                            .confirmPasswordError;
                       } else {
                         return null;
                       }
@@ -185,15 +174,15 @@ class _SignUpState extends State<SignUp> {
                     decoration: InputDecoration(
                         suffixIcon: IconButton(
                           onPressed: () {
-                            confirmPasswordInvisible = !confirmPasswordInvisible;
+                            confirmPasswordInvisible =
+                                !confirmPasswordInvisible;
                             setState(() {});
                           },
                           icon: Icon(Icons.visibility),
                         ),
                         border: OutlineInputBorder(),
                         labelText:
-                            AppLocalizations.of(context)?.confirmPassword ??
-                                ''),
+                            AppLocalizations.of(context)!.confirmPassword),
                     maxLength: 16,
                     obscureText: !confirmPasswordInvisible,
                   ),
@@ -208,7 +197,7 @@ class _SignUpState extends State<SignUp> {
                           }
                         },
                         child: Text(
-                            AppLocalizations.of(context)?.registerButton ?? ''),
+                            AppLocalizations.of(context)!.registerButton),
                         style: ElevatedButton.styleFrom(
                           fixedSize: Size(200, 50),
                         ),

@@ -1,8 +1,13 @@
 import 'package:book/app_colors.dart';
 import 'package:book/home/view/home_page.dart';
+import 'package:book/login/bloc/login_bloc.dart';
+import 'package:book/login/bloc/login_state.dart';
 import 'package:book/login/view/sign_up_page.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+
+import '../bloc/login_event.dart';
 
 class LoginPage extends StatefulWidget {
   @override
@@ -14,18 +19,49 @@ class _LoginPageState extends State<LoginPage> {
   late String emailValue;
   late String passwordValue;
   bool passwordInvisible = false;
+  late LoginBloc bloc;
+
+  @override
+  void initState() {
+    super.initState();
+    bloc = LoginBloc();
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        centerTitle: true,
-        automaticallyImplyLeading: false,
-        backgroundColor: AppColors.primaryColor,
-        title: Text(AppLocalizations.of(context)!.loginTitle),
-      ),
-      body: _buildBody(),
-    );
+    return BlocConsumer(
+        bloc: bloc,
+        builder: (context, Object? state) {
+          return Scaffold(
+            appBar: AppBar(
+              centerTitle: true,
+              automaticallyImplyLeading: false,
+              backgroundColor: AppColors.primaryColor,
+              title: Text(AppLocalizations.of(context)!.loginTitle),
+            ),
+            body: _buildBody(),
+          );
+        },
+        listener: (context, state) {
+          if (state is SuccessfulLogin) {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                builder: (context) => HomePage(),
+              ),
+            );
+          } else if (state is ErrorAuthState) {
+            final snackBar = SnackBar(
+              content: Text(AppLocalizations.of(context)!.invalidCredentials),
+            );
+            ScaffoldMessenger.of(context).showSnackBar(snackBar);
+          } else if (state is ErrorState) {
+            final snackBar = SnackBar(
+              content: Text(AppLocalizations.of(context)!.serverError),
+            );
+            ScaffoldMessenger.of(context).showSnackBar(snackBar);
+          }
+        });
   }
 
   Widget _buildBody() {
@@ -113,16 +149,15 @@ class _LoginPageState extends State<LoginPage> {
                     ElevatedButton(
                       onPressed: () {
                         if (_formKey.currentState!.validate()) {
-                          Navigator.pushReplacement(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => HomePage(),
+                          bloc.add(
+                            Login(
+                              email: emailValue,
+                              password: passwordValue,
                             ),
                           );
                         }
                       },
-                      child:
-                          Text(AppLocalizations.of(context)!.loginButton),
+                      child: Text(AppLocalizations.of(context)!.loginButton),
                       style: ElevatedButton.styleFrom(
                         fixedSize: Size(200, 50),
                       ),
@@ -140,7 +175,9 @@ class _LoginPageState extends State<LoginPage> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => SignUp(),
+                            builder: (context) => SignUp(
+                              bloc: bloc,
+                            ),
                           ),
                         );
                       },

@@ -21,5 +21,9 @@
   "passwordLengthError": "Password must be at least 8 characters long",
   "confirmPassword": "Confirm Password",
   "confirmPasswordError": "Passwords are not matching",
-  "registerButton": "Register"
+  "registerButton": "Register",
+  "successfullyRegistered": "You have been registered successfully",
+  "invalidEmail": "Invalid email",
+  "serverError": "Can not reach the server",
+  "invalidCredentials": "Invalid email or password"
 }

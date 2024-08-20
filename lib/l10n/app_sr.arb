@@ -21,5 +21,9 @@
   "passwordLengthError": "Lozinka mora da ima barem 8 karaktera",
   "confirmPassword": "Potvrdite lozinku",
   "confirmPasswordError": "Lozinke nisu iste",
-  "registerButton": "Registrujte se"
+  "registerButton": "Registrujte se",
+  "successfullyRegistered": "Uspesno ste se registrovali",
+  "invalidEmail": "Neispravan email",
+  "serverError": "Server je nedostupan",
+  "invalidCredentials": "Pogresan email ili lozinka"
 }

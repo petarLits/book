@@ -1,8 +1,17 @@
 import 'package:book/app_colors.dart';
+import 'package:book/app_user.dart';
+import 'package:book/login/bloc/login_bloc.dart';
+import 'package:book/login/bloc/login_event.dart';
+import 'package:book/login/bloc/login_state.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class SignUp extends StatefulWidget {
+  SignUp({required this.bloc});
+
+  final LoginBloc bloc;
+
   @override
   State<SignUp> createState() => _SignUpState();
 }
@@ -19,15 +28,39 @@ class _SignUpState extends State<SignUp> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        automaticallyImplyLeading: true,
-        centerTitle: true,
-        title: Text(AppLocalizations.of(context)!.register),
-        backgroundColor: AppColors.primaryColor,
-      ),
-      body: _buildBody(),
-    );
+    return BlocConsumer(
+        bloc: widget.bloc,
+        builder: (context, Object? state) {
+          return Scaffold(
+            appBar: AppBar(
+              automaticallyImplyLeading: true,
+              centerTitle: true,
+              title: Text(AppLocalizations.of(context)!.register),
+              backgroundColor: AppColors.primaryColor,
+            ),
+            body: _buildBody(),
+          );
+        },
+        listener: (context, state) {
+          if (state is SuccessfulSignUp) {
+            Navigator.pop(context);
+            final snackBar = SnackBar(
+              content:
+                  Text(AppLocalizations.of(context)!.successfullyRegistered),
+            );
+            ScaffoldMessenger.of(context).showSnackBar(snackBar);
+          } else if (state is ErrorAuthState) {
+            final snackBarErrorAuth = SnackBar(
+              content: Text(AppLocalizations.of(context)!.invalidEmail),
+            );
+            ScaffoldMessenger.of(context).showSnackBar(snackBarErrorAuth);
+          } else if (state is ErrorState) {
+            final snackBarError = SnackBar(
+              content: Text(AppLocalizations.of(context)!.serverError),
+            );
+            ScaffoldMessenger.of(context).showSnackBar(snackBarError);
+          }
+        });
   }
 
   Widget _buildBody() {
@@ -193,11 +226,17 @@ class _SignUpState extends State<SignUp> {
                       ElevatedButton(
                         onPressed: () {
                           if (_formKey.currentState!.validate()) {
-                            Navigator.pop(context);
+                            AppUser newUser = AppUser(
+                                firstName: firstName,
+                                lastName: lastName,
+                                email: emailValue,
+                                password: passwordValue);
+
+                            widget.bloc.add(SignUpEvent(user: newUser));
                           }
                         },
-                        child: Text(
-                            AppLocalizations.of(context)!.registerButton),
+                        child:
+                            Text(AppLocalizations.of(context)!.registerButton),
                         style: ElevatedButton.styleFrom(
                           fixedSize: Size(200, 50),
                         ),

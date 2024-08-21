@@ -3,10 +3,23 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 class FirebaseAuthManager {
-  static final auth = FirebaseAuth.instance;
-  static final db = FirebaseFirestore.instance;
+  static FirebaseAuthManager? _instance;
+  late FirebaseAuth auth;
+  late FirebaseFirestore db;
 
-  static Future<void> registerUser(AppUser user) async {
+  FirebaseAuthManager._internal() {
+    auth = FirebaseAuth.instance;
+    db = FirebaseFirestore.instance;
+  }
+
+  factory FirebaseAuthManager(){
+    if (_instance == null){
+      _instance = FirebaseAuthManager._internal();
+    }
+    return _instance!;
+  }
+
+  Future<void> registerUser(AppUser user) async {
     late String uId;
     await auth
         .createUserWithEmailAndPassword(
@@ -27,12 +40,11 @@ class FirebaseAuthManager {
     });
   }
 
-  static Future<void> loginUser(String email, String password) async {
+  Future<void> loginUser(String email, String password) async {
     await auth
         .signInWithEmailAndPassword(email: email, password: password)
         .timeout(Duration(seconds: 3), onTimeout: () {
       throw Exception('Cant reach server');
     });
-
   }
 }

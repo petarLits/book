@@ -8,7 +8,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class SignUp extends StatefulWidget {
-  SignUp({required this.bloc});
+  const SignUp({required this.bloc});
 
   final LoginBloc bloc;
 
@@ -45,17 +45,20 @@ class _SignUpState extends State<SignUp> {
           if (state is SuccessfulSignUp) {
             Navigator.pop(context);
             final snackBar = SnackBar(
+              backgroundColor: AppColors.snackBar,
               content:
                   Text(AppLocalizations.of(context)!.successfullyRegistered),
             );
             ScaffoldMessenger.of(context).showSnackBar(snackBar);
-          } else if (state is ErrorAuthState) {
+          } else if (state is SignUpErrorAuth) {
             final snackBarErrorAuth = SnackBar(
+              backgroundColor: AppColors.errorSnackBar,
               content: Text(AppLocalizations.of(context)!.invalidEmail),
             );
             ScaffoldMessenger.of(context).showSnackBar(snackBarErrorAuth);
           } else if (state is ErrorState) {
             final snackBarError = SnackBar(
+              backgroundColor: AppColors.errorSnackBar,
               content: Text(AppLocalizations.of(context)!.serverError),
             );
             ScaffoldMessenger.of(context).showSnackBar(snackBarError);

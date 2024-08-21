@@ -52,11 +52,13 @@ class _LoginPageState extends State<LoginPage> {
             );
           } else if (state is ErrorAuthState) {
             final snackBar = SnackBar(
+              backgroundColor: AppColors.errorSnackBar,
               content: Text(AppLocalizations.of(context)!.invalidCredentials),
             );
             ScaffoldMessenger.of(context).showSnackBar(snackBar);
           } else if (state is ErrorState) {
             final snackBar = SnackBar(
+              backgroundColor: AppColors.errorSnackBar,
               content: Text(AppLocalizations.of(context)!.serverError),
             );
             ScaffoldMessenger.of(context).showSnackBar(snackBar);

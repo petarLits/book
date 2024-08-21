@@ -22,20 +22,30 @@ class ErrorAuthState extends LoginState {
   ErrorAuthState({required this.error});
 
   final Exception error;
-  
+
   @override
-  List<Object?> get props => [Random().nextInt(10000)];
+  List<Object?> get props => [error, Random().nextInt(10000)];
 }
 
-class ErrorState extends LoginState{
+class ErrorState extends LoginState {
   ErrorState({required this.error});
+
   final Exception error;
-  
+
   @override
-  List<Object?> get props => [Random().nextInt(10000)];
+  List<Object?> get props => [error, Random().nextInt(10000)];
 }
 
-class SuccessfulLogin extends LoginState{
+class SignUpErrorAuth extends LoginState {
+  SignUpErrorAuth({required this.error});
+
+  final Exception error;
+
+  @override
+  List<Object?> get props => [error, Random().nextInt(10000)];
+}
+
+class SuccessfulLogin extends LoginState {
   SuccessfulLogin();
 
   @override

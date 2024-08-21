@@ -12,12 +12,10 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
     on<Login>(_onLogin);
   }
 
-  FirebaseAuthManager authManager = FirebaseAuthManager();
-
   Future<void> _onSignUpEvent(
       SignUpEvent event, Emitter<LoginState> emit) async {
     try {
-      await authManager.registerUser(event.user);
+      await FirebaseAuthManager.instance.registerUser(event.user);
       emit(SuccessfulSignUp());
     } on FirebaseAuthException catch (e) {
       emit(SignUpErrorAuth(error: e));
@@ -28,7 +26,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
 
   Future<void> _onLogin(Login event, Emitter<LoginState> emit) async {
     try {
-      await authManager.loginUser(event.email, event.password);
+      await FirebaseAuthManager.instance.loginUser(event.email, event.password);
       emit(
         SuccessfulLogin(),
       );

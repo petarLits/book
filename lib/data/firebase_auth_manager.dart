@@ -12,6 +12,8 @@ class FirebaseAuthManager {
     db = FirebaseFirestore.instance;
   }
 
+  static FirebaseAuthManager get instance => FirebaseAuthManager();
+
   factory FirebaseAuthManager(){
     if (_instance == null){
       _instance = FirebaseAuthManager._internal();

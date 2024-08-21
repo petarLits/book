@@ -45,7 +45,7 @@ class _SignUpState extends State<SignUp> {
           if (state is SuccessfulSignUp) {
             Navigator.pop(context);
             final snackBar = SnackBar(
-              backgroundColor: AppColors.snackBar,
+              backgroundColor: AppColors.successfulSnackBar,
               content:
                   Text(AppLocalizations.of(context)!.successfullyRegistered),
             );

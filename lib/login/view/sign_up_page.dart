@@ -3,6 +3,7 @@ import 'package:book/app_user.dart';
 import 'package:book/login/bloc/login_bloc.dart';
 import 'package:book/login/bloc/login_event.dart';
 import 'package:book/login/bloc/login_state.dart';
+import 'package:book/utils/validation_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -135,13 +136,15 @@ class _SignUpState extends State<SignUp> {
                   ),
                   SizedBox(height: 30),
                   TextFormField(
+                    autovalidateMode: AutovalidateMode.onUserInteraction,
                     onChanged: (value) {
                       emailValue = value;
                     },
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return AppLocalizations.of(context)!.emptyEmail;
-                      } else if (validateEmail(emailValue) == false) {
+                      } else if (ValidationUtils.validateEmail(emailValue) ==
+                          false) {
                         return AppLocalizations.of(context)!.emailError;
                       }
                       return null;
@@ -152,32 +155,12 @@ class _SignUpState extends State<SignUp> {
                   ),
                   SizedBox(height: 30),
                   TextFormField(
+                    autovalidateMode: AutovalidateMode.onUserInteraction,
                     onChanged: (value) {
                       passwordValue = value;
                     },
                     validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return AppLocalizations.of(context)!.emptyPassword;
-                      } else if (!value.contains(RegExp(r'[A-Z]'))) {
-                        return AppLocalizations.of(context)!
-                            .passwordUppercaseError;
-                      } else if (!value.contains(RegExp(r'[a-z]'))) {
-                        return AppLocalizations.of(context)!
-                            .passwordLowercaseError;
-                      } else if (!value.contains(RegExp(r'[0-9]'))) {
-                        return AppLocalizations.of(context)!
-                            .passwordNumericError;
-                      } else if (!value
-                          .contains(RegExp(r'[!@#\$%^&*()<>?/|}{~:]'))) {
-                        return AppLocalizations.of(context)!
-                            .passwordSpecialCharacterError;
-                      }
-                      if (value.length < 8) {
-                        return AppLocalizations.of(context)!
-                            .passwordLengthError;
-                      } else {
-                        return null;
-                      }
+                      return ValidationUtils.validatePassword(context, value);
                     },
                     maxLength: 16,
                     decoration: InputDecoration(
@@ -194,6 +177,7 @@ class _SignUpState extends State<SignUp> {
                   ),
                   SizedBox(height: 30),
                   TextFormField(
+                    autovalidateMode: AutovalidateMode.onUserInteraction,
                     onChanged: (value) {
                       confirmPasswordValue = value;
                     },
@@ -255,13 +239,5 @@ class _SignUpState extends State<SignUp> {
     );
   }
 
-  bool validateEmail(String emailValue) {
-    final emailRegex =
-        r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
-    if (RegExp(emailRegex).hasMatch(emailValue)) {
-      return true;
-    } else {
-      return false;
-    }
-  }
+
 }

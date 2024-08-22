@@ -1,8 +1,7 @@
 import 'package:book/app_colors.dart';
-import 'package:book/home/view/home_page.dart';
 import 'package:book/login/bloc/login_bloc.dart';
 import 'package:book/login/bloc/login_state.dart';
-import 'package:book/login/view/sign_up_page.dart';
+import 'package:book/utils/validation_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -44,11 +43,9 @@ class _LoginPageState extends State<LoginPage> {
         },
         listener: (context, state) {
           if (state is SuccessfulLogin) {
-            Navigator.pushReplacement(
+            Navigator.pushReplacementNamed(
               context,
-              MaterialPageRoute(
-                builder: (context) => HomePage(),
-              ),
+              '/'
             );
           } else if (state is ErrorAuthState) {
             final snackBar = SnackBar(
@@ -104,7 +101,7 @@ class _LoginPageState extends State<LoginPage> {
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return AppLocalizations.of(context)!.emptyEmail;
-                    } else if (validateEmail(value) == false) {
+                    } else if (ValidationUtils.validateEmail(value) == false) {
                       return AppLocalizations.of(context)!.emailError;
                     }
                     return null;
@@ -174,13 +171,10 @@ class _LoginPageState extends State<LoginPage> {
                   children: [
                     TextButton(
                       onPressed: () {
-                        Navigator.push(
+                        Navigator.pushNamed(
                           context,
-                          MaterialPageRoute(
-                            builder: (context) => SignUp(
-                              bloc: bloc,
-                            ),
-                          ),
+                          '/SignUp',
+                          arguments: bloc,
                         );
                       },
                       child: Text(
@@ -196,15 +190,5 @@ class _LoginPageState extends State<LoginPage> {
         ],
       ),
     );
-  }
-
-  bool validateEmail(String emailValue) {
-    final emailRegex =
-        r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
-    if (RegExp(emailRegex).hasMatch(emailValue)) {
-      return true;
-    } else {
-      return false;
-    }
   }
 }

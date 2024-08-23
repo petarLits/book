@@ -3,14 +3,13 @@ import 'package:book/app_user.dart';
 import 'package:book/login/bloc/login_bloc.dart';
 import 'package:book/login/bloc/login_event.dart';
 import 'package:book/login/bloc/login_state.dart';
+import 'package:book/utils/validation_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class SignUp extends StatefulWidget {
-  const SignUp({required this.bloc});
-
-  final LoginBloc bloc;
+  const SignUp({super.key});
 
   @override
   State<SignUp> createState() => _SignUpState();
@@ -28,42 +27,39 @@ class _SignUpState extends State<SignUp> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocConsumer(
-        bloc: widget.bloc,
-        builder: (context, Object? state) {
-          return Scaffold(
-            appBar: AppBar(
-              automaticallyImplyLeading: true,
-              centerTitle: true,
-              title: Text(AppLocalizations.of(context)!.register),
-              backgroundColor: AppColors.primaryColor,
-            ),
-            body: _buildBody(),
-          );
-        },
-        listener: (context, state) {
-          if (state is SuccessfulSignUp) {
-            Navigator.pop(context);
-            final snackBar = SnackBar(
-              backgroundColor: AppColors.successfulSnackBar,
-              content:
-                  Text(AppLocalizations.of(context)!.successfullyRegistered),
-            );
-            ScaffoldMessenger.of(context).showSnackBar(snackBar);
-          } else if (state is SignUpErrorAuth) {
-            final snackBarErrorAuth = SnackBar(
-              backgroundColor: AppColors.errorSnackBar,
-              content: Text(AppLocalizations.of(context)!.invalidEmail),
-            );
-            ScaffoldMessenger.of(context).showSnackBar(snackBarErrorAuth);
-          } else if (state is ErrorState) {
-            final snackBarError = SnackBar(
-              backgroundColor: AppColors.errorSnackBar,
-              content: Text(AppLocalizations.of(context)!.serverError),
-            );
-            ScaffoldMessenger.of(context).showSnackBar(snackBarError);
-          }
-        });
+    return BlocConsumer<LoginBloc, LoginState>(
+        builder: (context, LoginState state) {
+      return Scaffold(
+        appBar: AppBar(
+          automaticallyImplyLeading: true,
+          centerTitle: true,
+          title: Text(AppLocalizations.of(context)!.register),
+          backgroundColor: AppColors.primaryColor,
+        ),
+        body: _buildBody(),
+      );
+    }, listener: (context, state) {
+      if (state is SuccessfulSignUp) {
+        Navigator.pop(context);
+        final snackBar = SnackBar(
+          backgroundColor: AppColors.successfulSnackBar,
+          content: Text(AppLocalizations.of(context)!.successfullyRegistered),
+        );
+        ScaffoldMessenger.of(context).showSnackBar(snackBar);
+      } else if (state is SignUpErrorAuth) {
+        final snackBarErrorAuth = SnackBar(
+          backgroundColor: AppColors.errorSnackBar,
+          content: Text(AppLocalizations.of(context)!.invalidEmail),
+        );
+        ScaffoldMessenger.of(context).showSnackBar(snackBarErrorAuth);
+      } else if (state is ErrorState) {
+        final snackBarError = SnackBar(
+          backgroundColor: AppColors.errorSnackBar,
+          content: Text(AppLocalizations.of(context)!.serverError),
+        );
+        ScaffoldMessenger.of(context).showSnackBar(snackBarError);
+      }
+    });
   }
 
   Widget _buildBody() {
@@ -135,13 +131,14 @@ class _SignUpState extends State<SignUp> {
                   ),
                   SizedBox(height: 30),
                   TextFormField(
+                    autovalidateMode: AutovalidateMode.onUserInteraction,
                     onChanged: (value) {
                       emailValue = value;
                     },
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return AppLocalizations.of(context)!.emptyEmail;
-                      } else if (validateEmail(emailValue) == false) {
+                      } else if (!ValidationUtils.validateEmail(emailValue)) {
                         return AppLocalizations.of(context)!.emailError;
                       }
                       return null;
@@ -152,32 +149,12 @@ class _SignUpState extends State<SignUp> {
                   ),
                   SizedBox(height: 30),
                   TextFormField(
+                    autovalidateMode: AutovalidateMode.onUserInteraction,
                     onChanged: (value) {
                       passwordValue = value;
                     },
                     validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return AppLocalizations.of(context)!.emptyPassword;
-                      } else if (!value.contains(RegExp(r'[A-Z]'))) {
-                        return AppLocalizations.of(context)!
-                            .passwordUppercaseError;
-                      } else if (!value.contains(RegExp(r'[a-z]'))) {
-                        return AppLocalizations.of(context)!
-                            .passwordLowercaseError;
-                      } else if (!value.contains(RegExp(r'[0-9]'))) {
-                        return AppLocalizations.of(context)!
-                            .passwordNumericError;
-                      } else if (!value
-                          .contains(RegExp(r'[!@#\$%^&*()<>?/|}{~:]'))) {
-                        return AppLocalizations.of(context)!
-                            .passwordSpecialCharacterError;
-                      }
-                      if (value.length < 8) {
-                        return AppLocalizations.of(context)!
-                            .passwordLengthError;
-                      } else {
-                        return null;
-                      }
+                      return ValidationUtils.validatePassword(context, value);
                     },
                     maxLength: 16,
                     decoration: InputDecoration(
@@ -194,6 +171,7 @@ class _SignUpState extends State<SignUp> {
                   ),
                   SizedBox(height: 30),
                   TextFormField(
+                    autovalidateMode: AutovalidateMode.onUserInteraction,
                     onChanged: (value) {
                       confirmPasswordValue = value;
                     },
@@ -235,7 +213,9 @@ class _SignUpState extends State<SignUp> {
                                 email: emailValue,
                                 password: passwordValue);
 
-                            widget.bloc.add(SignUpEvent(user: newUser));
+                            context
+                                .read<LoginBloc>()
+                                .add(SignUpEvent(user: newUser));
                           }
                         },
                         child:
@@ -253,15 +233,5 @@ class _SignUpState extends State<SignUp> {
         ),
       ),
     );
-  }
-
-  bool validateEmail(String emailValue) {
-    final emailRegex =
-        r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
-    if (RegExp(emailRegex).hasMatch(emailValue)) {
-      return true;
-    } else {
-      return false;
-    }
   }
 }

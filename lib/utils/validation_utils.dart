@@ -5,6 +5,10 @@ class ValidationUtils {
 
   static final emailRegex =
       r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
+  static final uppercaseRegex = r'[A-Z]';
+  static final lowercaseRegex = r'[a-z]';
+  static final numericRegex = r'[0-9]';
+  static final specialCharacterRegex = r'[!@#\$%^&*()<>?/|}{~:]';
 
   static bool validateEmail(String emailValue) {
     if (RegExp(emailRegex).hasMatch(emailValue)) {
@@ -17,13 +21,13 @@ class ValidationUtils {
   static String? validatePassword(BuildContext context, String? value) {
     if (value == null || value.isEmpty) {
       return AppLocalizations.of(context)!.emptyPassword;
-    } else if (!value.contains(RegExp(r'[A-Z]'))) {
+    } else if (!value.contains(RegExp(uppercaseRegex))) {
       return AppLocalizations.of(context)!.passwordUppercaseError;
-    } else if (!value.contains(RegExp(r'[a-z]'))) {
+    } else if (!value.contains(RegExp(lowercaseRegex))) {
       return AppLocalizations.of(context)!.passwordLowercaseError;
-    } else if (!value.contains(RegExp(r'[0-9]'))) {
+    } else if (!value.contains(RegExp(numericRegex))) {
       return AppLocalizations.of(context)!.passwordNumericError;
-    } else if (!value.contains(RegExp(r'[!@#\$%^&*()<>?/|}{~:]'))) {
+    } else if (!value.contains(RegExp(specialCharacterRegex))) {
       return AppLocalizations.of(context)!.passwordSpecialCharacterError;
     }
     if (value.length < 8) {

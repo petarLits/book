@@ -9,7 +9,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class SignUp extends StatefulWidget {
-  const SignUp();
+  const SignUp({super.key});
 
   @override
   State<SignUp> createState() => _SignUpState();

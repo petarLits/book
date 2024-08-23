@@ -1,7 +1,9 @@
 import 'package:book/app_colors.dart';
 import 'package:book/app_routes.dart';
+import 'package:book/app_user_singleton.dart';
 import 'package:book/login/bloc/login_bloc.dart';
 import 'package:book/login/bloc/login_state.dart';
+import 'package:book/utils/future_utils.dart';
 import 'package:book/utils/validation_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -37,7 +39,7 @@ class _LoginPageState extends State<LoginPage> {
         ),
         body: _buildBody(),
       );
-    }, listener: (context, state) {
+    }, listener: (context, state) async {
       if (state is SuccessfulLogin) {
         Navigator.pushReplacementNamed(context, homeRoute);
       } else if (state is ErrorAuthState) {

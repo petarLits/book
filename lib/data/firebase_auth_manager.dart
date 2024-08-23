@@ -1,4 +1,5 @@
 import 'package:book/app_user.dart';
+import 'package:book/core/constants.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
@@ -14,8 +15,8 @@ class FirebaseAuthManager {
 
   static FirebaseAuthManager get instance => FirebaseAuthManager();
 
-  factory FirebaseAuthManager(){
-    if (_instance == null){
+  factory FirebaseAuthManager() {
+    if (_instance == null) {
       _instance = FirebaseAuthManager._internal();
     }
     return _instance!;
@@ -27,7 +28,7 @@ class FirebaseAuthManager {
         .createUserWithEmailAndPassword(
             email: user.email, password: user.password)
         .timeout(Duration(seconds: 3), onTimeout: () {
-      throw Exception('Cant reach server');
+      throw Exception(serverError);
     });
     ;
 
@@ -38,7 +39,7 @@ class FirebaseAuthManager {
     final userRef = db.collection('users').doc(uId);
 
     userRef.set(user.toJson()).timeout(Duration(seconds: 3), onTimeout: () {
-      throw Exception('Cant reach server');
+      throw Exception(serverError);
     });
   }
 
@@ -46,7 +47,33 @@ class FirebaseAuthManager {
     await auth
         .signInWithEmailAndPassword(email: email, password: password)
         .timeout(Duration(seconds: 3), onTimeout: () {
-      throw Exception('Cant reach server');
+      throw Exception(serverError);
+    });
+  }
+
+  String? get currentUserId => auth.currentUser?.uid;
+
+  Future<AppUser?> downloadCurrentUser() async {
+    if (currentUserId != null) {
+      final userRef = db.collection('users').doc(currentUserId);
+      final snapShot =
+          await userRef.get().timeout(Duration(seconds: 3), onTimeout: () {
+        throw Exception(serverError);
+      });
+      if (snapShot.data() != null) {
+        AppUser appUser = AppUser.fromJson(snapShot.data()!);
+        return appUser;
+      } else {
+        return null;
+      }
+    } else {
+      return null;
+    }
+  }
+
+  Future<void> signOut() async {
+    await auth.signOut().timeout(Duration(seconds: 3), onTimeout: () {
+      throw Exception(serverError);
     });
   }
 }

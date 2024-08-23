@@ -11,7 +11,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     on<SignOut>(_onSignOut);
   }
 
-  FutureOr<void> _onSignOut(SignOut event, Emitter<HomeState> emit) async {
+  Future<void> _onSignOut(SignOut event, Emitter<HomeState> emit) async {
     try {
       await FirebaseAuthManager.instance.signOut();
       AppUserSingleton.instance.clearAppUser();

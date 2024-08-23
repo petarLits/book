@@ -1,0 +1,1 @@
+const String serverError = 'Can not reach the server';

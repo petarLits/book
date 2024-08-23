@@ -18,14 +18,17 @@ class AppUserSingleton {
 
   static AppUserSingleton get instance => AppUserSingleton();
 
-  Future<void> setUser() async {
+  Future<AppUser?> fetchCurrentUser() async {
     AppUser? result = await FirebaseAuthManager.instance.downloadCurrentUser();
 
     _appUser = result;
+
+    return result;
   }
+
   AppUser? get appUser => _appUser;
 
-  void clearAppUser(){
+  void clearAppUser() {
     _appUser = null;
   }
 }

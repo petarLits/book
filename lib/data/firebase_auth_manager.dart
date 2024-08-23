@@ -1,5 +1,5 @@
 import 'package:book/app_user.dart';
-import 'package:book/constants.dart';
+import 'package:book/core/constants.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
@@ -51,21 +51,11 @@ class FirebaseAuthManager {
     });
   }
 
-  Future<String?> getCurrentUserId() async {
-    final result = await auth.currentUser?.uid;
-    if (result != null) {
-      return result;
-    }
-    return null;
-  }
+  String? get currentUserId => auth.currentUser?.uid;
 
   Future<AppUser?> downloadCurrentUser() async {
-    final result =
-        await getCurrentUserId().timeout(Duration(seconds: 3), onTimeout: () {
-      throw Exception(serverError);
-    });
-    if (result != null) {
-      final userRef = db.collection('users').doc(result);
+    if (currentUserId != null) {
+      final userRef = db.collection('users').doc(currentUserId);
       final snapShot =
           await userRef.get().timeout(Duration(seconds: 3), onTimeout: () {
         throw Exception(serverError);
@@ -76,11 +66,12 @@ class FirebaseAuthManager {
       } else {
         return null;
       }
+    } else {
+      return null;
     }
-    return null;
   }
 
-  Future<void> signOut() async{
+  Future<void> signOut() async {
     await auth.signOut().timeout(Duration(seconds: 3), onTimeout: () {
       throw Exception(serverError);
     });

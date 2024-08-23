@@ -41,13 +41,7 @@ class _LoginPageState extends State<LoginPage> {
       );
     }, listener: (context, state) async {
       if (state is SuccessfulLogin) {
-        final message = await FutureUtils.executeFutureWithLoader(
-          context,
-          AppUserSingleton.instance.setUser(),
-        );
-        if(message != null){
         Navigator.pushReplacementNamed(context, homeRoute);
-        }
       } else if (state is ErrorAuthState) {
         final snackBar = SnackBar(
           backgroundColor: AppColors.errorSnackBar,

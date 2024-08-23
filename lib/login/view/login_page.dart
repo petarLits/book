@@ -1,11 +1,11 @@
 import 'package:book/app_colors.dart';
+import 'package:book/app_routes.dart';
 import 'package:book/login/bloc/login_bloc.dart';
 import 'package:book/login/bloc/login_state.dart';
 import 'package:book/utils/validation_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-
 import '../bloc/login_event.dart';
 
 class LoginPage extends StatefulWidget {
@@ -18,49 +18,42 @@ class _LoginPageState extends State<LoginPage> {
   late String emailValue;
   late String passwordValue;
   bool passwordInvisible = false;
-  late LoginBloc bloc;
 
   @override
   void initState() {
     super.initState();
-    bloc = LoginBloc();
   }
 
   @override
   Widget build(BuildContext context) {
-    return BlocConsumer(
-        bloc: bloc,
-        builder: (context, Object? state) {
-          return Scaffold(
-            appBar: AppBar(
-              centerTitle: true,
-              automaticallyImplyLeading: false,
-              backgroundColor: AppColors.primaryColor,
-              title: Text(AppLocalizations.of(context)!.loginTitle),
-            ),
-            body: _buildBody(),
-          );
-        },
-        listener: (context, state) {
-          if (state is SuccessfulLogin) {
-            Navigator.pushReplacementNamed(
-              context,
-              '/'
-            );
-          } else if (state is ErrorAuthState) {
-            final snackBar = SnackBar(
-              backgroundColor: AppColors.errorSnackBar,
-              content: Text(AppLocalizations.of(context)!.invalidCredentials),
-            );
-            ScaffoldMessenger.of(context).showSnackBar(snackBar);
-          } else if (state is ErrorState) {
-            final snackBar = SnackBar(
-              backgroundColor: AppColors.errorSnackBar,
-              content: Text(AppLocalizations.of(context)!.serverError),
-            );
-            ScaffoldMessenger.of(context).showSnackBar(snackBar);
-          }
-        });
+    return BlocConsumer<LoginBloc, LoginState>(
+        builder: (context, LoginState state) {
+      return Scaffold(
+        appBar: AppBar(
+          centerTitle: true,
+          automaticallyImplyLeading: false,
+          backgroundColor: AppColors.primaryColor,
+          title: Text(AppLocalizations.of(context)!.loginTitle),
+        ),
+        body: _buildBody(),
+      );
+    }, listener: (context, state) {
+      if (state is SuccessfulLogin) {
+        Navigator.pushReplacementNamed(context, homeRoute);
+      } else if (state is ErrorAuthState) {
+        final snackBar = SnackBar(
+          backgroundColor: AppColors.errorSnackBar,
+          content: Text(AppLocalizations.of(context)!.invalidCredentials),
+        );
+        ScaffoldMessenger.of(context).showSnackBar(snackBar);
+      } else if (state is ErrorState) {
+        final snackBar = SnackBar(
+          backgroundColor: AppColors.errorSnackBar,
+          content: Text(AppLocalizations.of(context)!.serverError),
+        );
+        ScaffoldMessenger.of(context).showSnackBar(snackBar);
+      }
+    });
   }
 
   Widget _buildBody() {
@@ -148,12 +141,12 @@ class _LoginPageState extends State<LoginPage> {
                     ElevatedButton(
                       onPressed: () {
                         if (_formKey.currentState!.validate()) {
-                          bloc.add(
-                            Login(
-                              email: emailValue,
-                              password: passwordValue,
-                            ),
-                          );
+                          context.read<LoginBloc>().add(
+                                Login(
+                                  email: emailValue,
+                                  password: passwordValue,
+                                ),
+                              );
                         }
                       },
                       child: Text(AppLocalizations.of(context)!.loginButton),
@@ -173,8 +166,7 @@ class _LoginPageState extends State<LoginPage> {
                       onPressed: () {
                         Navigator.pushNamed(
                           context,
-                          '/SignUp',
-                          arguments: bloc,
+                          signUpRoute,
                         );
                       },
                       child: Text(

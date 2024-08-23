@@ -1,30 +1,33 @@
 import 'package:book/home/view/home_page.dart';
-import 'package:book/login/bloc/login_bloc.dart';
 import 'package:book/login/view/login_page.dart';
 import 'package:flutter/material.dart';
+
 import 'login/view/sign_up_page.dart';
 
-const String HomeRoute = '/';
-const String LoginRoute = '/Login';
-const String SignUpRoute = '/SignUp';
+const String homeRoute = '/';
+const String loginRoute = '/Login';
+const String signUpRoute = '/SignUp';
 
 class AppRoutes {
+
   static Route<dynamic>? onGenerateRoutes(RouteSettings settings) {
     switch (settings.name) {
-      case HomeRoute:
+      case homeRoute:
         return _materialRoute(
           HomePage(),
         );
-      case LoginRoute:
+      case loginRoute:
         return _materialRoute(
-          LoginPage(),
+           LoginPage(),
         );
-      case SignUpRoute:
+
+      case signUpRoute:
         return _materialRoute(
-          SignUp(bloc: settings.arguments as LoginBloc),
+          SignUp(),
         );
+      default:
+        return null;
     }
-    return null;
   }
 
   static Route<dynamic> _materialRoute(Widget view) {

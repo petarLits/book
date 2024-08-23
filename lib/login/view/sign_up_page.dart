@@ -9,9 +9,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class SignUp extends StatefulWidget {
-  const SignUp({required this.bloc});
-
-  final LoginBloc bloc;
+  const SignUp();
 
   @override
   State<SignUp> createState() => _SignUpState();
@@ -29,42 +27,39 @@ class _SignUpState extends State<SignUp> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocConsumer(
-        bloc: widget.bloc,
-        builder: (context, Object? state) {
-          return Scaffold(
-            appBar: AppBar(
-              automaticallyImplyLeading: true,
-              centerTitle: true,
-              title: Text(AppLocalizations.of(context)!.register),
-              backgroundColor: AppColors.primaryColor,
-            ),
-            body: _buildBody(),
-          );
-        },
-        listener: (context, state) {
-          if (state is SuccessfulSignUp) {
-            Navigator.pop(context);
-            final snackBar = SnackBar(
-              backgroundColor: AppColors.successfulSnackBar,
-              content:
-                  Text(AppLocalizations.of(context)!.successfullyRegistered),
-            );
-            ScaffoldMessenger.of(context).showSnackBar(snackBar);
-          } else if (state is SignUpErrorAuth) {
-            final snackBarErrorAuth = SnackBar(
-              backgroundColor: AppColors.errorSnackBar,
-              content: Text(AppLocalizations.of(context)!.invalidEmail),
-            );
-            ScaffoldMessenger.of(context).showSnackBar(snackBarErrorAuth);
-          } else if (state is ErrorState) {
-            final snackBarError = SnackBar(
-              backgroundColor: AppColors.errorSnackBar,
-              content: Text(AppLocalizations.of(context)!.serverError),
-            );
-            ScaffoldMessenger.of(context).showSnackBar(snackBarError);
-          }
-        });
+    return BlocConsumer<LoginBloc, LoginState>(
+        builder: (context, LoginState state) {
+      return Scaffold(
+        appBar: AppBar(
+          automaticallyImplyLeading: true,
+          centerTitle: true,
+          title: Text(AppLocalizations.of(context)!.register),
+          backgroundColor: AppColors.primaryColor,
+        ),
+        body: _buildBody(),
+      );
+    }, listener: (context, state) {
+      if (state is SuccessfulSignUp) {
+        Navigator.pop(context);
+        final snackBar = SnackBar(
+          backgroundColor: AppColors.successfulSnackBar,
+          content: Text(AppLocalizations.of(context)!.successfullyRegistered),
+        );
+        ScaffoldMessenger.of(context).showSnackBar(snackBar);
+      } else if (state is SignUpErrorAuth) {
+        final snackBarErrorAuth = SnackBar(
+          backgroundColor: AppColors.errorSnackBar,
+          content: Text(AppLocalizations.of(context)!.invalidEmail),
+        );
+        ScaffoldMessenger.of(context).showSnackBar(snackBarErrorAuth);
+      } else if (state is ErrorState) {
+        final snackBarError = SnackBar(
+          backgroundColor: AppColors.errorSnackBar,
+          content: Text(AppLocalizations.of(context)!.serverError),
+        );
+        ScaffoldMessenger.of(context).showSnackBar(snackBarError);
+      }
+    });
   }
 
   Widget _buildBody() {
@@ -143,8 +138,7 @@ class _SignUpState extends State<SignUp> {
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return AppLocalizations.of(context)!.emptyEmail;
-                      } else if (ValidationUtils.validateEmail(emailValue) ==
-                          false) {
+                      } else if (!ValidationUtils.validateEmail(emailValue)) {
                         return AppLocalizations.of(context)!.emailError;
                       }
                       return null;
@@ -219,7 +213,9 @@ class _SignUpState extends State<SignUp> {
                                 email: emailValue,
                                 password: passwordValue);
 
-                            widget.bloc.add(SignUpEvent(user: newUser));
+                            context
+                                .read<LoginBloc>()
+                                .add(SignUpEvent(user: newUser));
                           }
                         },
                         child:
@@ -238,6 +234,4 @@ class _SignUpState extends State<SignUp> {
       ),
     );
   }
-
-
 }

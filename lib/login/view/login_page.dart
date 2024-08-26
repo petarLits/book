@@ -1,8 +1,10 @@
 import 'package:book/app_colors.dart';
 import 'package:book/app_routes.dart';
 import 'package:book/app_user_singleton.dart';
+import 'package:book/core/constants.dart';
 import 'package:book/login/bloc/login_bloc.dart';
 import 'package:book/login/bloc/login_state.dart';
+import 'package:book/login/widgets/custom_text_form_field.dart';
 import 'package:book/utils/future_utils.dart';
 import 'package:book/utils/validation_utils.dart';
 import 'package:flutter/material.dart';
@@ -92,7 +94,7 @@ class _LoginPageState extends State<LoginPage> {
                 Text(AppLocalizations.of(context)!.welcome),
                 Text(AppLocalizations.of(context)!.loginSubtitle),
                 SizedBox(height: 30),
-                TextFormField(
+                CustomTextFormField(
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return AppLocalizations.of(context)!.emptyEmail;
@@ -104,15 +106,14 @@ class _LoginPageState extends State<LoginPage> {
                   onChanged: (value) {
                     emailValue = value;
                   },
-                  decoration: InputDecoration(
-                    border: OutlineInputBorder(),
-                    labelText: AppLocalizations.of(context)!.email,
-                  ),
+                  isNonPasswordField: true,
+                  labelText: AppLocalizations.of(context)!.email,
+                  maxLength: emailMaxLength,
                 ),
                 SizedBox(
                   height: 20,
                 ),
-                TextFormField(
+                CustomTextFormField(
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return AppLocalizations.of(context)!.emptyPassword;
@@ -122,17 +123,9 @@ class _LoginPageState extends State<LoginPage> {
                   onChanged: (value) {
                     passwordValue = value;
                   },
-                  decoration: InputDecoration(
-                      suffixIcon: IconButton(
-                        onPressed: () {
-                          passwordInvisible = !passwordInvisible;
-                          setState(() {});
-                        },
-                        icon: Icon(Icons.visibility),
-                      ),
-                      border: OutlineInputBorder(),
-                      labelText: AppLocalizations.of(context)!.password),
-                  obscureText: !passwordInvisible,
+                  isNonPasswordField: false,
+                  labelText: AppLocalizations.of(context)!.password,
+                  maxLength: passwordMaxLength,
                 ),
                 SizedBox(
                   height: 20,

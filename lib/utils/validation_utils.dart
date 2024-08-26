@@ -1,3 +1,4 @@
+import 'package:book/core/constants.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
@@ -30,7 +31,7 @@ class ValidationUtils {
     } else if (!value.contains(RegExp(specialCharacterRegex))) {
       return AppLocalizations.of(context)!.passwordSpecialCharacterError;
     }
-    if (value.length < 8) {
+    if (value.length < passwordMinLength) {
       return AppLocalizations.of(context)!.passwordLengthError;
     } else {
       return null;

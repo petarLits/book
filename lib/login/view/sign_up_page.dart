@@ -1,8 +1,10 @@
 import 'package:book/app_colors.dart';
 import 'package:book/app_user.dart';
+import 'package:book/core/constants.dart';
 import 'package:book/login/bloc/login_bloc.dart';
 import 'package:book/login/bloc/login_event.dart';
 import 'package:book/login/bloc/login_state.dart';
+import 'package:book/login/widgets/custom_text_form_field.dart';
 import 'package:book/utils/validation_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -96,7 +98,7 @@ class _SignUpState extends State<SignUp> {
               margin: EdgeInsets.only(right: 24, left: 24),
               child: Column(
                 children: [
-                  TextFormField(
+                  CustomTextFormField(
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return AppLocalizations.of(context)!.emptyFirstName;
@@ -106,14 +108,12 @@ class _SignUpState extends State<SignUp> {
                     onChanged: (value) {
                       firstName = value;
                     },
-                    maxLength: 24,
-                    decoration: InputDecoration(
-                      border: OutlineInputBorder(),
-                      labelText: AppLocalizations.of(context)!.firstName,
-                    ),
+                    maxLength: nameMaxLength,
+                    isNonPasswordField: true,
+                    labelText: AppLocalizations.of(context)!.firstName,
                   ),
                   SizedBox(height: 30),
-                  TextFormField(
+                  CustomTextFormField(
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return AppLocalizations.of(context)!.emptyLastName;
@@ -123,15 +123,12 @@ class _SignUpState extends State<SignUp> {
                     onChanged: (value) {
                       lastName = value;
                     },
-                    decoration: InputDecoration(
-                      border: OutlineInputBorder(),
-                      labelText: AppLocalizations.of(context)!.lastName,
-                    ),
-                    maxLength: 24,
+                    maxLength: nameMaxLength,
+                    isNonPasswordField: true,
+                    labelText: AppLocalizations.of(context)!.lastName,
                   ),
                   SizedBox(height: 30),
-                  TextFormField(
-                    autovalidateMode: AutovalidateMode.onUserInteraction,
+                  CustomTextFormField(
                     onChanged: (value) {
                       emailValue = value;
                     },
@@ -143,35 +140,24 @@ class _SignUpState extends State<SignUp> {
                       }
                       return null;
                     },
-                    decoration: InputDecoration(
-                        border: OutlineInputBorder(),
-                        labelText: AppLocalizations.of(context)!.email),
+                    isNonPasswordField: false,
+                    labelText: AppLocalizations.of(context)!.email,
+                    maxLength: emailMaxLength,
                   ),
                   SizedBox(height: 30),
-                  TextFormField(
-                    autovalidateMode: AutovalidateMode.onUserInteraction,
+                  CustomTextFormField(
                     onChanged: (value) {
                       passwordValue = value;
                     },
                     validator: (value) {
                       return ValidationUtils.validatePassword(context, value);
                     },
-                    maxLength: 16,
-                    decoration: InputDecoration(
-                        suffixIcon: IconButton(
-                          onPressed: () {
-                            passwordInvisible = !passwordInvisible;
-                            setState(() {});
-                          },
-                          icon: Icon(Icons.visibility),
-                        ),
-                        border: OutlineInputBorder(),
-                        labelText: AppLocalizations.of(context)!.password),
-                    obscureText: !passwordInvisible,
+                    maxLength: passwordMaxLength,
+                    isNonPasswordField: false,
+                    labelText: AppLocalizations.of(context)!.password,
                   ),
                   SizedBox(height: 30),
-                  TextFormField(
-                    autovalidateMode: AutovalidateMode.onUserInteraction,
+                  CustomTextFormField(
                     onChanged: (value) {
                       confirmPasswordValue = value;
                     },
@@ -185,20 +171,9 @@ class _SignUpState extends State<SignUp> {
                         return null;
                       }
                     },
-                    decoration: InputDecoration(
-                        suffixIcon: IconButton(
-                          onPressed: () {
-                            confirmPasswordInvisible =
-                                !confirmPasswordInvisible;
-                            setState(() {});
-                          },
-                          icon: Icon(Icons.visibility),
-                        ),
-                        border: OutlineInputBorder(),
-                        labelText:
-                            AppLocalizations.of(context)!.confirmPassword),
-                    maxLength: 16,
-                    obscureText: !confirmPasswordInvisible,
+                    isNonPasswordField: false,
+                    labelText: AppLocalizations.of(context)!.confirmPassword,
+                    maxLength: passwordMaxLength,
                   ),
                   SizedBox(height: 30),
                   Row(

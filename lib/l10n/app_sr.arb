@@ -25,5 +25,12 @@
   "successfullyRegistered": "Uspesno ste se registrovali",
   "invalidEmail": "Neispravan email",
   "serverError": "Server je nedostupan",
-  "invalidCredentials": "Pogresan email ili lozinka"
+  "invalidCredentials": "Pogresan email ili lozinka",
+  "newBookTitle": "Naslov",
+  "bookTitleError": "Unesite naslov",
+  "author": "Autor",
+  "authorError": "Unesite autora",
+  "pickBookImage": "Izaberite sliku da dodate novu knjigu",
+  "saveButton": "SACUVAJ",
+  "addNewBook": "Dodajte novu knjigu"
 }

@@ -9,6 +9,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 class HomeBloc extends Bloc<HomeEvent, HomeState> {
   HomeBloc() : super(InitialState()) {
     on<SignOut>(_onSignOut);
+    on<AddNewBook>(_onAddNewBook);
   }
 
   Future<void> _onSignOut(SignOut event, Emitter<HomeState> emit) async {
@@ -23,5 +24,9 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
         ErrorState(error: e),
       );
     }
+  }
+
+  void _onAddNewBook(AddNewBook event, Emitter<HomeState> emit) {
+    emit(AddingNewBook());
   }
 }

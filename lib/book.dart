@@ -1,0 +1,23 @@
+import 'dart:io';
+import 'package:book/book_data.dart';
+import 'package:equatable/equatable.dart';
+
+class Book extends Equatable {
+  Book({
+    required this.title,
+    required this.author,
+    required this.imageUrl,
+    this.bookData,
+    required this.docId,
+  });
+
+  String title;
+  String author;
+  File? image;
+  String imageUrl;
+  BookData? bookData;
+  String docId;
+
+  @override
+  List<Object?> get props => [title, author, imageUrl, bookData, docId];
+}

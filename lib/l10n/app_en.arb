@@ -25,5 +25,12 @@
   "successfullyRegistered": "You have been registered successfully",
   "invalidEmail": "Invalid email",
   "serverError": "Can not reach the server",
-  "invalidCredentials": "Invalid email or password"
+  "invalidCredentials": "Invalid email or password",
+  "newBookTitle": "Title",
+  "bookTitleError": "Enter title",
+  "author": "Author",
+  "authorError": "Enter author",
+  "pickBookImage": "Pick some image to add new book",
+  "saveButton": "SAVE",
+  "addNewBook": "Add new book"
 }

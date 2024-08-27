@@ -1,7 +1,6 @@
 import 'dart:math';
 
 import 'package:equatable/equatable.dart';
-import 'package:flutter/cupertino.dart';
 
 sealed class HomeState extends Equatable{
 
@@ -26,4 +25,8 @@ ErrorState({required this.error});
 
   @override
   List<Object?> get props => [error, Random().nextInt(10000)];
+}
+
+class AddingNewBook extends HomeState{
+  AddingNewBook();
 }

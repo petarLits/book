@@ -17,7 +17,7 @@ class CustomTextFormField extends StatefulWidget {
 
 
   @override
-  State<StatefulWidget> createState() => _CustomTextFormFieldState();
+  State<CustomTextFormField> createState() => _CustomTextFormFieldState();
 }
 
 class _CustomTextFormFieldState extends State<CustomTextFormField> {

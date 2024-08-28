@@ -1,5 +1,6 @@
 import 'package:book/app_colors.dart';
 import 'package:book/app_routes.dart';
+import 'package:book/app_text_styles.dart';
 import 'package:book/core/constants.dart';
 import 'package:book/login/bloc/login_bloc.dart';
 import 'package:book/login/bloc/login_state.dart';
@@ -36,7 +37,10 @@ class _LoginPageState extends State<LoginPage> {
           centerTitle: true,
           automaticallyImplyLeading: false,
           backgroundColor: AppColors.primaryColor,
-          title: Text(AppLocalizations.of(context)!.loginTitle),
+          title: Text(
+            AppLocalizations.of(context)!.loginTitle,
+            style: AppTextStyles.smallerBlackTitle(),
+          ),
         ),
         body: _buildBody(),
       );
@@ -90,8 +94,14 @@ class _LoginPageState extends State<LoginPage> {
             margin: EdgeInsets.only(left: 24, right: 24),
             child: Column(
               children: [
-                Text(AppLocalizations.of(context)!.welcome),
-                Text(AppLocalizations.of(context)!.loginSubtitle),
+                Text(
+                  AppLocalizations.of(context)!.welcome,
+                  style: AppTextStyles.smallerBlackTitle(),
+                ),
+                Text(
+                  AppLocalizations.of(context)!.loginSubtitle,
+                  style: AppTextStyles.subtitle(),
+                ),
                 SizedBox(height: 30),
                 CustomTextFormField(
                   validator: (value) {

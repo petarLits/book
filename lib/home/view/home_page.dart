@@ -1,7 +1,8 @@
 import 'package:book/app_colors.dart';
 import 'package:book/app_routes.dart';
+import 'package:book/app_text_styles.dart';
 import 'package:book/app_user_singleton.dart';
-import 'package:book/book.dart';
+import 'package:book/book/book.dart';
 import 'package:book/data/firebase_auth_manager.dart';
 import 'package:book/home/bloc/home_bloc.dart';
 import 'package:book/home/bloc/home_event.dart';
@@ -45,7 +46,7 @@ class _HomePageSate extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<HomeBloc, HomeState>(
-      listener: (context, state) {
+      listener: (context, state) async {
         if (state is SuccessfulSignOut) {
           Navigator.pushReplacementNamed(context, loginRoute);
         } else if (state is ErrorState) {
@@ -57,7 +58,11 @@ class _HomePageSate extends State<HomePage> {
           );
           ScaffoldMessenger.of(context).showSnackBar(snackBar);
         } else if (state is AddingNewBook) {
-          Navigator.pushNamed(context, addNewBookRoute);
+          Book newBook = Book(title: '', author: '', imageUrl: '', docId: '');
+          final Book? result = await Navigator.pushNamed<dynamic>(context, addNewBookRoute, arguments: newBook);
+          if (result != null) {
+            books.add(result);
+          }
         }
       },
       builder: (context, HomeState state) {
@@ -140,7 +145,7 @@ class _HomePageSate extends State<HomePage> {
                     child: Text(
                       book.title,
                       maxLines: 2,
-                      style: TextStyle(color: Colors.white),
+                      style: AppTextStyles.title(),
                     ),
                   ),
                   Spacer(),
@@ -150,8 +155,8 @@ class _HomePageSate extends State<HomePage> {
                       Padding(
                         padding: EdgeInsets.only(right: 24),
                         child: Text(
-                          '${AppLocalizations.of(context)?.author ?? ''} ${book.author}',
-                          style: TextStyle(color: Colors.white),
+                          '${AppLocalizations.of(context)!.author} ${book.author}',
+                          style: AppTextStyles.text1(),
                         ),
                       ),
                     ],

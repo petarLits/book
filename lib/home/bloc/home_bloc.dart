@@ -10,6 +10,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
   HomeBloc() : super(InitialState()) {
     on<SignOut>(_onSignOut);
     on<AddNewBook>(_onAddNewBook);
+    on<SaveNewBook>(_onSaveNewBook);
   }
 
   Future<void> _onSignOut(SignOut event, Emitter<HomeState> emit) async {
@@ -26,7 +27,11 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     }
   }
 
-  void _onAddNewBook(AddNewBook event, Emitter<HomeState> emit) {
+  Future<void> _onAddNewBook(AddNewBook event, Emitter<HomeState> emit) async {
     emit(AddingNewBook());
+  }
+
+  Future<void> _onSaveNewBook(SaveNewBook event, Emitter<HomeState> emit)async {
+    emit(SavedBook(book: event.book));
   }
 }

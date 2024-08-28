@@ -1,4 +1,8 @@
+import 'dart:io';
+
 import 'package:equatable/equatable.dart';
+
+import '../../book/book.dart';
 
 sealed class HomeEvent extends Equatable {
   @override
@@ -9,14 +13,8 @@ class SignOut extends HomeEvent {}
 
 class AddNewBook extends HomeEvent {}
 
-class SaveNewBook extends HomeEvent {
-  SaveNewBook({
-    required this.author,
-    required this.title,
-    required this.imageUrl,
-  });
+class SaveNewBook extends HomeEvent{
+  SaveNewBook({required this.book});
 
-  final String author;
-  final String title;
-  final String imageUrl;
+  final Book book;
 }

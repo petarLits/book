@@ -1,4 +1,4 @@
-import 'package:book/book_page_image.dart';
+import 'package:book/book/book_page/book_page_image.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/cupertino.dart';
 

@@ -2,17 +2,19 @@ import 'package:book/core/constants.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 
-import '../book.dart';
+import '../book/book.dart';
 
 class FirebaseDbManager{
   static FirebaseDbManager? _instance;
 
   late FirebaseFirestore db;
   late FirebaseStorage storage;
+  late Reference storageRef;
 
   FirebaseDbManager._internal(){
     db = FirebaseFirestore.instance;
     storage = FirebaseStorage.instance;
+    storageRef = storage.ref();
   }
   factory FirebaseDbManager() {
     if (_instance == null) {
@@ -24,7 +26,6 @@ class FirebaseDbManager{
   static FirebaseDbManager get instance => FirebaseDbManager();
 
   Future<void> uploadBookImageAndGetUrl(Book book) async{
-    final storageRef = storage.ref();
 
     final folderRef= storageRef.child(book.title);
 

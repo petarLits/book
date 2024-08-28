@@ -6,7 +6,6 @@ class AppUserSingleton {
   AppUser? _appUser;
 
   AppUserSingleton._internal() {
-    _appUser = _appUser;
   }
 
   factory AppUserSingleton() {

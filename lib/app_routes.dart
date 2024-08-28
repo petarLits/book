@@ -1,3 +1,4 @@
+import 'package:book/book/book.dart';
 import 'package:book/home/view/add_new_book.dart';
 import 'package:book/home/view/home_page.dart';
 import 'package:book/login/view/login_page.dart';
@@ -28,7 +29,7 @@ class AppRoutes {
           SignUp(),
         );
       case addNewBookRoute:
-        return _materialRoute(AddNewBook());
+        return _materialRoute(AddNewBook(newBook: settings.arguments as Book));
       default:
         return null;
     }

@@ -5,6 +5,7 @@ part 'app_user.g.dart';
 
 @JsonSerializable()
 class AppUser extends Equatable {
+
   AppUser(
       {required this.firstName,
       required this.lastName,
@@ -19,8 +20,9 @@ class AppUser extends Equatable {
   bool isAdmin;
 
   factory AppUser.fromJson(Map<String,dynamic> json) => _$AppUserFromJson(json);
+
   Map<String, dynamic> toJson() => _$AppUserToJson(this);
+
   @override
-  // TODO: implement props
   List<Object?> get props =>[firstName, lastName, email, password, isAdmin];
 }

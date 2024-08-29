@@ -42,7 +42,12 @@ class FirebaseDbManager{
     book.imageUrl = url;
   }
 
-  Future<void> uploadBook()async{
+  Future<void> uploadBook(Book book) async{
+    final bookRef = db.collection('books').doc();
+    await bookRef.set(book.toJson()).timeout(Duration(seconds: 3),
+        onTimeout: () {
+          throw Exception(serverError);
+        });
 
   }
 

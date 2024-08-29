@@ -4,9 +4,11 @@ import 'package:book/app_text_styles.dart';
 import 'package:book/app_user_singleton.dart';
 import 'package:book/book/book.dart';
 import 'package:book/data/firebase_auth_manager.dart';
+import 'package:book/data/firebase_db_manager.dart';
 import 'package:book/home/bloc/home_bloc.dart';
 import 'package:book/home/bloc/home_event.dart';
 import 'package:book/home/bloc/home_state.dart';
+import 'package:book/utils/dialog_utils.dart';
 import 'package:book/utils/future_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -59,30 +61,41 @@ class _HomePageSate extends State<HomePage> {
           ScaffoldMessenger.of(context).showSnackBar(snackBar);
         } else if (state is AddingNewBook) {
           Book newBook = Book(title: '', author: '', imageUrl: '', docId: '');
-          final Book? result = await Navigator.pushNamed<dynamic>(context, addNewBookRoute, arguments: newBook);
+          final Book? result = await Navigator.pushNamed<dynamic>(
+              context, addNewBookRoute,
+              arguments: newBook);
           if (result != null) {
-            books.add(result);
+            final uploadResult = await FutureUtils.executeFutureWithLoader(
+                context, FirebaseDbManager.instance.uploadBook(result));
+            if (uploadResult != null) {
+              books.add(result);
+            }
           }
         }
       },
       builder: (context, HomeState state) {
-        return Scaffold(
-          appBar: AppBar(
-            automaticallyImplyLeading: false,
-            leading: IconButton(
-              onPressed: () {
-                context.read<HomeBloc>().add(SignOut());
-              },
-              icon: Icon(Icons.exit_to_app),
+        return WillPopScope(
+          onWillPop: _onBackPressed,
+          child: Scaffold(
+            appBar: AppBar(
+              automaticallyImplyLeading: false,
+              leading: IconButton(
+                onPressed: () {
+                  Navigator.maybePop(context);
+                },
+                icon: Icon(Icons.exit_to_app),
+              ),
+              title: Text(
+                AppLocalizations.of(context)!.pickBook,
+              ),
             ),
-            title: Text(AppLocalizations.of(context)!.welcome),
-          ),
-          body: _buildBody(context),
-          floatingActionButton: FloatingActionButton(
-            onPressed: () {
-              context.read<HomeBloc>().add(AddNewBook());
-            },
-            child: Icon(Icons.add),
+            body: _buildBody(context),
+            floatingActionButton: FloatingActionButton(
+              onPressed: () {
+                context.read<HomeBloc>().add(AddNewBook());
+              },
+              child: Icon(Icons.add),
+            ),
           ),
         );
       },
@@ -168,5 +181,33 @@ class _HomePageSate extends State<HomePage> {
         ],
       ),
     );
+  }
+
+  Future<bool> _onBackPressed() async {
+    final result = await showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => AlertDialog(
+        title: Text(AppLocalizations.of(context)!.singOutDialog),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context, true);
+            },
+            child: Text(AppLocalizations.of(context)!.yes),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context, false);
+            },
+            child: Text(AppLocalizations.of(context)!.no),
+          ),
+        ],
+      ),
+    );
+    if (result == true) {
+      context.read<HomeBloc>().add(SignOut());
+    }
+    return result;
   }
 }

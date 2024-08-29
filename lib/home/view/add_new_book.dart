@@ -37,136 +37,169 @@ class _AddNewBookState extends State<AddNewBook> {
         Navigator.pop(context, state.book);
       }
     }, builder: (context, HomeState state) {
-      return Scaffold(
-        appBar: AppBar(
-          backgroundColor: AppColors.primaryColor,
-          title: Text(AppLocalizations.of(context)!.addNewBook),
-          centerTitle: true,
-        ),
-        body: Container(
-          margin: EdgeInsets.all(24),
-          child: Form(
-            key: _formKey,
-            child: ListView(
-              shrinkWrap: true,
-              children: [
-                SizedBox(
-                  height: 30,
-                ),
-                CustomTextFormField(
-                    isNonPasswordField: true,
-                    labelText: AppLocalizations.of(context)!.newBookTitle,
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return AppLocalizations.of(context)!.bookTitleError;
-                      }
-                      return null;
-                    },
-                    maxLength: titleMaxLength,
-                    onChanged: (value) {
-                      titleValue = value;
-                    }),
-                SizedBox(
-                  height: 20,
-                ),
-                CustomTextFormField(
-                    isNonPasswordField: true,
-                    labelText: AppLocalizations.of(context)!.author,
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return AppLocalizations.of(context)!.authorError;
-                      }
-                      return null;
-                    },
-                    maxLength: authorMaxLength,
-                    onChanged: (value) {
-                      authorValue = value;
-                    }),
-                SizedBox(
-                  height: 20,
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    IconButton(
-                      onPressed: () async {
-                        final pickedImage =
-                            await picker.pickImage(source: ImageSource.gallery);
-                        if (pickedImage != null) {
-                          image = File(pickedImage.path);
+      return WillPopScope(
+        onWillPop: _onBackPressed,
+        child: Scaffold(
+          appBar: AppBar(
+            backgroundColor: AppColors.primaryColor,
+            title: Text(AppLocalizations.of(context)!.addNewBook),
+            centerTitle: true,
+            leading: IconButton(onPressed: (){
+              Navigator.maybePop(context);
+            }, icon: Icon(Icons.arrow_back),),
+          ),
+          body: Container(
+            margin: EdgeInsets.all(24),
+            child: Form(
+              key: _formKey,
+              child: ListView(
+                shrinkWrap: true,
+                children: [
+                  SizedBox(
+                    height: 30,
+                  ),
+                  CustomTextFormField(
+                      isNonPasswordField: true,
+                      labelText: AppLocalizations.of(context)!.newBookTitle,
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return AppLocalizations.of(context)!.bookTitleError;
                         }
-                        setState(() {});
+                        return null;
                       },
-                      icon: Icon(Icons.add_a_photo),
-                    ),
-                  ],
-                ),
-                SizedBox(
-                  height: 100,
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    image != null
-                        ? SizedBox(
-                            height: 100,
-                            width: 100,
-                            child: Image.file(image!),
-                          )
-                        : Text(
-                            AppLocalizations.of(context)!.pickBookImage,
-                          ),
-                    IconButton(
-                      onPressed: image != null
-                          ? () {
-                              image = null;
-                              setState(() {});
-                            }
-                          : null,
-                      icon: Icon(Icons.delete),
-                    ),
-                  ],
-                ),
-                SizedBox(
-                  height: 200,
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Expanded(
-                      child: ElevatedButton(
+                      maxLength: titleMaxLength,
+                      onChanged: (value) {
+                        titleValue = value;
+                      }),
+                  SizedBox(
+                    height: 20,
+                  ),
+                  CustomTextFormField(
+                      isNonPasswordField: true,
+                      labelText: AppLocalizations.of(context)!.author,
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return AppLocalizations.of(context)!.authorError;
+                        }
+                        return null;
+                      },
+                      maxLength: authorMaxLength,
+                      onChanged: (value) {
+                        authorValue = value;
+                      }),
+                  SizedBox(
+                    height: 20,
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      IconButton(
+                        onPressed: () async {
+                          final pickedImage = await picker.pickImage(
+                              source: ImageSource.gallery);
+                          if (pickedImage != null) {
+                            image = File(pickedImage.path);
+                          }
+                          setState(() {});
+                        },
+                        icon: Icon(Icons.add_a_photo),
+                      ),
+                    ],
+                  ),
+                  SizedBox(
+                    height: 100,
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      image != null
+                          ? SizedBox(
+                              height: 100,
+                              width: 100,
+                              child: Image.file(image!),
+                            )
+                          : Text(
+                              AppLocalizations.of(context)!.pickBookImage,
+                            ),
+                      IconButton(
                         onPressed: image != null
-                            ? () async {
-                                if (_formKey.currentState!.validate()) {
-                                  widget.newBook.title = titleValue;
-                                  widget.newBook.author = authorValue;
-                                  widget.newBook.image = image;
-                                  final result =
-                                      await FutureUtils.executeFutureWithLoader(
-                                          context,
-                                          FirebaseDbManager.instance
-                                              .uploadBookImageAndGetUrl(
-                                                  widget.newBook));
-                                  if (result != null) {
-                                    context
-                                        .read<HomeBloc>()
-                                        .add(SaveNewBook(book: widget.newBook));
-                                  }
-                                }
+                            ? () {
+                                image = null;
+                                setState(() {});
                               }
                             : null,
-                        child: Text(
-                          AppLocalizations.of(context)!.saveButton,
-                        ),
+                        icon: Icon(Icons.delete),
                       ),
-                    )
-                  ],
-                )
-              ],
+                    ],
+                  ),
+                  SizedBox(
+                    height: 200,
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Expanded(
+                        child: ElevatedButton(
+                          onPressed: image != null
+                              ? () async {
+                                  if (_formKey.currentState!.validate()) {
+                                    widget.newBook.title = titleValue;
+                                    widget.newBook.author = authorValue;
+                                    widget.newBook.image = image;
+                                    final result = await FutureUtils
+                                        .executeFutureWithLoader(
+                                            context,
+                                            FirebaseDbManager.instance
+                                                .uploadBookImageAndGetUrl(
+                                                    widget.newBook));
+                                    if (result != null) {
+                                      context.read<HomeBloc>().add(
+                                          SaveNewBook(book: widget.newBook));
+                                    }
+                                  }
+                                }
+                              : null,
+                          child: Text(
+                            AppLocalizations.of(context)!.saveButton,
+                          ),
+                        ),
+                      )
+                    ],
+                  )
+                ],
+              ),
             ),
           ),
         ),
       );
     });
+  }
+
+  Future<bool> _onBackPressed() async {
+    final result = await showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(AppLocalizations.of(context)!.leaveDialog),
+        content: Text(AppLocalizations.of(context)!.changesWillBeDiscarded),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context, true);
+            },
+            child: Text(AppLocalizations.of(context)!.yes),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context, false);
+            },
+            child: Text(AppLocalizations.of(context)!.no),
+          ),
+        ],
+      ),
+    );
+    if(result == true){
+      Navigator.pop(context);
+    }
+    return result;
   }
 }

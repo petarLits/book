@@ -14,6 +14,8 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
 
   Future<void> _onSignUpEvent(
       SignUpEvent event, Emitter<LoginState> emit) async {
+
+    emit(LoadingState());
     try {
       await FirebaseAuthManager.instance.registerUser(event.user);
       emit(SuccessfulSignUp());
@@ -22,9 +24,13 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
     } on Exception catch (e) {
       emit(ErrorState(error: e));
     }
+    finally{
+      emit(LoadedState());
+    }
   }
 
   Future<void> _onLogin(Login event, Emitter<LoginState> emit) async {
+    emit(LoadingState());
     try {
       await FirebaseAuthManager.instance.loginUser(
         event.email,
@@ -32,6 +38,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
       );
       final result = await AppUserSingleton.instance.fetchCurrentUser();
       if (result != null) {
+        emit(LoadedState());
         emit(
           SuccessfulLogin(),
         );
@@ -40,10 +47,12 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
       emit(
         ErrorAuthState(error: e),
       );
+      emit(LoadedState());
     } on Exception catch (e) {
       emit(
         ErrorState(error: e),
       );
+      emit(LoadedState());
     }
   }
 }

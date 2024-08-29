@@ -51,3 +51,17 @@ class SuccessfulLogin extends LoginState {
   @override
   List<Object?> get props => [Random().nextInt(10000)];
 }
+
+class LoadingState extends LoginState{
+  LoadingState();
+  
+  @override
+  List<Object?> get props => [Random().nextInt(10000)];
+}
+
+class LoadedState extends LoginState{
+  LoadedState();
+  
+  @override
+  List<Object?> get props => [Random().nextInt(10000)];
+}

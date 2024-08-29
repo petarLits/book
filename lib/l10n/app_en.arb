@@ -32,5 +32,11 @@
   "authorError": "Enter author",
   "pickBookImage": "Pick some image to add new book",
   "saveButton": "SAVE",
-  "addNewBook": "Add new book"
+  "addNewBook": "Add new book",
+  "pickBook": "Pick any book",
+  "singOutDialog": "Are you sure you want to sign out?",
+  "yes": "Yes",
+  "no": "No",
+  "leaveDialog": "Are you sure you want to leave?",
+  "changesWillBeDiscarded": "All changes will be discarded"
 }

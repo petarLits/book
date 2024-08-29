@@ -32,5 +32,11 @@
   "authorError": "Unesite autora",
   "pickBookImage": "Izaberite sliku da dodate novu knjigu",
   "saveButton": "SACUVAJ",
-  "addNewBook": "Dodajte novu knjigu"
+  "addNewBook": "Dodajte novu knjigu",
+  "pickBook": "Izaberite knjigu",
+  "singOutDialog": "Da li ste sigurni da zelite da se odjavite?",
+  "yes": "Da",
+  "no": "Ne",
+  "leaveDialog": "Da li ste sigurni da zelite da napustite stranicu?",
+  "changesWillBeDiscarded": "Sve promene ce biti ponistene"
 }

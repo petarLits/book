@@ -25,9 +25,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       await FirebaseAuthManager.instance.signOut();
       AppUserSingleton.instance.clearAppUser();
       emit(LoadedState());
-      emit(
-        SuccessfulSignOut(),
-      );
+      emit(SuccessfulSignOut());
     } on Exception catch (e) {
       emit(
         ErrorState(error: e),

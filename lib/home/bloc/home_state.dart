@@ -19,17 +19,18 @@ class SuccessfulSignOut extends HomeState {
 }
 
 class ErrorState extends HomeState {
-
   ErrorState({required this.error});
 
   final Exception error;
 
   @override
-  List<Object?> get props => [error, Random().nextInt(10000)];
+  List<Object?> get props => [
+        error,
+        Random().nextInt(10000),
+      ];
 }
 
 class UploadedBookState extends HomeState {
-
   UploadedBookState({required this.book});
 
   final Book book;
@@ -39,24 +40,24 @@ class UploadedBookState extends HomeState {
 }
 
 class SavedBookState extends HomeState {
-
   SavedBookState({required this.book});
 
   final Book book;
 
   @override
-  List<Object?> get props => [book, Random().nextInt(10000)];
+  List<Object?> get props => [
+        book,
+        Random().nextInt(10000),
+      ];
 }
 
 class AddBookImageState extends HomeState {
-
   AddBookImageState({required this.image});
 
   final File image;
 }
 
 class UploadedBookImageAndUrlGotState extends HomeState {
-
   UploadedBookImageAndUrlGotState({required this.book});
 
   final Book book;

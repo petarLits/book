@@ -16,18 +16,12 @@ class AppRoutes {
   static Route<dynamic>? onGenerateRoutes(RouteSettings settings) {
     switch (settings.name) {
       case homeRoute:
-        return _materialRoute(
-          HomePage(),
-        );
+        return _materialRoute(HomePage());
       case loginRoute:
-        return _materialRoute(
-           LoginPage(),
-        );
+        return _materialRoute(LoginPage());
 
       case signUpRoute:
-        return _materialRoute(
-          SignUp(),
-        );
+        return _materialRoute(SignUp());
       case addNewBookRoute:
         return _materialRoute(AddNewBook(newBook: settings.arguments as Book));
       default:

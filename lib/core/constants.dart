@@ -5,3 +5,4 @@ const int nameMaxLength = 24;
 const int passwordMinLength = 8;
 const int titleMaxLength = 50;
 const int authorMaxLength = 50;
+const int titleMaxLines = 2;

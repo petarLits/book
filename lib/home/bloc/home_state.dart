@@ -1,9 +1,9 @@
+import 'dart:io';
 import 'dart:math';
 
+import 'package:book/book/book.dart';
 import 'package:equatable/equatable.dart';
-import 'package:image_picker/image_picker.dart';
 
-import '../../book/book.dart';
 
 sealed class HomeState extends Equatable {
  
@@ -28,16 +28,61 @@ class ErrorState extends HomeState {
   List<Object?> get props => [error, Random().nextInt(10000)];
 }
 
-class AddingNewBook extends HomeState {
+class UploadedBookState extends HomeState {
+
+  UploadedBookState({required this.book});
+
+  final Book book;
+
   @override
-  List<Object?> get props => [Random().nextInt(10000)];
+  List<Object?> get props => [book];
 }
 
-class SavedBook extends HomeState {
-  SavedBook({required this.book});
+class SaveBookState extends HomeState {
+  SaveBookState({required this.book});
 
   final Book book;
   @override
   List<Object?> get props => [book, Random().nextInt(10000)];
 }
 
+class AddBookImageState extends HomeState{
+
+  AddBookImageState({required this.image});
+
+  final File image;
+}
+
+class UploadedBookImageAndUrlGotState extends HomeState{
+
+  UploadedBookImageAndUrlGotState({required this.book});
+
+  final Book book;
+
+  @override
+  List<Object?> get props => [book];
+}
+
+class DeletedBookImage extends HomeState{
+
+  DeletedBookImage();
+
+  @override
+  List<Object?> get props => [Random().nextInt(10000)];
+}
+
+class LoadingState extends HomeState{
+  
+  LoadingState();
+  
+  @override
+  List<Object?> get props => [Random().nextInt(10000)];
+}
+
+class LoadedState extends HomeState{
+  
+  LoadedState();
+  
+  @override
+  List<Object?> get props => [Random().nextInt(10000)];
+}

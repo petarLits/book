@@ -1,8 +1,8 @@
+import 'package:book/book/book.dart';
 import 'package:book/core/constants.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 
-import '../book/book.dart';
 
 class FirebaseDbManager{
   static FirebaseDbManager? _instance;

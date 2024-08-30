@@ -1,15 +1,11 @@
 import 'package:book/app_colors.dart';
 import 'package:book/app_routes.dart';
 import 'package:book/app_text_styles.dart';
-import 'package:book/app_user_singleton.dart';
 import 'package:book/book/book.dart';
-import 'package:book/data/firebase_auth_manager.dart';
-import 'package:book/data/firebase_db_manager.dart';
+import 'package:book/core/constants.dart';
 import 'package:book/home/bloc/home_bloc.dart';
 import 'package:book/home/bloc/home_event.dart';
 import 'package:book/home/bloc/home_state.dart';
-import 'package:book/utils/dialog_utils.dart';
-import 'package:book/utils/future_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -59,18 +55,9 @@ class _HomePageSate extends State<HomePage> {
             ),
           );
           ScaffoldMessenger.of(context).showSnackBar(snackBar);
-        } else if (state is AddingNewBook) {
-          Book newBook = Book(title: '', author: '', imageUrl: '', docId: '');
-          final Book? result = await Navigator.pushNamed<dynamic>(
-              context, addNewBookRoute,
-              arguments: newBook);
-          if (result != null) {
-            final uploadResult = await FutureUtils.executeFutureWithLoader(
-                context, FirebaseDbManager.instance.uploadBook(result));
-            if (uploadResult != null) {
-              books.add(result);
-            }
-          }
+        } else if (state is UploadedBookState) {
+          books.add(state.book);
+
         }
       },
       builder: (context, HomeState state) {
@@ -91,8 +78,15 @@ class _HomePageSate extends State<HomePage> {
             ),
             body: _buildBody(context),
             floatingActionButton: FloatingActionButton(
-              onPressed: () {
-                context.read<HomeBloc>().add(AddNewBook());
+              onPressed: () async {
+                Book newBook =
+                    Book(title: '', author: '', imageUrl: '', docId: '');
+                final Book? result = await Navigator.pushNamed<dynamic>(
+                    context, addNewBookRoute,
+                    arguments: newBook);
+                if (result != null) {
+                  context.read<HomeBloc>().add(UploadBook(book: result));
+                }
               },
               child: Icon(Icons.add),
             ),
@@ -157,7 +151,7 @@ class _HomePageSate extends State<HomePage> {
                     margin: EdgeInsets.all(24),
                     child: Text(
                       book.title,
-                      maxLines: 2,
+                      maxLines: titleMaxLines,
                       style: AppTextStyles.title(),
                     ),
                   ),

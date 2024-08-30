@@ -3,12 +3,10 @@ import 'dart:io';
 import 'package:book/app_colors.dart';
 import 'package:book/book/book.dart';
 import 'package:book/core/constants.dart';
-import 'package:book/data/firebase_db_manager.dart';
 import 'package:book/home/bloc/home_bloc.dart';
 import 'package:book/home/bloc/home_event.dart';
 import 'package:book/home/bloc/home_state.dart';
 import 'package:book/login/widgets/custom_text_form_field.dart';
-import 'package:book/utils/future_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -33,8 +31,20 @@ class _AddNewBookState extends State<AddNewBook> {
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<HomeBloc, HomeState>(listener: (context, state) {
-      if (state is SavedBook) {
+      if (state is SaveBookState) {
         Navigator.pop(context, state.book);
+      } else if (state is AddBookImageState) {
+        image = state.image;
+      } else if (state is UploadedBookImageAndUrlGotState) {
+        context.read<HomeBloc>().add(SaveNewBook(book: state.book));
+      } else if (state is ErrorState) {
+        final snackBar = SnackBar(
+          content: Text(AppLocalizations.of(context)!.serverError),
+          backgroundColor: AppColors.errorSnackBar,
+        );
+        ScaffoldMessenger.of(context).showSnackBar(snackBar);
+      }else if(state is DeletedBookImage){
+        image = null;
       }
     }, builder: (context, HomeState state) {
       return WillPopScope(
@@ -44,9 +54,12 @@ class _AddNewBookState extends State<AddNewBook> {
             backgroundColor: AppColors.primaryColor,
             title: Text(AppLocalizations.of(context)!.addNewBook),
             centerTitle: true,
-            leading: IconButton(onPressed: (){
-              Navigator.maybePop(context);
-            }, icon: Icon(Icons.arrow_back),),
+            leading: IconButton(
+              onPressed: () {
+                Navigator.maybePop(context);
+              },
+              icon: Icon(Icons.arrow_back),
+            ),
           ),
           body: Container(
             margin: EdgeInsets.all(24),
@@ -98,9 +111,12 @@ class _AddNewBookState extends State<AddNewBook> {
                           final pickedImage = await picker.pickImage(
                               source: ImageSource.gallery);
                           if (pickedImage != null) {
-                            image = File(pickedImage.path);
+                            context.read<HomeBloc>().add(
+                                  AddBookImage(
+                                    image: File(pickedImage.path),
+                                  ),
+                                );
                           }
-                          setState(() {});
                         },
                         icon: Icon(Icons.add_a_photo),
                       ),
@@ -124,9 +140,8 @@ class _AddNewBookState extends State<AddNewBook> {
                       IconButton(
                         onPressed: image != null
                             ? () {
-                                image = null;
-                                setState(() {});
-                              }
+                                context.read<HomeBloc>().add(DeleteBookImage());
+                        }
                             : null,
                         icon: Icon(Icons.delete),
                       ),
@@ -146,16 +161,9 @@ class _AddNewBookState extends State<AddNewBook> {
                                     widget.newBook.title = titleValue;
                                     widget.newBook.author = authorValue;
                                     widget.newBook.image = image;
-                                    final result = await FutureUtils
-                                        .executeFutureWithLoader(
-                                            context,
-                                            FirebaseDbManager.instance
-                                                .uploadBookImageAndGetUrl(
-                                                    widget.newBook));
-                                    if (result != null) {
-                                      context.read<HomeBloc>().add(
-                                          SaveNewBook(book: widget.newBook));
-                                    }
+                                    context.read<HomeBloc>().add(
+                                        UploadBookImageAndGetUrl(
+                                            book: widget.newBook));
                                   }
                                 }
                               : null,
@@ -197,7 +205,7 @@ class _AddNewBookState extends State<AddNewBook> {
         ],
       ),
     );
-    if(result == true){
+    if (result == true) {
       Navigator.pop(context);
     }
     return result;

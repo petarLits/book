@@ -8,8 +8,8 @@ class Book extends Equatable {
     required this.title,
     required this.author,
     required this.imageUrl,
-    this.bookData,
     required this.docId,
+    this.bookData,
   });
 
   String title;

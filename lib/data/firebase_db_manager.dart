@@ -4,7 +4,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 
 class FirebaseDbManager {
-
   static FirebaseDbManager? _instance;
   late FirebaseFirestore db;
   late FirebaseStorage storage;

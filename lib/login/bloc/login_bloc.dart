@@ -7,7 +7,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class LoginBloc extends Bloc<LoginEvent, LoginState> {
-
   LoginBloc() : super(InitialState()) {
     on<SignUpEvent>(_onSignUpEvent);
     on<Login>(_onLogin);

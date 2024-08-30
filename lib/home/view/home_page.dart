@@ -18,7 +18,6 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageSate extends State<HomePage> {
-
   late final _controller;
   List<Book> books = [];
   late Book book1;

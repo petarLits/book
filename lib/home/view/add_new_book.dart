@@ -13,7 +13,6 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:image_picker/image_picker.dart';
 
 class AddNewBook extends StatefulWidget {
-
   AddNewBook({required this.newBook});
 
   final Book newBook;

@@ -12,7 +12,6 @@ sealed class HomeEvent extends Equatable {
 class SignOut extends HomeEvent {}
 
 class UploadBook extends HomeEvent {
-
   UploadBook({required this.book});
 
   final Book book;
@@ -22,7 +21,6 @@ class UploadBook extends HomeEvent {
 }
 
 class SaveNewBook extends HomeEvent {
-
   SaveNewBook({required this.book});
 
   final Book book;
@@ -32,7 +30,6 @@ class SaveNewBook extends HomeEvent {
 }
 
 class AddBookImage extends HomeEvent {
-
   AddBookImage({required this.image});
 
   final File image;
@@ -42,7 +39,6 @@ class AddBookImage extends HomeEvent {
 }
 
 class UploadBookImageAndGetUrl extends HomeEvent {
-
   UploadBookImageAndGetUrl({required this.book});
 
   final Book book;

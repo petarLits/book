@@ -5,7 +5,6 @@ part 'app_user.g.dart';
 
 @JsonSerializable()
 class AppUser extends Equatable {
-
   AppUser(
       {required this.firstName,
       required this.lastName,

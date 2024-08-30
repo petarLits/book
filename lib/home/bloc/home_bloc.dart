@@ -27,9 +27,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       emit(LoadedState());
       emit(SuccessfulSignOut());
     } on Exception catch (e) {
-      emit(
-        ErrorState(error: e),
-      );
+      emit(ErrorState(error: e));
       emit(LoadedState());
     }
   }

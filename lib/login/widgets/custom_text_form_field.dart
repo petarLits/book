@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 class CustomTextFormField extends StatefulWidget {
-
   const CustomTextFormField(
       {super.key,
       required this.isNonPasswordField,

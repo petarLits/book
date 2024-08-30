@@ -5,8 +5,7 @@ class AppUserSingleton {
   static AppUserSingleton? _instance;
   AppUser? _appUser;
 
-  AppUserSingleton._internal() {
-  }
+  AppUserSingleton._internal() {}
 
   factory AppUserSingleton() {
     if (_instance == null) {

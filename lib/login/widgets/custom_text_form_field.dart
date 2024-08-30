@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 class CustomTextFormField extends StatefulWidget {
+
   const CustomTextFormField(
       {super.key,
       required this.isNonPasswordField,
@@ -15,7 +16,6 @@ class CustomTextFormField extends StatefulWidget {
   final int maxLength;
   final ValueChanged<String> onChanged;
 
-
   @override
   State<CustomTextFormField> createState() => _CustomTextFormFieldState();
 }
@@ -27,24 +27,25 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
   Widget build(BuildContext context) {
     return TextFormField(
       autovalidateMode: AutovalidateMode.onUserInteraction,
-      onChanged: (value) {widget.onChanged(value);},
+      onChanged: (value) {
+        widget.onChanged(value);
+      },
       maxLength: widget.maxLength,
       obscureText: widget.isNonPasswordField ? false : !obscureText,
       validator: widget.validator,
       decoration: InputDecoration(
-        suffixIcon: IconButton(
-          onPressed: () {
-            toggleObscureText();
-          },
-          icon: widget.isNonPasswordField
-              ? Icon(null)
-              : !obscureText
-                  ? Icon(Icons.visibility)
-                  : Icon(Icons.visibility_off),
-        ),
-        border: OutlineInputBorder(),
-        labelText: widget.labelText
-      ),
+          suffixIcon: IconButton(
+            onPressed: () {
+              toggleObscureText();
+            },
+            icon: widget.isNonPasswordField
+                ? Icon(null)
+                : !obscureText
+                    ? Icon(Icons.visibility)
+                    : Icon(Icons.visibility_off),
+          ),
+          border: OutlineInputBorder(),
+          labelText: widget.labelText),
     );
   }
 

@@ -14,11 +14,13 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../bloc/login_event.dart';
 
 class LoginPage extends StatefulWidget {
+
   @override
   State<LoginPage> createState() => _LoginPageState();
 }
 
 class _LoginPageState extends State<LoginPage> {
+
   final _formKey = GlobalKey<FormState>();
   late String emailValue;
   late String passwordValue;
@@ -60,9 +62,9 @@ class _LoginPageState extends State<LoginPage> {
           content: Text(AppLocalizations.of(context)!.serverError),
         );
         ScaffoldMessenger.of(context).showSnackBar(snackBar);
-      }else if(state is LoadingState){
+      } else if (state is LoadingState) {
         DialogUtils.showLoadingScreen(context);
-      }else if(state is LoadedState){
+      } else if (state is LoadedState) {
         Navigator.pop(context);
       }
     });

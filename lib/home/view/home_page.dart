@@ -6,16 +6,19 @@ import 'package:book/core/constants.dart';
 import 'package:book/home/bloc/home_bloc.dart';
 import 'package:book/home/bloc/home_event.dart';
 import 'package:book/home/bloc/home_state.dart';
+import 'package:book/utils/dialog_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class HomePage extends StatefulWidget {
+
   @override
   State<HomePage> createState() => _HomePageSate();
 }
 
 class _HomePageSate extends State<HomePage> {
+
   late final _controller;
   List<Book> books = [];
   late Book book1;
@@ -57,7 +60,10 @@ class _HomePageSate extends State<HomePage> {
           ScaffoldMessenger.of(context).showSnackBar(snackBar);
         } else if (state is UploadedBookState) {
           books.add(state.book);
-
+        } else if (state is LoadingState) {
+          DialogUtils.showLoadingScreen(context);
+        } else if (state is LoadedState) {
+          Navigator.pop(context);
         }
       },
       builder: (context, HomeState state) {
@@ -203,5 +209,11 @@ class _HomePageSate extends State<HomePage> {
       context.read<HomeBloc>().add(SignOut());
     }
     return result;
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _controller.dispose();
   }
 }

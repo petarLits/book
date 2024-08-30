@@ -7,6 +7,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class LoginBloc extends Bloc<LoginEvent, LoginState> {
+
   LoginBloc() : super(InitialState()) {
     on<SignUpEvent>(_onSignUpEvent);
     on<Login>(_onLogin);
@@ -14,7 +15,6 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
 
   Future<void> _onSignUpEvent(
       SignUpEvent event, Emitter<LoginState> emit) async {
-
     emit(LoadingState());
     try {
       await FirebaseAuthManager.instance.registerUser(event.user);
@@ -23,8 +23,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
       emit(SignUpErrorAuth(error: e));
     } on Exception catch (e) {
       emit(ErrorState(error: e));
-    }
-    finally{
+    } finally {
       emit(LoadedState());
     }
   }

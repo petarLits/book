@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:equatable/equatable.dart';
 
 sealed class LoginState extends Equatable {
+
   @override
   List<Object?> get props => [];
 }
@@ -52,16 +53,16 @@ class SuccessfulLogin extends LoginState {
   List<Object?> get props => [Random().nextInt(10000)];
 }
 
-class LoadingState extends LoginState{
+class LoadingState extends LoginState {
   LoadingState();
-  
+
   @override
   List<Object?> get props => [Random().nextInt(10000)];
 }
 
-class LoadedState extends LoginState{
+class LoadedState extends LoginState {
   LoadedState();
-  
+
   @override
   List<Object?> get props => [Random().nextInt(10000)];
 }

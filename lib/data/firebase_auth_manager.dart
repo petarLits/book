@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 class FirebaseAuthManager {
+
   static FirebaseAuthManager? _instance;
   late FirebaseAuth auth;
   late FirebaseFirestore db;

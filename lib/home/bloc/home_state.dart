@@ -4,9 +4,8 @@ import 'dart:math';
 import 'package:book/book/book.dart';
 import 'package:equatable/equatable.dart';
 
-
 sealed class HomeState extends Equatable {
- 
+
   @override
   List<Object?> get props => [];
 }
@@ -20,6 +19,7 @@ class SuccessfulSignOut extends HomeState {
 }
 
 class ErrorState extends HomeState {
+
   ErrorState({required this.error});
 
   final Exception error;
@@ -38,22 +38,24 @@ class UploadedBookState extends HomeState {
   List<Object?> get props => [book];
 }
 
-class SaveBookState extends HomeState {
-  SaveBookState({required this.book});
+class SavedBookState extends HomeState {
+
+  SavedBookState({required this.book});
 
   final Book book;
+
   @override
   List<Object?> get props => [book, Random().nextInt(10000)];
 }
 
-class AddBookImageState extends HomeState{
+class AddBookImageState extends HomeState {
 
   AddBookImageState({required this.image});
 
   final File image;
 }
 
-class UploadedBookImageAndUrlGotState extends HomeState{
+class UploadedBookImageAndUrlGotState extends HomeState {
 
   UploadedBookImageAndUrlGotState({required this.book});
 
@@ -63,26 +65,23 @@ class UploadedBookImageAndUrlGotState extends HomeState{
   List<Object?> get props => [book];
 }
 
-class DeletedBookImage extends HomeState{
-
+class DeletedBookImage extends HomeState {
   DeletedBookImage();
 
   @override
   List<Object?> get props => [Random().nextInt(10000)];
 }
 
-class LoadingState extends HomeState{
-  
+class LoadingState extends HomeState {
   LoadingState();
-  
+
   @override
   List<Object?> get props => [Random().nextInt(10000)];
 }
 
-class LoadedState extends HomeState{
-  
+class LoadedState extends HomeState {
   LoadedState();
-  
+
   @override
   List<Object?> get props => [Random().nextInt(10000)];
 }

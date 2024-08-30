@@ -13,6 +13,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:image_picker/image_picker.dart';
 
 class AddNewBook extends StatefulWidget {
+
   AddNewBook({required this.newBook});
 
   final Book newBook;
@@ -31,7 +32,7 @@ class _AddNewBookState extends State<AddNewBook> {
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<HomeBloc, HomeState>(listener: (context, state) {
-      if (state is SaveBookState) {
+      if (state is SavedBookState) {
         Navigator.pop(context, state.book);
       } else if (state is AddBookImageState) {
         image = state.image;
@@ -43,7 +44,7 @@ class _AddNewBookState extends State<AddNewBook> {
           backgroundColor: AppColors.errorSnackBar,
         );
         ScaffoldMessenger.of(context).showSnackBar(snackBar);
-      }else if(state is DeletedBookImage){
+      } else if (state is DeletedBookImage) {
         image = null;
       }
     }, builder: (context, HomeState state) {
@@ -141,7 +142,7 @@ class _AddNewBookState extends State<AddNewBook> {
                         onPressed: image != null
                             ? () {
                                 context.read<HomeBloc>().add(DeleteBookImage());
-                        }
+                              }
                             : null,
                         icon: Icon(Icons.delete),
                       ),

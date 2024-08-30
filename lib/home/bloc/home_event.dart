@@ -3,8 +3,8 @@ import 'dart:io';
 import 'package:book/book/book.dart';
 import 'package:equatable/equatable.dart';
 
-
 sealed class HomeEvent extends Equatable {
+
   @override
   List<Object?> get props => [];
 }
@@ -21,7 +21,8 @@ class UploadBook extends HomeEvent {
   List<Object?> get props => [book];
 }
 
-class SaveNewBook extends HomeEvent{
+class SaveNewBook extends HomeEvent {
+
   SaveNewBook({required this.book});
 
   final Book book;
@@ -30,7 +31,7 @@ class SaveNewBook extends HomeEvent{
   List<Object?> get props => [book];
 }
 
-class AddBookImage extends HomeEvent{
+class AddBookImage extends HomeEvent {
 
   AddBookImage({required this.image});
 
@@ -40,7 +41,7 @@ class AddBookImage extends HomeEvent{
   List<Object?> get props => [image];
 }
 
-class UploadBookImageAndGetUrl extends HomeEvent{
+class UploadBookImageAndGetUrl extends HomeEvent {
 
   UploadBookImageAndGetUrl({required this.book});
 
@@ -50,7 +51,6 @@ class UploadBookImageAndGetUrl extends HomeEvent{
   List<Object?> get props => [book];
 }
 
-class DeleteBookImage extends HomeEvent{
-
+class DeleteBookImage extends HomeEvent {
   DeleteBookImage();
 }

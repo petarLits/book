@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:equatable/equatable.dart';
 
 class BookPageImage extends Equatable {
+
   BookPageImage(
       {required this.width,
       required this.height,

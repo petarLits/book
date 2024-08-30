@@ -6,7 +6,9 @@ class DialogUtils {
     showDialog(
       context: context,
       barrierDismissible: false,
-      builder: (context) => Center(child: CircularProgressIndicator(),),
+      builder: (context) => Center(
+        child: CircularProgressIndicator(),
+      ),
     );
   }
 }

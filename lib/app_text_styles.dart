@@ -2,6 +2,7 @@ import 'package:book/app_colors.dart';
 import 'package:flutter/material.dart';
 
 class AppTextStyles {
+
   static const Color defaultColor = AppColors.primaryTextColor;
   static const double defaultOpacity = 1;
 

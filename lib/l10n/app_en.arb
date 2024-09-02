@@ -28,7 +28,15 @@
   "invalidCredentials": "Invalid email or password",
   "newBookTitle": "Title",
   "bookTitleError": "Enter title",
-  "author": "Author",
+  "authorWithName": "Author {bookAuthor}",
+  "@authorWithName": {
+    "placeholders":{
+      "bookAuthor": {
+        "type": "String"
+      }
+    }
+  },
+  "authorLabel": "Author",
   "authorError": "Enter author",
   "pickBookImage": "Pick some image to add new book",
   "saveButton": "SAVE",

@@ -89,7 +89,7 @@ class _AddNewBookState extends State<AddNewBook> {
                   ),
                   CustomTextFormField(
                       isNonPasswordField: true,
-                      labelText: AppLocalizations.of(context)!.author,
+                      labelText: AppLocalizations.of(context)!.authorLabel,
                       validator: (value) {
                         if (value == null || value.isEmpty) {
                           return AppLocalizations.of(context)!.authorError;

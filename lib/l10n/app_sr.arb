@@ -28,7 +28,15 @@
   "invalidCredentials": "Pogresan email ili lozinka",
   "newBookTitle": "Naslov",
   "bookTitleError": "Unesite naslov",
-  "author": "Autor",
+  "authorWithName": "Autor {bookAuthor}",
+  "@authorWithName": {
+    "placeholders": {
+      "bookAuthor": {
+        "type": "String"
+      }
+    }
+  },
+  "authorLabel": "Autor",
   "authorError": "Unesite autora",
   "pickBookImage": "Izaberite sliku da dodate novu knjigu",
   "saveButton": "SACUVAJ",

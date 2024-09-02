@@ -167,7 +167,7 @@ class _HomePageSate extends State<HomePage> {
                       Padding(
                         padding: EdgeInsets.only(right: 24),
                         child: Text(
-                          '${AppLocalizations.of(context)!.author} ${book.author}',
+                          AppLocalizations.of(context)!.authorWithName(book.author),
                           style: AppTextStyles.text1(),
                         ),
                       ),

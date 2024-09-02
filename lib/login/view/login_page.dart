@@ -1,18 +1,20 @@
 import 'package:book/app_colors.dart';
 import 'package:book/app_routes.dart';
-import 'package:book/app_user_singleton.dart';
+import 'package:book/app_text_styles.dart';
 import 'package:book/core/constants.dart';
 import 'package:book/login/bloc/login_bloc.dart';
 import 'package:book/login/bloc/login_state.dart';
 import 'package:book/login/widgets/custom_text_form_field.dart';
-import 'package:book/utils/future_utils.dart';
+import 'package:book/utils/dialog_utils.dart';
 import 'package:book/utils/validation_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+
 import '../bloc/login_event.dart';
 
 class LoginPage extends StatefulWidget {
+
   @override
   State<LoginPage> createState() => _LoginPageState();
 }
@@ -37,7 +39,10 @@ class _LoginPageState extends State<LoginPage> {
           centerTitle: true,
           automaticallyImplyLeading: false,
           backgroundColor: AppColors.primaryColor,
-          title: Text(AppLocalizations.of(context)!.loginTitle),
+          title: Text(
+            AppLocalizations.of(context)!.loginTitle,
+            style: AppTextStyles.smallerBlackTitle(),
+          ),
         ),
         body: _buildBody(),
       );
@@ -56,6 +61,10 @@ class _LoginPageState extends State<LoginPage> {
           content: Text(AppLocalizations.of(context)!.serverError),
         );
         ScaffoldMessenger.of(context).showSnackBar(snackBar);
+      } else if (state is LoadingState) {
+        DialogUtils.showLoadingScreen(context);
+      } else if (state is LoadedState) {
+        Navigator.pop(context);
       }
     });
   }
@@ -91,8 +100,14 @@ class _LoginPageState extends State<LoginPage> {
             margin: EdgeInsets.only(left: 24, right: 24),
             child: Column(
               children: [
-                Text(AppLocalizations.of(context)!.welcome),
-                Text(AppLocalizations.of(context)!.loginSubtitle),
+                Text(
+                  AppLocalizations.of(context)!.welcome,
+                  style: AppTextStyles.smallerBlackTitle(),
+                ),
+                Text(
+                  AppLocalizations.of(context)!.loginSubtitle,
+                  style: AppTextStyles.subtitle(),
+                ),
                 SizedBox(height: 30),
                 CustomTextFormField(
                   validator: (value) {

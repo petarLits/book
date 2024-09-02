@@ -2,6 +2,7 @@ import 'package:book/app_user.dart';
 import 'package:equatable/equatable.dart';
 
 sealed class LoginEvent extends Equatable {
+
   @override
   List<Object?> get props => [];
 }

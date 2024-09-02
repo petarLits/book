@@ -25,5 +25,26 @@
   "successfullyRegistered": "Uspesno ste se registrovali",
   "invalidEmail": "Neispravan email",
   "serverError": "Server je nedostupan",
-  "invalidCredentials": "Pogresan email ili lozinka"
+  "invalidCredentials": "Pogresan email ili lozinka",
+  "newBookTitle": "Naslov",
+  "bookTitleError": "Unesite naslov",
+  "authorWithName": "Autor {bookAuthor}",
+  "@authorWithName": {
+    "placeholders": {
+      "bookAuthor": {
+        "type": "String"
+      }
+    }
+  },
+  "authorLabel": "Autor",
+  "authorError": "Unesite autora",
+  "pickBookImage": "Izaberite sliku da dodate novu knjigu",
+  "saveButton": "SACUVAJ",
+  "addNewBook": "Dodajte novu knjigu",
+  "pickBook": "Izaberite knjigu",
+  "singOutDialog": "Da li ste sigurni da zelite da se odjavite?",
+  "yes": "Da",
+  "no": "Ne",
+  "leaveDialog": "Da li ste sigurni da zelite da napustite stranicu?",
+  "changesWillBeDiscarded": "Sve promene ce biti ponistene"
 }

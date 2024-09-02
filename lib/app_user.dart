@@ -18,9 +18,11 @@ class AppUser extends Equatable {
   String password;
   bool isAdmin;
 
-  factory AppUser.fromJson(Map<String,dynamic> json) => _$AppUserFromJson(json);
+  factory AppUser.fromJson(Map<String, dynamic> json) =>
+      _$AppUserFromJson(json);
+
   Map<String, dynamic> toJson() => _$AppUserToJson(this);
+
   @override
-  // TODO: implement props
-  List<Object?> get props =>[firstName, lastName, email, password, isAdmin];
+  List<Object?> get props => [firstName, lastName, email, password, isAdmin];
 }

@@ -46,5 +46,7 @@
   "yes": "Da",
   "no": "Ne",
   "leaveDialog": "Da li ste sigurni da zelite da napustite stranicu?",
-  "changesWillBeDiscarded": "Sve promene ce biti ponistene"
+  "changesWillBeDiscarded": "Sve promene ce biti ponistene",
+  "textLabel": "Tekst",
+  "textError": "Unesite tekst"
 }

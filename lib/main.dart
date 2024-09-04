@@ -1,5 +1,6 @@
 import 'package:book/app_routes.dart';
 import 'package:book/app_user_singleton.dart';
+import 'package:book/book/bloc/book_page_bloc.dart';
 import 'package:book/home/bloc/home_bloc.dart';
 import 'package:book/login/bloc/login_bloc.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -25,12 +26,9 @@ class MyApp extends StatelessWidget {
   Widget build(context) {
     return MultiBlocProvider(
         providers: [
-          BlocProvider<LoginBloc>(
-            create: (context) => LoginBloc(),
-          ),
-          BlocProvider<HomeBloc>(
-            create: (context) => HomeBloc(),
-          )
+          BlocProvider<LoginBloc>(create: (context) => LoginBloc()),
+          BlocProvider<HomeBloc>(create: (context) => HomeBloc()),
+          BlocProvider<BookPageBloc>(create: (context) => BookPageBloc()),
         ],
         child: MaterialApp(
           onGenerateRoute: AppRoutes.onGenerateRoutes,

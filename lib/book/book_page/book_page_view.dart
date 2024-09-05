@@ -25,49 +25,46 @@ class _BookPageViewState extends State<BookPageView> {
   Widget build(BuildContext context) {
     return BlocConsumer<BookPageBloc, BookPageState>(
         listener: (context, state) {
-          if(state is AddBookPageState){
-            pages.add(state.page);
-          }
-        },
-        builder: (context, BookPageState state) {
-          return Scaffold(
-            appBar: AppBar(
-              backgroundColor: AppColors.primaryColor,
-              centerTitle: true,
-              title: pages.isEmpty
-                  ? Text(widget.book.title)
-                  : Text('Chapter title'),
-            ),
-            floatingActionButton: FloatingActionButton(
-              backgroundColor: AppColors.primaryColor,
-              onPressed: () async{
-                BookPage newPage =
-                    BookPage(text: '', pageNumber: pages.length + 1);
-                final BookPage? result =  await Navigator.pushNamed<dynamic>(context, newPageRoute,
-                    arguments: newPage);
-                if(result != null) {
-                  context.read<BookPageBloc>().add(AddBookPage(page: result));
-                }
-
-              },
-              child: Icon(Icons.add),
-            ),
-            body: pageBody(context),
-          );
-        });
+      if (state is AddBookPageState) {
+        pages.add(state.page);
+      }
+    }, builder: (context, BookPageState state) {
+      return Scaffold(
+        appBar: AppBar(
+          backgroundColor: AppColors.primaryColor,
+          centerTitle: true,
+          title:
+              pages.isEmpty ? Text(widget.book.title) : Text('Chapter title'),
+        ),
+        floatingActionButton: FloatingActionButton(
+          backgroundColor: AppColors.primaryColor,
+          onPressed: () async {
+            BookPage newPage = BookPage(text: '', pageNumber: pages.length + 1);
+            final BookPage? result = await Navigator.pushNamed<dynamic>(
+                context, newPageRoute,
+                arguments: newPage);
+            if (result != null) {
+              context.read<BookPageBloc>().add(AddBookPage(page: result));
+            }
+          },
+          child: Icon(Icons.add),
+        ),
+        body: pageBody(context),
+      );
+    });
   }
 
   Widget pageBody(BuildContext context) {
     return Container(
-      child: pages.isNotEmpty ? Column(
-        children: [
-          Text(pages[currentPageIndex].text),
-          if(pages[currentPageIndex].pageImage != null)
-            Image.network(pages[currentPageIndex].pageImage!.imageUrl!)
-
-        ],
-      ): Container(),
+      child: pages.isNotEmpty
+          ? Column(
+              children: [
+                Text(pages[currentPageIndex].text),
+                if (pages[currentPageIndex].pageImage != null)
+                  Image.network(pages[currentPageIndex].pageImage!.imageUrl!)
+              ],
+            )
+          : Container(),
     );
   }
-
 }

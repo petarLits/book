@@ -8,7 +8,6 @@ import 'package:book/home/bloc/home_state.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class HomeBloc extends Bloc<HomeEvent, HomeState> {
-
   HomeBloc() : super(InitialState()) {
     on<SignOut>(_onSignOut);
     on<UploadBook>(_onUploadBook);
@@ -57,7 +56,6 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
 
   Future<void> _onUploadBookImage(
       UploadBookImageAndGetUrl event, Emitter<HomeState> emit) async {
-
     emit(LoadingState());
 
     try {

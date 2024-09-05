@@ -23,18 +23,16 @@ class BookPageBloc extends Bloc<BookPageEvent, BookPageState> {
     emit(BookPageImageDeleted());
   }
 
-
   Future<void> _onSaveBookPage(
       SaveNewBookPage event, Emitter<BookPageState> emit) async {
     emit(LoadingState());
-    try{
-      if(event.page.pageImage != null){
-      await FirebaseDbManager.instance.uploadPageImageGetUrl(event.page);
+    try {
+      if (event.page.pageImage != null) {
+        await FirebaseDbManager.instance.uploadPageImageGetUrl(event.page);
       }
       emit(LoadedState());
       emit(NewBookPageSaved(page: event.page));
-
-    }on Exception catch(e){
+    } on Exception catch (e) {
       emit(ErrorState(error: e));
     }
   }
@@ -43,5 +41,4 @@ class BookPageBloc extends Bloc<BookPageEvent, BookPageState> {
       AddBookPage event, Emitter<BookPageState> emit) async {
     emit(AddBookPageState(page: event.page));
   }
-
 }

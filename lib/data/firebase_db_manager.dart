@@ -59,8 +59,8 @@ class FirebaseDbManager {
 
     await fileRef.putFile(page.pageImage!.image!).timeout(Duration(seconds: 3),
         onTimeout: () {
-          throw Exception(serverError);
-        });
+      throw Exception(serverError);
+    });
 
     final url = await fileRef.getDownloadURL().timeout(Duration(seconds: 3),
         onTimeout: () {

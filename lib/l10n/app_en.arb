@@ -30,7 +30,7 @@
   "bookTitleError": "Enter title",
   "authorWithName": "Author {bookAuthor}",
   "@authorWithName": {
-    "placeholders":{
+    "placeholders": {
       "bookAuthor": {
         "type": "String"
       }

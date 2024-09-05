@@ -36,7 +36,7 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
       obscureText: widget.isNonPasswordField ? false : !obscureText,
       validator: widget.validator,
       decoration: InputDecoration(
-        alignLabelWithHint: true,
+          alignLabelWithHint: true,
           suffixIcon: IconButton(
             onPressed: () {
               toggleObscureText();

@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'dart:math';
 
 import 'package:book/book/book_page/book_page.dart';
 import 'package:equatable/equatable.dart';
@@ -39,5 +38,3 @@ class AddBookPage extends BookPageEvent {
   @override
   List<Object?> get props => [page];
 }
-
-

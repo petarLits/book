@@ -16,9 +16,10 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:image_picker/image_picker.dart';
 
 class NewBookPage extends StatefulWidget {
-  NewBookPage({required this.newPage});
+  NewBookPage({required this.newPage, required this.bookId});
 
   BookPage newPage;
+  String bookId;
 
   @override
   State<NewBookPage> createState() => _NewBookPageState();
@@ -52,12 +53,12 @@ class _NewBookPageState extends State<NewBookPage> {
             backgroundColor: AppColors.errorSnackBar,
           );
           ScaffoldMessenger.of(context).showSnackBar(snackBar);
-        } else if (state is BookPageImageAdded) {
+        } else if (state is AddBookPageImageState) {
           image = state.image;
           decodedImage = await decodeImageFromList(image!.readAsBytesSync());
-        } else if (state is BookPageImageDeleted) {
+        } else if (state is DeleteBookPageImageState) {
           image = null;
-        } else if (state is NewBookPageSaved) {
+        } else if (state is SaveNewBookPageState) {
           Navigator.pop(context, state.page);
         }
       },
@@ -107,7 +108,7 @@ class _NewBookPageState extends State<NewBookPage> {
                                 source: ImageSource.gallery);
                             if (pickedImage != null) {
                               context.read<BookPageBloc>().add(
-                                    AddBookPageImage(
+                                    AddBookPageImageEvent(
                                       image: File(pickedImage.path),
                                     ),
                                   );
@@ -131,7 +132,7 @@ class _NewBookPageState extends State<NewBookPage> {
                             onPressed: () {
                               context
                                   .read<BookPageBloc>()
-                                  .add(DeleteBookPageImage());
+                                  .add(DeleteBookPageImageEvent());
                             },
                             icon: Icon(Icons.cancel),
                           ),
@@ -154,7 +155,7 @@ class _NewBookPageState extends State<NewBookPage> {
 
                           context
                               .read<BookPageBloc>()
-                              .add(SaveNewBookPage(page: widget.newPage));
+                              .add(SaveNewBookPageEvent(page: widget.newPage));
                         }
                       },
                       child: Text(AppLocalizations.of(context)!.saveButton),

@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:book/enums/image_aspect_ratio.dart';
 import 'package:equatable/equatable.dart';
 
 class BookPageImage extends Equatable {
@@ -26,5 +27,13 @@ class BookPageImage extends Equatable {
     return image?.path.split('/').last ??
         imageUrl?.split('/').last ??
         'No Image';
+  }
+
+  ImageAspectRatio aspectRatio() {
+    if (this.width / this.height < 1) {
+      return ImageAspectRatio.portrait;
+    } else {
+      return ImageAspectRatio.landscapeOrSquare;
+    }
   }
 }

@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'dart:math';
 
+import 'package:book/book/book_data.dart';
 import 'package:book/book/book_page/book_page.dart';
 import 'package:equatable/equatable.dart';
 
@@ -13,8 +14,8 @@ class InitialState extends BookPageState {
   InitialState();
 }
 
-class BookPageImageAdded extends BookPageState {
-  BookPageImageAdded({required this.image});
+class AddBookPageImageState extends BookPageState {
+  AddBookPageImageState({required this.image});
 
   final File? image;
 
@@ -25,8 +26,8 @@ class BookPageImageAdded extends BookPageState {
       ];
 }
 
-class BookPageImageDeleted extends BookPageState {
-  BookPageImageDeleted();
+class DeleteBookPageImageState extends BookPageState {
+  DeleteBookPageImageState();
 }
 
 class LoadingState extends BookPageState {
@@ -37,8 +38,12 @@ class LoadedState extends BookPageState {
   LoadedState();
 }
 
-class ErrorState extends BookPageState {
-  ErrorState({required this.error});
+class ErrorState extends DisplayBookPageState {
+  ErrorState({
+    required this.error,
+    required super.bookData,
+    required super.pageIndex,
+  });
 
   final Exception error;
 
@@ -49,8 +54,8 @@ class ErrorState extends BookPageState {
       ];
 }
 
-class BookPageImageUploaded extends BookPageState {
-  BookPageImageUploaded({required this.page});
+class SaveNewBookPageState extends BookPageState {
+  SaveNewBookPageState({required this.page});
 
   final BookPage page;
 
@@ -61,26 +66,20 @@ class BookPageImageUploaded extends BookPageState {
       ];
 }
 
-class NewBookPageSaved extends BookPageState {
-  NewBookPageSaved({required this.page});
+class DisplayBookPageState extends BookPageState {
+  DisplayBookPageState({
+    required this.bookData,
+    required this.pageIndex,
+  });
 
-  final BookPage page;
+  final BookData bookData;
+  final int pageIndex;
 
   @override
   List<Object?> get props => [
-        page,
+        bookData,
+        pageIndex,
         Random().nextInt(10000),
       ];
 }
 
-class AddBookPageState extends BookPageState {
-  AddBookPageState({required this.page});
-
-  final BookPage page;
-
-  @override
-  List<Object?> get props => [
-        page,
-        Random().nextInt(10000),
-      ];
-}

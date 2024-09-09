@@ -1,0 +1,3 @@
+enum ImageAspectRatio{
+  portrait, landscapeOrSquare
+}

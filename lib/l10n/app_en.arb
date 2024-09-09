@@ -48,5 +48,6 @@
   "leaveDialog": "Are you sure you want to leave?",
   "changesWillBeDiscarded": "All changes will be discarded",
   "textLabel": "Text",
-  "textError": "Enter some text"
+  "textError": "Enter some text",
+  "firstPage": "Add first page"
 }

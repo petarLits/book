@@ -15,6 +15,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     on<AddBookImage>(_onAddBookImage);
     on<UploadBookImageAndGetUrl>(_onUploadBookImage);
     on<DeleteBookImage>(_onDeleteBookImage);
+    on<DownloadBooksEvent>(_onDownloadBooks);
   }
 
   Future<void> _onSignOut(SignOut event, Emitter<HomeState> emit) async {
@@ -71,5 +72,18 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
   Future<void> _onDeleteBookImage(
       DeleteBookImage event, Emitter<HomeState> emit) async {
     emit(DeletedBookImage());
+  }
+
+  Future<void> _onDownloadBooks(
+      DownloadBooksEvent event, Emitter<HomeState> emit) async {
+    emit(LoadingState());
+    try{
+      final result = await FirebaseDbManager.instance.downloadBooks();
+      emit(LoadedState());
+      emit(DownloadBooksState(books: result));
+    } on Exception catch (e) {
+      emit(LoadedState());
+      emit(ErrorState(error: e));
+    }
   }
 }

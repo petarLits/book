@@ -49,3 +49,7 @@ class UploadBookImageAndGetUrl extends HomeEvent {
 class DeleteBookImage extends HomeEvent {
   DeleteBookImage();
 }
+
+class DownloadBooksEvent extends HomeEvent{
+  DownloadBooksEvent();
+}

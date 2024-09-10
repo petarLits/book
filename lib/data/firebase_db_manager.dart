@@ -69,4 +69,20 @@ class FirebaseDbManager {
 
     page.pageImage!.imageUrl = url;
   }
+
+  Future<List<Book>> downloadBooks() async {
+    final querySnapshots = await db
+        .collection('books')
+        .get()
+        .timeout(Duration(seconds: 3), onTimeout: () {
+      throw Exception(serverError);
+    });
+    ;
+    final List<Book> books = [];
+    for (final item in querySnapshots.docs) {
+      books.add(Book.fromJson(item.data(), item.id));
+    }
+
+    return Future.value(books);
+  }
 }

@@ -5,6 +5,7 @@ import 'package:book/book/bloc/book_page_event.dart';
 import 'package:book/book/bloc/book_page_state.dart';
 import 'package:book/book/book.dart';
 import 'package:book/book/book_data.dart';
+import 'package:book/core/constants.dart';
 import 'package:book/data/firebase_db_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -26,8 +27,20 @@ class BookPageBloc extends Bloc<BookPageEvent, BookPageState> {
   Future<void> _onAddBookPageImage(
       AddBookPageImageEvent event, Emitter<BookPageState> emit) async {
     ui.Image decodedImage;
-    decodedImage = await decodeImageFromList(event.image!.readAsBytesSync());
-    emit(AddBookPageImageState(image: event.image, decodedImage: decodedImage));
+    emit(LoadingState());
+    try {
+      decodedImage = await decodeImageFromList(event.image!.readAsBytesSync())
+          .timeout(Duration(seconds: 3), onTimeout: () {
+        throw Exception(serverError);
+      });
+      emit(LoadedState());
+      emit(AddBookPageImageState(
+          image: event.image, decodedImage: decodedImage));
+    } on Exception catch (e) {
+      emit(ErrorState(
+          error: e, bookData: book.bookData!, pageIndex: currentPageIndex));
+      emit(LoadedState());
+    }
   }
 
   Future<void> _onDeleteBookPageImage(
@@ -47,6 +60,7 @@ class BookPageBloc extends Bloc<BookPageEvent, BookPageState> {
     } on Exception catch (e) {
       emit(ErrorState(
           error: e, bookData: book.bookData!, pageIndex: currentPageIndex));
+      emit(LoadedState());
     }
   }
 

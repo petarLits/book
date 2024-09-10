@@ -16,7 +16,10 @@ class InitialState extends BookPageState {
 }
 
 class AddBookPageImageState extends BookPageState {
-  AddBookPageImageState({required this.image, required this.decodedImage});
+  AddBookPageImageState({
+    required this.image,
+    required this.decodedImage,
+  });
 
   final File? image;
   final ui.Image decodedImage;
@@ -84,4 +87,3 @@ class DisplayBookPageState extends BookPageState {
         Random().nextInt(10000),
       ];
 }
-

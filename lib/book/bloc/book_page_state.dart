@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'dart:math';
+import 'dart:ui' as ui;
 
 import 'package:book/book/book_data.dart';
 import 'package:book/book/book_page/book_page.dart';
@@ -15,9 +16,10 @@ class InitialState extends BookPageState {
 }
 
 class AddBookPageImageState extends BookPageState {
-  AddBookPageImageState({required this.image});
+  AddBookPageImageState({required this.image, required this.decodedImage});
 
   final File? image;
+  final ui.Image decodedImage;
 
   @override
   List<Object?> get props => [

@@ -55,7 +55,7 @@ class _NewBookPageState extends State<NewBookPage> {
           ScaffoldMessenger.of(context).showSnackBar(snackBar);
         } else if (state is AddBookPageImageState) {
           image = state.image;
-          decodedImage = await decodeImageFromList(image!.readAsBytesSync());
+          decodedImage = state.decodedImage;
         } else if (state is DeleteBookPageImageState) {
           image = null;
         } else if (state is SaveNewBookPageState) {

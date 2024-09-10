@@ -1,10 +1,12 @@
 import 'dart:async';
+import 'dart:ui' as ui;
 
 import 'package:book/book/bloc/book_page_event.dart';
 import 'package:book/book/bloc/book_page_state.dart';
 import 'package:book/book/book.dart';
 import 'package:book/book/book_data.dart';
 import 'package:book/data/firebase_db_manager.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class BookPageBloc extends Bloc<BookPageEvent, BookPageState> {
@@ -23,7 +25,9 @@ class BookPageBloc extends Bloc<BookPageEvent, BookPageState> {
 
   Future<void> _onAddBookPageImage(
       AddBookPageImageEvent event, Emitter<BookPageState> emit) async {
-    emit(AddBookPageImageState(image: event.image));
+    ui.Image decodedImage;
+    decodedImage = await decodeImageFromList(event.image!.readAsBytesSync());
+    emit(AddBookPageImageState(image: event.image, decodedImage: decodedImage));
   }
 
   Future<void> _onDeleteBookPageImage(

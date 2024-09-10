@@ -83,5 +83,4 @@ class DefaultFirebaseOptions {
     authDomain: 'book-bloc.firebaseapp.com',
     storageBucket: 'book-bloc.appspot.com',
   );
-
 }

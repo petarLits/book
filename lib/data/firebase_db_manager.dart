@@ -1,4 +1,5 @@
 import 'package:book/book/book.dart';
+import 'package:book/book/book_page/book_page.dart';
 import 'package:book/core/constants.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -46,5 +47,26 @@ class FirebaseDbManager {
         onTimeout: () {
       throw Exception(serverError);
     });
+  }
+
+  Future<void> uploadPageImageGetUrl(BookPage page) async {
+    final folderRef = storageRef.child('book');
+
+    final fileRef = folderRef.child('${page.pageNumber}/' +
+            DateTime.now().toString() +
+            page.pageImage!.getFileName() ??
+        '');
+
+    await fileRef.putFile(page.pageImage!.image!).timeout(Duration(seconds: 3),
+        onTimeout: () {
+      throw Exception(serverError);
+    });
+
+    final url = await fileRef.getDownloadURL().timeout(Duration(seconds: 3),
+        onTimeout: () {
+      throw Exception(serverError);
+    });
+
+    page.pageImage!.imageUrl = url;
   }
 }

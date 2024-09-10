@@ -3,7 +3,6 @@ import 'dart:math';
 import 'package:equatable/equatable.dart';
 
 sealed class LoginState extends Equatable {
-
   @override
   List<Object?> get props => [];
 }

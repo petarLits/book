@@ -12,7 +12,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class HomePage extends StatefulWidget {
-
   @override
   State<HomePage> createState() => _HomePageSate();
 }
@@ -83,6 +82,7 @@ class _HomePageSate extends State<HomePage> {
             ),
             body: _buildBody(context),
             floatingActionButton: FloatingActionButton(
+              backgroundColor: AppColors.primaryColor,
               onPressed: () async {
                 Book newBook =
                     Book(title: '', author: '', imageUrl: '', docId: '');
@@ -127,58 +127,63 @@ class _HomePageSate extends State<HomePage> {
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(30),
       ),
-      child: Stack(
-        children: [
-          Container(
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(30),
-              image: DecorationImage(
-                image: NetworkImage(book.imageUrl),
-                fit: BoxFit.cover,
-              ),
-            ),
-          ),
-          Positioned.fill(
-            child: Container(
+      child: GestureDetector(
+        onTap: () {
+          Navigator.pushNamed(context, bookPageRoute, arguments: book);
+        },
+        child: Stack(
+          children: [
+            Container(
               decoration: BoxDecoration(
-                gradient: LinearGradient(
-                    colors: [
-                      Colors.black.withOpacity(0.1),
-                      Colors.black.withOpacity(0.1)
-                    ],
-                    begin: FractionalOffset.topLeft,
-                    end: FractionalOffset.bottomRight),
-              ),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  Container(
-                    margin: EdgeInsets.all(24),
-                    child: Text(
-                      book.title,
-                      maxLines: titleMaxLines,
-                      style: AppTextStyles.title(),
-                    ),
-                  ),
-                  Spacer(),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      Padding(
-                        padding: EdgeInsets.only(right: 24),
-                        child: Text(
-                          AppLocalizations.of(context)!
-                              .authorWithName(book.author),
-                          style: AppTextStyles.text1(),
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
+                borderRadius: BorderRadius.circular(30),
+                image: DecorationImage(
+                  image: NetworkImage(book.imageUrl),
+                  fit: BoxFit.cover,
+                ),
               ),
             ),
-          ),
-        ],
+            Positioned.fill(
+              child: Container(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                      colors: [
+                        Colors.black.withOpacity(0.1),
+                        Colors.black.withOpacity(0.1)
+                      ],
+                      begin: FractionalOffset.topLeft,
+                      end: FractionalOffset.bottomRight),
+                ),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Container(
+                      margin: EdgeInsets.all(24),
+                      child: Text(
+                        book.title,
+                        maxLines: titleMaxLines,
+                        style: AppTextStyles.title(),
+                      ),
+                    ),
+                    Spacer(),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        Padding(
+                          padding: EdgeInsets.only(right: 24),
+                          child: Text(
+                            AppLocalizations.of(context)!
+                                .authorWithName(book.author),
+                            style: AppTextStyles.text1(),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

@@ -30,7 +30,7 @@
   "bookTitleError": "Enter title",
   "authorWithName": "Author {bookAuthor}",
   "@authorWithName": {
-    "placeholders":{
+    "placeholders": {
       "bookAuthor": {
         "type": "String"
       }
@@ -46,5 +46,8 @@
   "yes": "Yes",
   "no": "No",
   "leaveDialog": "Are you sure you want to leave?",
-  "changesWillBeDiscarded": "All changes will be discarded"
+  "changesWillBeDiscarded": "All changes will be discarded",
+  "textLabel": "Text",
+  "textError": "Enter some text",
+  "firstPage": "Add first page"
 }

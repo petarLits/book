@@ -4,7 +4,6 @@ import 'package:book/book/book.dart';
 import 'package:equatable/equatable.dart';
 
 sealed class HomeEvent extends Equatable {
-
   @override
   List<Object?> get props => [];
 }

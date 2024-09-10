@@ -6,3 +6,6 @@ const int passwordMinLength = 8;
 const int titleMaxLength = 50;
 const int authorMaxLength = 50;
 const int titleMaxLines = 2;
+const int textMaxLength = 1000;
+const int textMaxLines = 10;
+const double pageMargin = 24;

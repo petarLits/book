@@ -14,7 +14,6 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../bloc/login_event.dart';
 
 class LoginPage extends StatefulWidget {
-
   @override
   State<LoginPage> createState() => _LoginPageState();
 }

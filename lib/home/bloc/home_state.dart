@@ -85,3 +85,15 @@ class LoadedState extends HomeState {
   @override
   List<Object?> get props => [Random().nextInt(10000)];
 }
+
+class DownloadBooksState extends HomeState {
+  DownloadBooksState({required this.books});
+
+  final List<Book> books;
+
+  @override
+  List<Object?> get props => [
+        books,
+        Random().nextInt(10000),
+      ];
+}

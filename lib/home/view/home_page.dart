@@ -19,27 +19,13 @@ class HomePage extends StatefulWidget {
 class _HomePageSate extends State<HomePage> {
   late final _controller;
   List<Book> books = [];
-  late Book book1;
-  late Book book2;
+
 
   @override
   void initState() {
     _controller = PageController(viewportFraction: 0.9);
     super.initState();
-    book1 = Book(
-        title: 'Prva',
-        author: 'Petar',
-        imageUrl:
-            'https://static0.gamerantimages.com/wordpress/wp-content/uploads/2022/07/Lord-of-the-Rings-One-Ring.jpg',
-        docId: 'www');
-    book2 = Book(
-        title: 'Druga',
-        author: 'Petar',
-        imageUrl:
-            'https://www.art-anima.com/wp-content/uploads/2024/05/golum-m.jpg',
-        docId: 'bbb');
-    books.add(book1);
-    books.add(book2);
+    context.read<HomeBloc>().add(DownloadBooksEvent());
   }
 
   @override
@@ -62,6 +48,8 @@ class _HomePageSate extends State<HomePage> {
           DialogUtils.showLoadingScreen(context);
         } else if (state is LoadedState) {
           Navigator.pop(context);
+        } else if(state is DownloadBooksState){
+          books = state.books;
         }
       },
       builder: (context, HomeState state) {

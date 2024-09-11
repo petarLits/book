@@ -1,14 +1,15 @@
 import 'dart:async';
 import 'dart:ui' as ui;
 
-import 'package:book/book/bloc/book_page_event.dart';
-import 'package:book/book/bloc/book_page_state.dart';
 import 'package:book/book/book.dart';
 import 'package:book/book/book_data.dart';
 import 'package:book/core/constants.dart';
 import 'package:book/data/firebase_db_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+
+import 'book_page_event.dart';
+import 'book_page_state.dart';
 
 class BookPageBloc extends Bloc<BookPageEvent, BookPageState> {
   BookPageBloc() : super(InitialState()) {
@@ -19,6 +20,10 @@ class BookPageBloc extends Bloc<BookPageEvent, BookPageState> {
     on<InitBookEvent>(_onInitBookPage);
     on<PreviousPageEvent>(_onPreviousPage);
     on<NextPageEvent>(_onNextPage);
+    on<AddNewBookChapterEvent>(_onAddNewBookChapter);
+    on<BackToPageViewEvent>(_onBackToPageView);
+    on<ChangeSelectedChapterEvent>(_onChangeSelectedChapter);
+    on<SaveBookChapterEvent>(_onSaveBookChapter);
   }
 
   late Book book;
@@ -76,7 +81,7 @@ class BookPageBloc extends Bloc<BookPageEvent, BookPageState> {
       InitBookEvent event, Emitter<BookPageState> emit) async {
     this.book = event.book;
     if (book.bookData == null) {
-      book.bookData = BookData(bookPages: []);
+      book.bookData = BookData(bookPages: [], bookChapters: []);
     }
     this.currentPageIndex = 0;
     emit(DisplayBookPageState(
@@ -95,5 +100,27 @@ class BookPageBloc extends Bloc<BookPageEvent, BookPageState> {
     this.currentPageIndex = event.pageIndex + 1;
     emit(DisplayBookPageState(
         bookData: book.bookData!, pageIndex: currentPageIndex));
+  }
+
+  Future<void> _onAddNewBookChapter(
+      AddNewBookChapterEvent event, Emitter<BookPageState> emit) async {
+    book.bookData!.bookChapters.add(event.chapter);
+    emit(AddNewBookChapterState(chapters: book.bookData!.bookChapters));
+  }
+
+  Future<void> _onBackToPageView(
+      BackToPageViewEvent event, Emitter<BookPageState> emit) async {
+    emit(DisplayBookPageState(
+        bookData: book.bookData!, pageIndex: currentPageIndex));
+  }
+
+  Future<void> _onChangeSelectedChapter(
+      ChangeSelectedChapterEvent event, Emitter<BookPageState> emit) async {
+    emit(ChangeSelectedChapterState(chapter: event.chapter));
+  }
+
+  Future<void> _onSaveBookChapter(
+      SaveBookChapterEvent event, Emitter<BookPageState> emit) async {
+    emit(SaveBookChapterState(chapter: event.chapter));
   }
 }

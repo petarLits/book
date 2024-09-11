@@ -2,6 +2,7 @@ import 'dart:io';
 import 'dart:math';
 import 'dart:ui' as ui;
 
+import 'package:book/book/book_chapter/book_chapter.dart';
 import 'package:book/book/book_data.dart';
 import 'package:book/book/book_page/book_page.dart';
 import 'package:equatable/equatable.dart';
@@ -84,6 +85,42 @@ class DisplayBookPageState extends BookPageState {
   List<Object?> get props => [
         bookData,
         pageIndex,
+        Random().nextInt(10000),
+      ];
+}
+
+class AddNewBookChapterState extends BookPageState {
+  AddNewBookChapterState({required this.chapters});
+
+  final List<BookChapter> chapters;
+
+  @override
+  List<Object?> get props => [
+        chapters,
+        Random().nextInt(10000),
+      ];
+}
+
+class ChangeSelectedChapterState extends BookPageState {
+  ChangeSelectedChapterState({required this.chapter});
+
+  final BookChapter chapter;
+
+  @override
+  List<Object?> get props => [
+        chapter,
+        Random().nextInt(10000),
+      ];
+}
+
+class SaveBookChapterState extends BookPageState {
+  SaveBookChapterState({required this.chapter});
+
+  final BookChapter chapter;
+
+  @override
+  List<Object?> get props => [
+        chapter,
         Random().nextInt(10000),
       ];
 }

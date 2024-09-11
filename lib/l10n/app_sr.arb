@@ -49,5 +49,10 @@
   "changesWillBeDiscarded": "Sve promene ce biti ponistene",
   "textLabel": "Tekst",
   "textError": "Unesite tekst",
-  "firstPage": "Dodajte prvu stranicu"
+  "firstPage": "Dodajte prvu stranicu",
+  "addNewChapterTitle": "Dodajte novo poglavlje",
+  "titleLabel": "Naslov",
+  "chapterTitleError": "Unesite naslov",
+  "addFirstChapter": "Dodajte prvo poglavlje",
+  "addNewPage": "Dodajte novu stranicu"
 }

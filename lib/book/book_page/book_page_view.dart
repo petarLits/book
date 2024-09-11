@@ -1,9 +1,7 @@
 import 'package:book/app_colors.dart';
 import 'package:book/app_routes.dart';
-import 'package:book/book/bloc/book_page_bloc.dart';
-import 'package:book/book/bloc/book_page_event.dart';
-import 'package:book/book/bloc/book_page_state.dart';
 import 'package:book/book/book.dart';
+import 'package:book/book/book_chapter/book_chapter.dart';
 import 'package:book/book/book_page/book_page.dart';
 import 'package:book/book/book_page/book_page_image.dart';
 import 'package:book/core/constants.dart';
@@ -13,6 +11,10 @@ import 'package:float_column/float_column.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+
+import 'bloc/book_page_bloc.dart';
+import 'bloc/book_page_event.dart';
+import 'bloc/book_page_state.dart';
 
 class BookPageView extends StatefulWidget {
   BookPageView({required this.book});
@@ -26,11 +28,13 @@ class BookPageView extends StatefulWidget {
 class _BookPageViewState extends State<BookPageView> {
   int currentPageIndex = 0;
   late List<BookPage> pages;
+  late List<BookChapter> chapters;
 
   @override
   void initState() {
     context.read<BookPageBloc>().add(InitBookEvent(book: widget.book));
     pages = widget.book.bookData?.bookPages ?? [];
+    chapters = widget.book.bookData?.bookChapters ?? [];
     super.initState();
   }
 
@@ -53,6 +57,7 @@ class _BookPageViewState extends State<BookPageView> {
           widget.book.bookData!.bookPages = state.bookData.bookPages;
           pages = widget.book.bookData!.bookPages;
           currentPageIndex = state.pageIndex;
+          chapters = widget.book.bookData!.bookChapters;
         }
       },
       builder: (context, BookPageState state) {
@@ -63,7 +68,7 @@ class _BookPageViewState extends State<BookPageView> {
               centerTitle: true,
               title: pages.isEmpty
                   ? Text(widget.book.title)
-                  : Text('Chapter title'),
+                  : Text(pages[currentPageIndex].chapter!.title),
             ),
             floatingActionButton: FloatingActionButton(
               backgroundColor: AppColors.primaryColor,
@@ -76,6 +81,7 @@ class _BookPageViewState extends State<BookPageView> {
                   arguments: <String, dynamic>{
                     "newPage": newPage,
                     "bookId": widget.book.docId,
+                    "chapters": widget.book.bookData!.bookChapters
                   },
                 );
                 if (result != null) {

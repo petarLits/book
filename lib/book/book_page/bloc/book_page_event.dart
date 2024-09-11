@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:book/book/book.dart';
+import 'package:book/book/book_chapter/book_chapter.dart';
 import 'package:book/book/book_page/book_page.dart';
 import 'package:equatable/equatable.dart';
 
@@ -56,4 +57,26 @@ class PreviousPageEvent extends BookPageEvent {
   PreviousPageEvent({required this.pageIndex});
 
   final int pageIndex;
+}
+
+class AddNewBookChapterEvent extends BookPageEvent {
+  AddNewBookChapterEvent({required this.chapter});
+
+  final BookChapter chapter;
+}
+
+class BackToPageViewEvent extends BookPageEvent {
+  BackToPageViewEvent();
+}
+
+class ChangeSelectedChapterEvent extends BookPageEvent {
+  ChangeSelectedChapterEvent({required this.chapter});
+
+  final BookChapter chapter;
+}
+
+class SaveBookChapterEvent extends BookPageEvent{
+  SaveBookChapterEvent({required this.chapter});
+
+  final BookChapter chapter;
 }

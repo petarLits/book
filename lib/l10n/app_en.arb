@@ -49,5 +49,10 @@
   "changesWillBeDiscarded": "All changes will be discarded",
   "textLabel": "Text",
   "textError": "Enter some text",
-  "firstPage": "Add first page"
+  "firstPage": "Add first page",
+  "addNewChapterTitle": "Add new chapter",
+  "titleLabel": "Title",
+  "chapterTitleError": "Enter title",
+  "addFirstChapter": "Add first chapter",
+  "addNewPage": "Add new page"
 }

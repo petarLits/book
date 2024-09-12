@@ -1,7 +1,11 @@
 import 'package:book/book/book_chapter/book_chapter.dart';
 import 'package:book/book/book_page/book_page_image.dart';
 import 'package:equatable/equatable.dart';
+import 'package:json_annotation/json_annotation.dart';
 
+part 'book_page.g.dart';
+
+@JsonSerializable()
 class BookPage extends Equatable {
   BookPage({
     required this.text,
@@ -18,5 +22,16 @@ class BookPage extends Equatable {
   BookChapter? chapter;
 
   @override
-  List<Object?> get props => [text, pageNumber, pageImage, imageUrl, chapter];
+  List<Object?> get props => [
+        text,
+        pageNumber,
+        pageImage,
+        imageUrl,
+        chapter,
+      ];
+
+  factory BookPage.fromJson(Map<String, dynamic> json) =>
+      _$BookPageFromJson(json);
+
+  Map<String, dynamic> toJson() => _$BookPageToJson(this);
 }

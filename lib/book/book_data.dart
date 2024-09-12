@@ -10,4 +10,6 @@ class BookData extends Equatable {
 
   @override
   List<Object?> get props => [bookPages];
+
+
 }

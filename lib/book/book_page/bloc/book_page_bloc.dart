@@ -73,8 +73,15 @@ class BookPageBloc extends Bloc<BookPageEvent, BookPageState> {
       AddBookPageEvent event, Emitter<BookPageState> emit) async {
     book.bookData!.bookPages.add(event.page);
     currentPageIndex = book.bookData!.bookPages.indexOf(event.page);
-    emit(DisplayBookPageState(
-        bookData: book.bookData!, pageIndex: currentPageIndex));
+    try {
+      await FirebaseDbManager.instance
+          .uploadPages(book.bookData!.bookPages, book.docId);
+      emit(DisplayBookPageState(
+          bookData: book.bookData!, pageIndex: currentPageIndex));
+    } on Exception catch (e) {
+      emit(ErrorState(
+          error: e, bookData: book.bookData!, pageIndex: currentPageIndex));
+    }
   }
 
   Future<void> _onInitBookPage(
@@ -105,7 +112,14 @@ class BookPageBloc extends Bloc<BookPageEvent, BookPageState> {
   Future<void> _onAddNewBookChapter(
       AddNewBookChapterEvent event, Emitter<BookPageState> emit) async {
     book.bookData!.bookChapters.add(event.chapter);
-    emit(AddNewBookChapterState(chapters: book.bookData!.bookChapters));
+    try {
+      await FirebaseDbManager.instance
+          .uploadChapters(book.bookData!.bookChapters, book.docId);
+      emit(AddNewBookChapterState(chapters: book.bookData!.bookChapters));
+    } on Exception catch (e) {
+      emit(ErrorState(
+          error: e, bookData: book.bookData!, pageIndex: currentPageIndex));
+    }
   }
 
   Future<void> _onBackToPageView(

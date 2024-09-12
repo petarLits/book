@@ -1,4 +1,5 @@
 import 'package:book/book/book.dart';
+import 'package:book/book/book_chapter/book_chapter.dart';
 import 'package:book/book/book_page/book_page.dart';
 import 'package:book/core/constants.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -84,5 +85,23 @@ class FirebaseDbManager {
     }
 
     return Future.value(books);
+  }
+
+  Future<void> uploadPages(List<BookPage> pages, String bookId) async {
+    final booksRef = db.collection("pages").doc(bookId);
+    await booksRef
+        .set({'items': pages.map((page) => page.toJson()).toList()}).timeout(
+            Duration(seconds: 3), onTimeout: () {
+      throw Exception(serverError);
+    });
+  }
+
+  Future<void> uploadChapters(List<BookChapter> chapters, String bookId) async {
+    final chaptersRef = db.collection("chapters").doc(bookId);
+    await chaptersRef.set({
+      'items': chapters.map((chapter) => chapter.toJson()).toList()
+    }).timeout(Duration(seconds: 3), onTimeout: () {
+      throw Exception(serverError);
+    });
   }
 }

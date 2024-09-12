@@ -2,7 +2,11 @@ import 'dart:io';
 
 import 'package:book/enums/image_aspect_ratio.dart';
 import 'package:equatable/equatable.dart';
+import 'package:json_annotation/json_annotation.dart';
 
+part 'book_page_image.g.dart';
+
+@JsonSerializable()
 class BookPageImage extends Equatable {
   BookPageImage({
     required this.width,
@@ -13,6 +17,7 @@ class BookPageImage extends Equatable {
 
   int width;
   int height;
+  @JsonKey(includeFromJson: false, includeToJson: false)
   File? image;
   String? imageUrl;
 
@@ -36,4 +41,9 @@ class BookPageImage extends Equatable {
       return ImageAspectRatio.landscapeOrSquare;
     }
   }
+
+  factory BookPageImage.fromJson(Map<String, dynamic> json) =>
+      _$BookPageImageFromJson(json);
+
+  Map<String, dynamic> toJson() => _$BookPageImageToJson(this);
 }

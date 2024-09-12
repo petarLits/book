@@ -90,9 +90,6 @@ class BookPageBloc extends Bloc<BookPageEvent, BookPageState> {
   Future<void> _onInitBookPage(
       InitBookEvent event, Emitter<BookPageState> emit) async {
     this.book = event.book;
-    if (book.bookData == null) {
-      book.bookData = BookData(bookPages: [], bookChapters: []);
-    }
     this.currentPageIndex = 0;
     emit(LoadingState());
     try {

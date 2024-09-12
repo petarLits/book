@@ -44,7 +44,7 @@ class FirebaseDbManager {
   }
 
   Future<void> uploadBook(Book book) async {
-    final bookRef = db.collection('books').doc();
+    final bookRef = db.collection(booksCollection).doc();
     await bookRef.set(book.toJson()).timeout(Duration(seconds: 3),
         onTimeout: () {
       throw Exception(serverError);
@@ -74,7 +74,7 @@ class FirebaseDbManager {
 
   Future<List<Book>> downloadBooks() async {
     final querySnapshots = await db
-        .collection('books')
+        .collection(booksCollection)
         .get()
         .timeout(Duration(seconds: 3), onTimeout: () {
       throw Exception(serverError);
@@ -89,7 +89,7 @@ class FirebaseDbManager {
   }
 
   Future<void> uploadPages(List<BookPage> pages, String bookId) async {
-    final booksRef = db.collection("pages").doc(bookId);
+    final booksRef = db.collection(pagesCollection).doc(bookId);
     await booksRef
         .set({'items': pages.map((page) => page.toJson()).toList()}).timeout(
             Duration(seconds: 3), onTimeout: () {
@@ -98,7 +98,7 @@ class FirebaseDbManager {
   }
 
   Future<void> uploadChapters(List<BookChapter> chapters, String bookId) async {
-    final chaptersRef = db.collection("chapters").doc(bookId);
+    final chaptersRef = db.collection(chaptersCollection).doc(bookId);
     await chaptersRef.set({
       'items': chapters.map((chapter) => chapter.toJson()).toList()
     }).timeout(Duration(seconds: 3), onTimeout: () {
@@ -110,7 +110,7 @@ class FirebaseDbManager {
     List<BookPage> bookPages = [];
     List<BookChapter> bookChapters = [];
 
-    final booksRef = db.collection("pages").doc(bookId);
+    final booksRef = db.collection(pagesCollection).doc(bookId);
 
     final snapShoot =
         await booksRef.get().timeout(Duration(seconds: 3), onTimeout: () {
@@ -122,7 +122,7 @@ class FirebaseDbManager {
       bookPages.add(BookPage.fromJson(item));
     }
 
-    final chaptersRef = db.collection('chapters').doc(bookId);
+    final chaptersRef = db.collection(chaptersCollection).doc(bookId);
     final snapShootChapters =
         await chaptersRef.get().timeout(Duration(seconds: 3), onTimeout: () {
       throw Exception(serverError);

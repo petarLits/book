@@ -9,4 +9,7 @@ const int titleMaxLines = 2;
 const int textMaxLength = 1000;
 const int textMaxLines = 10;
 const double pageMargin = 24;
-
+const String booksCollection = 'books';
+const String usersCollection = 'users';
+const String pagesCollection = 'pages';
+const String chaptersCollection = 'chapters';

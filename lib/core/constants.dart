@@ -9,3 +9,4 @@ const int titleMaxLines = 2;
 const int textMaxLength = 1000;
 const int textMaxLines = 10;
 const double pageMargin = 24;
+

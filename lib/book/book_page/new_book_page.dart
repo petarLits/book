@@ -2,9 +2,8 @@ import 'dart:io';
 import 'dart:ui' as ui;
 
 import 'package:book/app_colors.dart';
-import 'package:book/book/bloc/book_page_bloc.dart';
-import 'package:book/book/bloc/book_page_event.dart';
-import 'package:book/book/bloc/book_page_state.dart';
+import 'package:book/app_routes.dart';
+import 'package:book/book/book_chapter/book_chapter.dart';
 import 'package:book/book/book_page/book_page.dart';
 import 'package:book/book/book_page/book_page_image.dart';
 import 'package:book/core/constants.dart';
@@ -15,11 +14,20 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:image_picker/image_picker.dart';
 
+import 'bloc/book_page_bloc.dart';
+import 'bloc/book_page_event.dart';
+import 'bloc/book_page_state.dart';
+
 class NewBookPage extends StatefulWidget {
-  NewBookPage({required this.newPage, required this.bookId});
+  NewBookPage({
+    required this.newPage,
+    required this.bookId,
+    required this.chapters,
+  });
 
   BookPage newPage;
   String bookId;
+  List<BookChapter> chapters;
 
   @override
   State<NewBookPage> createState() => _NewBookPageState();
@@ -31,12 +39,14 @@ class _NewBookPageState extends State<NewBookPage> {
   late ImagePicker _picker;
   File? image;
   ui.Image? decodedImage;
+  BookChapter? selectedChapter;
 
   @override
   void initState() {
     super.initState();
     textValue = widget.newPage.text;
     _picker = ImagePicker();
+    selectedChapter = widget.chapters.lastOrNull;
   }
 
   @override
@@ -60,6 +70,11 @@ class _NewBookPageState extends State<NewBookPage> {
           image = null;
         } else if (state is SaveNewBookPageState) {
           Navigator.pop(context, state.page);
+        } else if (state is AddNewBookChapterState) {
+          widget.chapters = state.chapters;
+          selectedChapter = widget.chapters.lastOrNull;
+        } else if (state is ChangeSelectedChapterState) {
+          selectedChapter = state.chapter;
         }
       },
       builder: (context, BookPageState state) {
@@ -67,6 +82,8 @@ class _NewBookPageState extends State<NewBookPage> {
           onWillPop: _onBackPressed,
           child: Scaffold(
             appBar: AppBar(
+              title: Text(AppLocalizations.of(context)!.addNewPage),
+              centerTitle: true,
               automaticallyImplyLeading: false,
               backgroundColor: AppColors.primaryColor,
               leading: IconButton(
@@ -83,7 +100,40 @@ class _NewBookPageState extends State<NewBookPage> {
                 child: ListView(
                   shrinkWrap: true,
                   children: [
+                    Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Expanded(
+                            child: widget.chapters.isNotEmpty ? DropdownButton(
+                              isExpanded: true,
+                              value: selectedChapter,
+                              items: _buildItems(),
+                              onChanged: (chapterSelected) {
+                                context.read<BookPageBloc>().add(
+                                    ChangeSelectedChapterEvent(
+                                        chapter:
+                                            chapterSelected as BookChapter));
+                              },
+                            ) : Text(AppLocalizations.of(context)!.addFirstChapter),
+                          ),
+                          IconButton(
+                              onPressed: () async {
+                                BookChapter newChapter = BookChapter(
+                                    number: widget.chapters.length + 1,
+                                    title: '');
+                                final result =
+                                    await Navigator.pushNamed<dynamic>(
+                                        context, newBookChapterRoute,
+                                        arguments: newChapter);
+                                if (result != null) {
+                                  context.read<BookPageBloc>().add(
+                                      AddNewBookChapterEvent(chapter: result));
+                                }
+                              },
+                              icon: Icon(Icons.add)),
+                        ]),
                     SizedBox(height: 30),
+                    if(widget.chapters.isNotEmpty)
                     CustomTextFormField(
                       maxLines: textMaxLines,
                       isNonPasswordField: true,
@@ -143,6 +193,7 @@ class _NewBookPageState extends State<NewBookPage> {
                       onPressed: () {
                         if (_formKey.currentState!.validate()) {
                           widget.newPage.text = textValue;
+                          widget.newPage.chapter = selectedChapter;
                           if (image != null && decodedImage != null) {
                             BookPageImage pageImage = BookPageImage(
                                 width: decodedImage!.width,
@@ -193,8 +244,23 @@ class _NewBookPageState extends State<NewBookPage> {
       ),
     );
     if (result == true) {
-      Navigator.pop(context);
+      context.read<BookPageBloc>().add(BackToPageViewEvent());
     }
     return result;
+  }
+
+  List<DropdownMenuItem<BookChapter>> _buildItems() {
+    final items = <DropdownMenuItem<BookChapter>>[];
+
+    for (final chapter in widget.chapters) {
+      items.add(DropdownMenuItem(
+        value: chapter,
+        child: Text(
+          chapter.title,
+          overflow: TextOverflow.ellipsis,
+        ),
+      ));
+    }
+    return items;
   }
 }

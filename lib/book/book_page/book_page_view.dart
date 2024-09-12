@@ -5,6 +5,7 @@ import 'package:book/book/book_chapter/book_chapter.dart';
 import 'package:book/book/book_page/book_page.dart';
 import 'package:book/book/book_page/book_page_image.dart';
 import 'package:book/core/constants.dart';
+import 'package:book/enums/book_page_mode.dart';
 import 'package:book/enums/image_aspect_ratio.dart';
 import 'package:book/utils/dialog_utils.dart';
 import 'package:float_column/float_column.dart';
@@ -69,6 +70,26 @@ class _BookPageViewState extends State<BookPageView> {
               title: pages.isEmpty
                   ? Text(widget.book.title)
                   : Text(pages[currentPageIndex].chapter!.title),
+              actions: [
+                IconButton(
+                    onPressed: () async {
+                      final BookPage? result =
+                          await Navigator.pushNamed<dynamic>(
+                              context, newPageRoute,
+                              arguments: <String, dynamic>{
+                            "newPage": pages[currentPageIndex],
+                            "bookId": widget.book.docId,
+                            "chapters": widget.book.bookData!.bookChapters,
+                            "pageMode": BookPageMode.edit,
+                          });
+                      if (result != null) {
+                        context
+                            .read<BookPageBloc>()
+                            .add(UpdateBookPagesEvent(page: result));
+                      }
+                    },
+                    icon: Icon(Icons.edit)),
+              ],
             ),
             floatingActionButton: FloatingActionButton(
               backgroundColor: AppColors.primaryColor,
@@ -81,7 +102,8 @@ class _BookPageViewState extends State<BookPageView> {
                   arguments: <String, dynamic>{
                     "newPage": newPage,
                     "bookId": widget.book.docId,
-                    "chapters": widget.book.bookData!.bookChapters
+                    "chapters": widget.book.bookData!.bookChapters,
+                    "pageMode": BookPageMode.create,
                   },
                 );
                 if (result != null) {

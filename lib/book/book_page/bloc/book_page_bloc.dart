@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:ui' as ui;
 
 import 'package:book/book/book.dart';
-import 'package:book/book/book_data.dart';
 import 'package:book/core/constants.dart';
 import 'package:book/data/firebase_db_manager.dart';
 import 'package:flutter/material.dart';
@@ -24,6 +23,8 @@ class BookPageBloc extends Bloc<BookPageEvent, BookPageState> {
     on<BackToPageViewEvent>(_onBackToPageView);
     on<ChangeSelectedChapterEvent>(_onChangeSelectedChapter);
     on<SaveBookChapterEvent>(_onSaveBookChapter);
+    on<SaveEditedPageEvent>(_onSaveEditedPage);
+    on<UpdateBookPagesEvent>(_onUpdateBookPages);
   }
 
   late Book book;
@@ -151,5 +152,27 @@ class BookPageBloc extends Bloc<BookPageEvent, BookPageState> {
   Future<void> _onSaveBookChapter(
       SaveBookChapterEvent event, Emitter<BookPageState> emit) async {
     emit(SaveBookChapterState(chapter: event.chapter));
+  }
+
+  Future<void> _onSaveEditedPage(
+      SaveEditedPageEvent event, Emitter<BookPageState> emit) async {
+    emit(SaveEditedPageState(page: event.page));
+  }
+
+  Future<void> _onUpdateBookPages(
+      UpdateBookPagesEvent event, Emitter<BookPageState> emit) async {
+    emit(LoadingState());
+    book.bookData!.bookPages[currentPageIndex] = event.page;
+    try {
+      await FirebaseDbManager.instance
+          .updateServerPages(book.bookData!.bookPages, book.docId);
+      emit(LoadedState());
+      emit(DisplayBookPageState(
+          bookData: book.bookData!, pageIndex: currentPageIndex));
+    } on Exception catch (e) {
+      emit(LoadedState());
+      emit(ErrorState(
+          error: e, bookData: book.bookData!, pageIndex: currentPageIndex));
+    }
   }
 }

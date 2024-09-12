@@ -1,5 +1,6 @@
 import 'package:book/book/book.dart';
 import 'package:book/book/book_chapter/book_chapter.dart';
+import 'package:book/book/book_data.dart';
 import 'package:book/book/book_page/book_page.dart';
 import 'package:book/core/constants.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -103,5 +104,37 @@ class FirebaseDbManager {
     }).timeout(Duration(seconds: 3), onTimeout: () {
       throw Exception(serverError);
     });
+  }
+
+  Future<BookData> downloadFromServer(String bookId) async {
+    List<BookPage> bookPages = [];
+    List<BookChapter> bookChapters = [];
+
+    final booksRef = db.collection("pages").doc(bookId);
+
+    final snapShoot =
+        await booksRef.get().timeout(Duration(seconds: 3), onTimeout: () {
+      throw Exception(serverError);
+    });
+    final data = snapShoot.data();
+    final List<dynamic> items = data?['items'] ?? [];
+    for (final item in items) {
+      bookPages.add(BookPage.fromJson(item));
+    }
+
+    final chaptersRef = db.collection('chapters').doc(bookId);
+    final snapShootChapters =
+        await chaptersRef.get().timeout(Duration(seconds: 3), onTimeout: () {
+      throw Exception(serverError);
+    });
+    final dataChapters = snapShootChapters.data();
+    final List<dynamic> chaptersItems = dataChapters?['items'] ?? [];
+    for (final chapterItem in chaptersItems) {
+      bookChapters.add(BookChapter.fromJson(chapterItem));
+    }
+    BookData bookData =
+        BookData(bookPages: bookPages, bookChapters: bookChapters);
+
+    return Future.value(bookData);
   }
 }

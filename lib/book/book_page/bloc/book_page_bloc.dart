@@ -73,12 +73,15 @@ class BookPageBloc extends Bloc<BookPageEvent, BookPageState> {
       AddBookPageEvent event, Emitter<BookPageState> emit) async {
     book.bookData!.bookPages.add(event.page);
     currentPageIndex = book.bookData!.bookPages.indexOf(event.page);
+    emit(LoadingState());
     try {
       await FirebaseDbManager.instance
           .uploadPages(book.bookData!.bookPages, book.docId);
+      emit(LoadedState());
       emit(DisplayBookPageState(
           bookData: book.bookData!, pageIndex: currentPageIndex));
     } on Exception catch (e) {
+      emit(LoadedState());
       emit(ErrorState(
           error: e, bookData: book.bookData!, pageIndex: currentPageIndex));
     }
@@ -91,8 +94,20 @@ class BookPageBloc extends Bloc<BookPageEvent, BookPageState> {
       book.bookData = BookData(bookPages: [], bookChapters: []);
     }
     this.currentPageIndex = 0;
-    emit(DisplayBookPageState(
-        bookData: book.bookData!, pageIndex: currentPageIndex));
+    emit(LoadingState());
+    try {
+      final result =
+          await FirebaseDbManager.instance.downloadFromServer(book.docId);
+      emit(LoadedState());
+      book.bookData = result;
+
+      emit(DisplayBookPageState(
+          bookData: book.bookData!, pageIndex: currentPageIndex));
+    } on Exception catch (e) {
+      emit(LoadedState());
+      emit(ErrorState(
+          error: e, bookData: book.bookData!, pageIndex: currentPageIndex));
+    }
   }
 
   Future<void> _onPreviousPage(
@@ -112,11 +127,14 @@ class BookPageBloc extends Bloc<BookPageEvent, BookPageState> {
   Future<void> _onAddNewBookChapter(
       AddNewBookChapterEvent event, Emitter<BookPageState> emit) async {
     book.bookData!.bookChapters.add(event.chapter);
+    emit(LoadingState());
     try {
       await FirebaseDbManager.instance
           .uploadChapters(book.bookData!.bookChapters, book.docId);
+      emit(LoadedState());
       emit(AddNewBookChapterState(chapters: book.bookData!.bookChapters));
     } on Exception catch (e) {
+      emit(LoadedState());
       emit(ErrorState(
           error: e, bookData: book.bookData!, pageIndex: currentPageIndex));
     }

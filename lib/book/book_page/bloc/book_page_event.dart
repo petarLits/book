@@ -75,8 +75,20 @@ class ChangeSelectedChapterEvent extends BookPageEvent {
   final BookChapter chapter;
 }
 
-class SaveBookChapterEvent extends BookPageEvent{
+class SaveBookChapterEvent extends BookPageEvent {
   SaveBookChapterEvent({required this.chapter});
 
   final BookChapter chapter;
+}
+
+class SaveEditedPageEvent extends BookPageEvent {
+  SaveEditedPageEvent({required this.page});
+
+  final BookPage page;
+}
+
+class UpdateBookPagesEvent extends BookPageEvent {
+  UpdateBookPagesEvent({required this.page});
+
+  final BookPage page;
 }

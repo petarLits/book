@@ -7,6 +7,7 @@ import 'package:book/book/book_chapter/book_chapter.dart';
 import 'package:book/book/book_page/book_page.dart';
 import 'package:book/book/book_page/book_page_image.dart';
 import 'package:book/core/constants.dart';
+import 'package:book/enums/book_page_mode.dart';
 import 'package:book/login/widgets/custom_text_form_field.dart';
 import 'package:book/utils/dialog_utils.dart';
 import 'package:flutter/material.dart';
@@ -23,11 +24,13 @@ class NewBookPage extends StatefulWidget {
     required this.newPage,
     required this.bookId,
     required this.chapters,
+    required this.pageMode,
   });
 
   BookPage newPage;
   String bookId;
   List<BookChapter> chapters;
+  BookPageMode pageMode;
 
   @override
   State<NewBookPage> createState() => _NewBookPageState();
@@ -46,7 +49,15 @@ class _NewBookPageState extends State<NewBookPage> {
     super.initState();
     textValue = widget.newPage.text;
     _picker = ImagePicker();
-    selectedChapter = widget.chapters.lastOrNull;
+
+    if (widget.newPage.pageImage != null) {
+      image = widget.newPage.pageImage!.image;
+    }
+    if (widget.pageMode == BookPageMode.edit) {
+      selectedChapter = widget.newPage.chapter;
+    } else {
+      selectedChapter = widget.chapters.lastOrNull;
+    }
   }
 
   @override
@@ -101,22 +112,30 @@ class _NewBookPageState extends State<NewBookPage> {
                   shrinkWrap: true,
                   children: [
                     Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Expanded(
-                            child: widget.chapters.isNotEmpty ? DropdownButton(
-                              isExpanded: true,
-                              value: selectedChapter,
-                              items: _buildItems(),
-                              onChanged: (chapterSelected) {
-                                context.read<BookPageBloc>().add(
-                                    ChangeSelectedChapterEvent(
-                                        chapter:
-                                            chapterSelected as BookChapter));
-                              },
-                            ) : Text(AppLocalizations.of(context)!.addFirstChapter),
-                          ),
-                          IconButton(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Expanded(
+                          child: widget.chapters.isNotEmpty
+                              ? DropdownButton(
+                                  isExpanded: true,
+                                  value: selectedChapter,
+                                  items: _buildItems(),
+                                  onChanged:
+                                      widget.pageMode == BookPageMode.create
+                                          ? (chapterSelected) {
+                                              context.read<BookPageBloc>().add(
+                                                  ChangeSelectedChapterEvent(
+                                                      chapter: chapterSelected
+                                                          as BookChapter));
+                                            }
+                                          : null,
+                                )
+                              : Text(AppLocalizations.of(context)!
+                                  .addFirstChapter),
+                        ),
+                        Visibility(
+                          visible: widget.pageMode == BookPageMode.create,
+                          child: IconButton(
                               onPressed: () async {
                                 BookChapter newChapter = BookChapter(
                                     number: widget.chapters.length + 1,
@@ -131,24 +150,27 @@ class _NewBookPageState extends State<NewBookPage> {
                                 }
                               },
                               icon: Icon(Icons.add)),
-                        ]),
-                    SizedBox(height: 30),
-                    if(widget.chapters.isNotEmpty)
-                    CustomTextFormField(
-                      maxLines: textMaxLines,
-                      isNonPasswordField: true,
-                      labelText: AppLocalizations.of(context)!.textLabel,
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return AppLocalizations.of(context)!.textError;
-                        }
-                        return null;
-                      },
-                      maxLength: textMaxLength,
-                      onChanged: (value) {
-                        textValue = value;
-                      },
+                        ),
+                      ],
                     ),
+                    SizedBox(height: 30),
+                    if (widget.chapters.isNotEmpty)
+                      CustomTextFormField(
+                        initialValue: textValue,
+                        maxLines: textMaxLines,
+                        isNonPasswordField: true,
+                        labelText: AppLocalizations.of(context)!.textLabel,
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return AppLocalizations.of(context)!.textError;
+                          }
+                          return null;
+                        },
+                        maxLength: textMaxLength,
+                        onChanged: (value) {
+                          textValue = value;
+                        },
+                      ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [

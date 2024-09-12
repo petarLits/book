@@ -137,4 +137,17 @@ class FirebaseDbManager {
 
     return Future.value(bookData);
   }
+
+  Future<void> updateServerPages(
+      List<BookPage> pages, String bookId) async {
+    final pagesRef = db.collection(pagesCollection).doc(bookId);
+
+    await pagesRef
+        .update({'items': pages.map((page) => page.toJson()).toList()}).timeout(
+        Duration(seconds: 3), onTimeout: () {
+      throw Exception(serverError);
+    });
+
+  }
+
 }

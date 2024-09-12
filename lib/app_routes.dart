@@ -4,6 +4,7 @@ import 'package:book/book/book_chapter/new_book_chapter.dart';
 import 'package:book/book/book_page/book_page.dart';
 import 'package:book/book/book_page/book_page_view.dart';
 import 'package:book/book/book_page/new_book_page.dart';
+import 'package:book/enums/book_page_mode.dart';
 import 'package:book/home/view/add_new_book.dart';
 import 'package:book/home/view/home_page.dart';
 import 'package:book/login/view/login_page.dart';
@@ -40,7 +41,9 @@ class AppRoutes {
             bookId: (settings.arguments as Map<String, dynamic>)['bookId']
                 as String,
             chapters: (settings.arguments as Map<String, dynamic>)['chapters']
-                as List<BookChapter>));
+                as List<BookChapter>,
+            pageMode: (settings.arguments as Map<String, dynamic>)['pageMode']
+                as BookPageMode));
       case newBookChapterRoute:
         return _materialRoute(
             NewBookChapter(chapter: settings.arguments as BookChapter));

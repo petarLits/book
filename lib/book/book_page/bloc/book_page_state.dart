@@ -124,3 +124,15 @@ class SaveBookChapterState extends BookPageState {
         Random().nextInt(10000),
       ];
 }
+
+class SaveEditedPageState extends BookPageState {
+  SaveEditedPageState({required this.page});
+
+  final BookPage page;
+
+  @override
+  List<Object?> get props => [
+        page,
+        Random().nextInt(10000),
+      ];
+}

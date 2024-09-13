@@ -54,5 +54,6 @@
   "titleLabel": "Naslov",
   "chapterTitleError": "Unesite naslov",
   "addFirstChapter": "Dodajte prvo poglavlje",
-  "addNewPage": "Dodajte novu stranicu"
+  "addNewPage": "Dodajte novu stranicu",
+  "deleteDialogTitle": "Da li ste sigurni da zelite da izbrisete ovu stranicu?"
 }

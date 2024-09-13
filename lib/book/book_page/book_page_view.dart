@@ -71,24 +71,60 @@ class _BookPageViewState extends State<BookPageView> {
                   ? Text(widget.book.title)
                   : Text(pages[currentPageIndex].chapter!.title),
               actions: [
-                IconButton(
-                    onPressed: () async {
-                      final BookPage? result =
-                          await Navigator.pushNamed<dynamic>(
-                              context, newPageRoute,
-                              arguments: <String, dynamic>{
-                            "newPage": pages[currentPageIndex],
-                            "bookId": widget.book.docId,
-                            "chapters": widget.book.bookData!.bookChapters,
-                            "pageMode": BookPageMode.edit,
-                          });
-                      if (result != null) {
-                        context
-                            .read<BookPageBloc>()
-                            .add(UpdateBookPagesEvent(page: result));
-                      }
-                    },
-                    icon: Icon(Icons.edit)),
+                pages.isNotEmpty
+                    ? IconButton(
+                        onPressed: () async {
+                          final BookPage? result =
+                              await Navigator.pushNamed<dynamic>(
+                                  context, newPageRoute,
+                                  arguments: <String, dynamic>{
+                                "newPage": pages[currentPageIndex],
+                                "bookId": widget.book.docId,
+                                "chapters": widget.book.bookData!.bookChapters,
+                                "pageMode": BookPageMode.edit,
+                              });
+                          if (result != null) {
+                            context
+                                .read<BookPageBloc>()
+                                .add(UpdateBookPagesEvent(page: result));
+                          }
+                        },
+                        icon: Icon(Icons.edit))
+                    : Container(),
+                pages.isNotEmpty
+                    ? IconButton(
+                        onPressed: () async {
+                          final result =  await showDialog(
+                            context: context,
+                            builder: (context) => AlertDialog(
+                              title: Text(AppLocalizations.of(context)!
+                                  .deleteDialogTitle),
+                              actions: [
+                                TextButton(
+                                  onPressed: () {
+                                    Navigator.pop(context, true);
+                                  },
+                                  child:
+                                      Text(AppLocalizations.of(context)!.yes),
+                                ),
+                                TextButton(
+                                  onPressed: () {
+                                    Navigator.pop(context, false);
+                                  },
+                                  child: Text(AppLocalizations.of(context)!.no),
+                                )
+                              ],
+                            ),
+                          );
+                          if(result == true){
+                            context.read<BookPageBloc>().add(DeleteBookPageEvent());
+                          }
+                        },
+                        icon: Icon(
+                          Icons.delete,
+                          color: Colors.red,
+                        ))
+                    : Container(),
               ],
             ),
             floatingActionButton: FloatingActionButton(

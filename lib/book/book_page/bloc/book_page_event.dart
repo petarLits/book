@@ -90,3 +90,9 @@ class UpdateBookPagesEvent extends BookPageEvent {
 class DeleteBookPageEvent extends BookPageEvent{
   DeleteBookPageEvent();
 }
+
+class NavigateToPageEvent extends BookPageEvent{
+  NavigateToPageEvent({required this.pageNumber});
+
+  final int pageNumber;
+}

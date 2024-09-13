@@ -1,7 +1,9 @@
 import 'package:book/app_colors.dart';
 import 'package:book/app_routes.dart';
+import 'package:book/app_text_styles.dart';
 import 'package:book/book/book.dart';
 import 'package:book/book/book_chapter/book_chapter.dart';
+import 'package:book/book/book_chapter/chapter_list_view.dart';
 import 'package:book/book/book_page/book_page.dart';
 import 'package:book/book/book_page/book_page_image.dart';
 import 'package:book/core/constants.dart';
@@ -30,6 +32,7 @@ class _BookPageViewState extends State<BookPageView> {
   int currentPageIndex = 0;
   late List<BookPage> pages;
   late List<BookChapter> chapters;
+  GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
   void initState() {
@@ -63,147 +66,257 @@ class _BookPageViewState extends State<BookPageView> {
       },
       builder: (context, BookPageState state) {
         if (state is DisplayBookPageState) {
-          return Scaffold(
-            appBar: AppBar(
-              backgroundColor: AppColors.primaryColor,
-              centerTitle: true,
-              title: pages.isEmpty
-                  ? Text(widget.book.title)
-                  : Text(pages[currentPageIndex].chapter!.title),
-              actions: [
-                pages.isNotEmpty
-                    ? IconButton(
-                        onPressed: () async {
-                          final BookPage? result =
-                              await Navigator.pushNamed<dynamic>(
-                                  context, newPageRoute,
-                                  arguments: <String, dynamic>{
-                                "newPage": pages[currentPageIndex],
-                                "bookId": widget.book.docId,
-                                "chapters": widget.book.bookData!.bookChapters,
-                                "pageMode": BookPageMode.edit,
-                              });
-                          if (result != null) {
-                            context
-                                .read<BookPageBloc>()
-                                .add(UpdateBookPagesEvent(page: result));
-                          }
-                        },
-                        icon: Icon(Icons.edit))
-                    : Container(),
-                pages.isNotEmpty
-                    ? IconButton(
-                        onPressed: () async {
-                          final result =  await showDialog(
-                            context: context,
-                            builder: (context) => AlertDialog(
-                              title: Text(AppLocalizations.of(context)!
-                                  .deleteDialogTitle),
-                              actions: [
-                                TextButton(
-                                  onPressed: () {
-                                    Navigator.pop(context, true);
-                                  },
-                                  child:
-                                      Text(AppLocalizations.of(context)!.yes),
-                                ),
-                                TextButton(
-                                  onPressed: () {
-                                    Navigator.pop(context, false);
-                                  },
-                                  child: Text(AppLocalizations.of(context)!.no),
-                                )
-                              ],
-                            ),
-                          );
-                          if(result == true){
-                            context.read<BookPageBloc>().add(DeleteBookPageEvent());
-                          }
-                        },
-                        icon: Icon(
-                          Icons.delete,
-                          color: Colors.red,
-                        ))
-                    : Container(),
-              ],
-            ),
-            floatingActionButton: FloatingActionButton(
-              backgroundColor: AppColors.primaryColor,
-              onPressed: () async {
-                BookPage newPage =
-                    BookPage(text: '', pageNumber: pages.length + 1);
-                final BookPage? result = await Navigator.pushNamed<dynamic>(
-                  context,
-                  newPageRoute,
-                  arguments: <String, dynamic>{
-                    "newPage": newPage,
-                    "bookId": widget.book.docId,
-                    "chapters": widget.book.bookData!.bookChapters,
-                    "pageMode": BookPageMode.create,
-                  },
-                );
-                if (result != null) {
-                  context
-                      .read<BookPageBloc>()
-                      .add(AddBookPageEvent(page: result));
-                }
-              },
-              child: Icon(Icons.add),
-            ),
-            body: pageBody(context),
-            bottomSheet: pages.isNotEmpty
-                ? SafeArea(
-                    child: Container(
-                      height: kToolbarHeight,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          return WillPopScope(
+            onWillPop: _onBackPressed,
+            child: Scaffold(
+              key: scaffoldKey,
+              appBar: AppBar(
+                backgroundColor: AppColors.primaryColor,
+                centerTitle: true,
+                title: pages.isEmpty
+                    ? Text(widget.book.title)
+                    : Text(pages[currentPageIndex].chapter!.title),
+                actions: [
+                  pages.isNotEmpty
+                      ? IconButton(
+                          onPressed: () async {
+                            final BookPage? result =
+                                await Navigator.pushNamed<dynamic>(
+                                    context, newPageRoute,
+                                    arguments: <String, dynamic>{
+                                  "newPage": pages[currentPageIndex],
+                                  "bookId": widget.book.docId,
+                                  "chapters":
+                                      widget.book.bookData!.bookChapters,
+                                  "pageMode": BookPageMode.edit,
+                                });
+                            if (result != null) {
+                              context
+                                  .read<BookPageBloc>()
+                                  .add(UpdateBookPagesEvent(page: result));
+                            }
+                          },
+                          icon: Icon(Icons.edit))
+                      : Container(),
+                  pages.isNotEmpty
+                      ? IconButton(
+                          onPressed: () async {
+                            final result = await showDialog(
+                              context: context,
+                              builder: (context) => AlertDialog(
+                                title: Text(AppLocalizations.of(context)!
+                                    .deleteDialogTitle),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () {
+                                      Navigator.pop(context, true);
+                                    },
+                                    child:
+                                        Text(AppLocalizations.of(context)!.yes),
+                                  ),
+                                  TextButton(
+                                    onPressed: () {
+                                      Navigator.pop(context, false);
+                                    },
+                                    child:
+                                        Text(AppLocalizations.of(context)!.no),
+                                  )
+                                ],
+                              ),
+                            );
+                            if (result == true) {
+                              context
+                                  .read<BookPageBloc>()
+                                  .add(DeleteBookPageEvent());
+                            }
+                          },
+                          icon: Icon(
+                            Icons.delete,
+                            color: Colors.red,
+                          ))
+                      : Container(),
+                ],
+              ),
+              floatingActionButton: FloatingActionButton(
+                backgroundColor: AppColors.primaryColor,
+                onPressed: () async {
+                  BookPage newPage =
+                      BookPage(text: '', pageNumber: pages.length + 1);
+                  final BookPage? result = await Navigator.pushNamed<dynamic>(
+                    context,
+                    newPageRoute,
+                    arguments: <String, dynamic>{
+                      "newPage": newPage,
+                      "bookId": widget.book.docId,
+                      "chapters": widget.book.bookData!.bookChapters,
+                      "pageMode": BookPageMode.create,
+                    },
+                  );
+                  if (result != null) {
+                    context
+                        .read<BookPageBloc>()
+                        .add(AddBookPageEvent(page: result));
+                  }
+                },
+                child: Icon(Icons.add),
+              ),
+              drawer: Drawer(
+                child: chapters.isNotEmpty
+                    ? Stack(
                         children: [
-                          IconButton(
-                            padding: const EdgeInsets.only(left: 16),
-                            onPressed: currentPageIndex > 0
-                                ? () {
-                                    if (currentPageIndex > 0) {
-                                      context.read<BookPageBloc>().add(
-                                          PreviousPageEvent(
-                                              pageIndex: currentPageIndex));
-                                    }
-                                  }
-                                : null,
-                            icon: Icon(Icons.arrow_back),
-                          ),
-                          if (pages.isNotEmpty)
-                            Container(
-                              alignment: Alignment.center,
-                              height: 30,
-                              width: 30,
-                              decoration: BoxDecoration(
-                                color: AppColors.primaryColor,
-                                shape: BoxShape.circle,
+                          Column(
+                            children: [
+                              Container(
+                                child: Container(
+                                  margin: EdgeInsets.all(48),
+                                  child: Text(
+                                    widget.book.title,
+                                    maxLines: titleMaxLines,
+                                    textAlign: TextAlign.center,
+                                    style: AppTextStyles.title(),
+                                  ),
+                                ),
+                                height: 200,
+                                width: double.infinity,
+                                decoration: BoxDecoration(
+                                    image: DecorationImage(
+                                        fit: BoxFit.cover,
+                                        image: NetworkImage(
+                                            widget.book.imageUrl))),
                               ),
+                              Flexible(
+                                child: ChaptersListView(
+                                  chapters: chapters,
+                                  pages: pages,
+                                  onPagePressed: (pageNumber) {
+                                    context.read<BookPageBloc>().add(
+                                        NavigateToPageEvent(
+                                            pageNumber: pageNumber));
+                                    Navigator.pop(context);
+                                  },
+                                ),
+                              ),
+                            ],
+                          ),
+                          Positioned(
+                            bottom: 20,
+                            child: TextButton(
+                              onPressed: () {
+                                Navigator.pop(context);
+                                Navigator.maybePop(context);
+                              },
                               child: Text(
-                                pages[currentPageIndex].pageNumber.toString(),
-                                textAlign: TextAlign.center,
-                                style: TextStyle(fontSize: 16),
+                                AppLocalizations.of(context)!.leaveBook,
+                                style: TextStyle(
+                                    decoration: TextDecoration.underline),
                               ),
                             ),
-                          IconButton(
-                            padding: const EdgeInsets.only(right: 16),
-                            onPressed: currentPageIndex < pages.length - 1
-                                ? () {
-                                    if (currentPageIndex < pages.length - 1) {
-                                      context.read<BookPageBloc>().add(
-                                          NextPageEvent(
-                                              pageIndex: currentPageIndex));
-                                    }
-                                  }
-                                : null,
-                            icon: Icon(Icons.arrow_forward),
                           ),
                         ],
+                      )
+                    : Container(
+                        margin: EdgeInsets.only(bottom: 24),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Container(
+                              child: Container(
+                                margin: EdgeInsets.all(48),
+                                child: Text(
+                                  maxLines: titleMaxLines,
+                                  widget.book.title,
+                                  textAlign: TextAlign.center,
+                                  style: AppTextStyles.title(),
+                                ),
+                              ),
+                              width: double.infinity,
+                              height: 200,
+                              decoration: BoxDecoration(
+                                image: DecorationImage(
+                                  fit: BoxFit.cover,
+                                  image: NetworkImage(widget.book.imageUrl),
+                                ),
+                              ),
+                            ),
+                            SizedBox(
+                              height: 20,
+                            ),
+                            Container(
+                              margin: EdgeInsets.only(left: 16),
+                              child: Text(
+                                  AppLocalizations.of(context)!.noChapters),
+                            ),
+                            Spacer(),
+                            TextButton(
+                              onPressed: () {
+                                Navigator.pop(context);
+                                Navigator.maybePop(context);
+                              },
+                              child: Text(
+                                AppLocalizations.of(context)!.leaveBook,
+                                style: TextStyle(
+                                    decoration: TextDecoration.underline),
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
-                  )
-                : null,
+              ),
+              body: pageBody(context),
+              bottomSheet: pages.isNotEmpty
+                  ? SafeArea(
+                      child: Container(
+                        height: kToolbarHeight,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            IconButton(
+                              padding: const EdgeInsets.only(left: 16),
+                              onPressed: currentPageIndex > 0
+                                  ? () {
+                                      if (currentPageIndex > 0) {
+                                        context.read<BookPageBloc>().add(
+                                            PreviousPageEvent(
+                                                pageIndex: currentPageIndex));
+                                      }
+                                    }
+                                  : null,
+                              icon: Icon(Icons.arrow_back),
+                            ),
+                            if (pages.isNotEmpty)
+                              Container(
+                                alignment: Alignment.center,
+                                height: 30,
+                                width: 30,
+                                decoration: BoxDecoration(
+                                  color: AppColors.primaryColor,
+                                  shape: BoxShape.circle,
+                                ),
+                                child: Text(
+                                  pages[currentPageIndex].pageNumber.toString(),
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(fontSize: 16),
+                                ),
+                              ),
+                            IconButton(
+                              padding: const EdgeInsets.only(right: 16),
+                              onPressed: currentPageIndex < pages.length - 1
+                                  ? () {
+                                      if (currentPageIndex < pages.length - 1) {
+                                        context.read<BookPageBloc>().add(
+                                            NextPageEvent(
+                                                pageIndex: currentPageIndex));
+                                      }
+                                    }
+                                  : null,
+                              icon: Icon(Icons.arrow_forward),
+                            ),
+                          ],
+                        ),
+                      ),
+                    )
+                  : null,
+            ),
           );
         } else {
           return Center(
@@ -307,5 +420,34 @@ class _BookPageViewState extends State<BookPageView> {
     } else {
       return buildPageLandscapeAndSquare(bookPage.pageImage!);
     }
+  }
+
+  Future<bool> _onBackPressed() async {
+    bool? opened = scaffoldKey.currentState?.isDrawerOpen;
+    if (opened != true) {
+      final result = await showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) => AlertDialog(
+          title: Text(AppLocalizations.of(context)!.leavingBook),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context, true);
+              },
+              child: Text(AppLocalizations.of(context)!.yes),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context, false);
+              },
+              child: Text(AppLocalizations.of(context)!.no),
+            ),
+          ],
+        ),
+      );
+      return result;
+    }
+    return true;
   }
 }

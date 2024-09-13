@@ -25,6 +25,7 @@ class BookPageBloc extends Bloc<BookPageEvent, BookPageState> {
     on<SaveBookChapterEvent>(_onSaveBookChapter);
     on<UpdateBookPagesEvent>(_onUpdateBookPages);
     on<DeleteBookPageEvent>(_onDeleteBookPage);
+    on<NavigateToPageEvent>(_onNavigateToPage);
   }
 
   late Book book;
@@ -171,22 +172,33 @@ class BookPageBloc extends Bloc<BookPageEvent, BookPageState> {
     }
   }
 
-  Future<void> _onDeleteBookPage(DeleteBookPageEvent event, Emitter<BookPageState> emit) async{
+  Future<void> _onDeleteBookPage(
+      DeleteBookPageEvent event, Emitter<BookPageState> emit) async {
     emit(LoadingState());
-    try{
-      await FirebaseDbManager.instance.removePage(book.bookData!.bookPages[currentPageIndex], book.docId);
+    try {
+      await FirebaseDbManager.instance
+          .removePage(book.bookData!.bookPages[currentPageIndex], book.docId);
       book.bookData!.bookPages.removeAt(currentPageIndex);
-      for(int i = currentPageIndex; i < book.bookData!.bookPages.length; i++){
+      for (int i = currentPageIndex; i < book.bookData!.bookPages.length; i++) {
         book.bookData!.bookPages[i].pageNumber--;
       }
-      if(currentPageIndex == book.bookData!.bookPages.length && currentPageIndex > 0){
+      if (currentPageIndex == book.bookData!.bookPages.length &&
+          currentPageIndex > 0) {
         currentPageIndex--;
       }
       emit(LoadedState());
-      emit(DisplayBookPageState(bookData: book.bookData!, pageIndex: currentPageIndex));
+      emit(DisplayBookPageState(
+          bookData: book.bookData!, pageIndex: currentPageIndex));
     } on Exception catch (e) {
       emit(LoadedState());
-      emit(ErrorState(error: e, bookData: book.bookData!, pageIndex: currentPageIndex));
+      emit(ErrorState(
+          error: e, bookData: book.bookData!, pageIndex: currentPageIndex));
     }
+  }
+
+  Future<void> _onNavigateToPage(
+      NavigateToPageEvent event, Emitter<BookPageState> emit) async {
+    emit(DisplayBookPageState(
+        bookData: book.bookData!, pageIndex: event.pageNumber - 1));
   }
 }

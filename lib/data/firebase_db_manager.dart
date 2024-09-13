@@ -68,7 +68,7 @@ class FirebaseDbManager {
         onTimeout: () {
       throw Exception(serverError);
     });
-
+    page.pageImage!.imagePath = fileRef.fullPath;
     page.pageImage!.imageUrl = url;
   }
 
@@ -148,6 +148,32 @@ class FirebaseDbManager {
       throw Exception(serverError);
     });
 
+  }
+  Future<void> removePage(BookPage page, String bookId) async {
+    int pageNumberToDelete = page.pageNumber;
+    final docRef = db.collection(pagesCollection).doc(bookId);
+    final snapShoot = await docRef.get();
+
+    final List<dynamic>? items = snapShoot.data()?['items'];
+    items?.removeWhere((item) => item['pageNumber'] == pageNumberToDelete);
+
+    if (items != null) {
+      for (final item in items) {
+        if (item['pageNumber'] > pageNumberToDelete) {
+          item['pageNumber'] = item['pageNumber'] - 1;
+        }
+      }
+    }
+    if (page.pageImage?.imagePath != null) {
+      final deleteRef = storageRef.child(page.pageImage!.imagePath!);
+      await deleteRef.delete().timeout(Duration(seconds: 3), onTimeout: () {
+        throw Exception(serverError);
+      });
+    }
+    await docRef.update({'items': items}).timeout(Duration(seconds: 3),
+        onTimeout: () {
+          throw Exception(serverError);
+        });
   }
 
 }

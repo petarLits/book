@@ -23,8 +23,8 @@ class BookPageBloc extends Bloc<BookPageEvent, BookPageState> {
     on<BackToPageViewEvent>(_onBackToPageView);
     on<ChangeSelectedChapterEvent>(_onChangeSelectedChapter);
     on<SaveBookChapterEvent>(_onSaveBookChapter);
-    on<SaveEditedPageEvent>(_onSaveEditedPage);
     on<UpdateBookPagesEvent>(_onUpdateBookPages);
+    on<DeleteBookPageEvent>(_onDeleteBookPage);
   }
 
   late Book book;
@@ -154,11 +154,6 @@ class BookPageBloc extends Bloc<BookPageEvent, BookPageState> {
     emit(SaveBookChapterState(chapter: event.chapter));
   }
 
-  Future<void> _onSaveEditedPage(
-      SaveEditedPageEvent event, Emitter<BookPageState> emit) async {
-    emit(SaveEditedPageState(page: event.page));
-  }
-
   Future<void> _onUpdateBookPages(
       UpdateBookPagesEvent event, Emitter<BookPageState> emit) async {
     emit(LoadingState());
@@ -173,6 +168,25 @@ class BookPageBloc extends Bloc<BookPageEvent, BookPageState> {
       emit(LoadedState());
       emit(ErrorState(
           error: e, bookData: book.bookData!, pageIndex: currentPageIndex));
+    }
+  }
+
+  Future<void> _onDeleteBookPage(DeleteBookPageEvent event, Emitter<BookPageState> emit) async{
+    emit(LoadingState());
+    try{
+      await FirebaseDbManager.instance.removePage(book.bookData!.bookPages[currentPageIndex], book.docId);
+      book.bookData!.bookPages.removeAt(currentPageIndex);
+      for(int i = currentPageIndex; i < book.bookData!.bookPages.length; i++){
+        book.bookData!.bookPages[i].pageNumber--;
+      }
+      if(currentPageIndex == book.bookData!.bookPages.length && currentPageIndex > 0){
+        currentPageIndex--;
+      }
+      emit(LoadedState());
+      emit(DisplayBookPageState(bookData: book.bookData!, pageIndex: currentPageIndex));
+    } on Exception catch (e) {
+      emit(LoadedState());
+      emit(ErrorState(error: e, bookData: book.bookData!, pageIndex: currentPageIndex));
     }
   }
 }

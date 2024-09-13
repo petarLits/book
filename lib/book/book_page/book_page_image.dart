@@ -13,6 +13,7 @@ class BookPageImage extends Equatable {
     required this.height,
     this.image,
     this.imageUrl,
+    this.imagePath,
   });
 
   int width;
@@ -20,6 +21,7 @@ class BookPageImage extends Equatable {
   @JsonKey(includeFromJson: false, includeToJson: false)
   File? image;
   String? imageUrl;
+  String? imagePath;
 
   @override
   List<Object?> get props => [

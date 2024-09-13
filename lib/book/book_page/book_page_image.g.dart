@@ -11,6 +11,7 @@ BookPageImage _$BookPageImageFromJson(Map<String, dynamic> json) =>
       width: (json['width'] as num).toInt(),
       height: (json['height'] as num).toInt(),
       imageUrl: json['imageUrl'] as String?,
+      imagePath: json['imagePath'] as String?,
     );
 
 Map<String, dynamic> _$BookPageImageToJson(BookPageImage instance) =>
@@ -18,4 +19,5 @@ Map<String, dynamic> _$BookPageImageToJson(BookPageImage instance) =>
       'width': instance.width,
       'height': instance.height,
       'imageUrl': instance.imageUrl,
+      'imagePath': instance.imagePath,
     };

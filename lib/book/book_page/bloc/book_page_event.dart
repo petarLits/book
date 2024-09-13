@@ -81,14 +81,12 @@ class SaveBookChapterEvent extends BookPageEvent {
   final BookChapter chapter;
 }
 
-class SaveEditedPageEvent extends BookPageEvent {
-  SaveEditedPageEvent({required this.page});
-
-  final BookPage page;
-}
-
 class UpdateBookPagesEvent extends BookPageEvent {
   UpdateBookPagesEvent({required this.page});
 
   final BookPage page;
+}
+
+class DeleteBookPageEvent extends BookPageEvent{
+  DeleteBookPageEvent();
 }

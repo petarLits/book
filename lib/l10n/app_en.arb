@@ -54,5 +54,6 @@
   "titleLabel": "Title",
   "chapterTitleError": "Enter title",
   "addFirstChapter": "Add first chapter",
-  "addNewPage": "Add new page"
+  "addNewPage": "Add new page",
+  "deleteDialogTitle": "Are you sure you want to delete this page?"
 }

@@ -73,7 +73,16 @@ class BookPageBloc extends Bloc<BookPageEvent, BookPageState> {
 
   Future<void> _onAddBookPage(
       AddBookPageEvent event, Emitter<BookPageState> emit) async {
+    for (int i = 0; i < book.bookData!.bookPages.length; i++) {
+      if (book.bookData!.bookPages[i].chapter!.number >
+          event.page.chapter!.number) {
+        book.bookData!.bookPages[i].pageNumber++;
+        event.page.pageNumber--;
+      }
+    }
     book.bookData!.bookPages.add(event.page);
+    book.bookData!.bookPages
+        .sort((page1, page2) => page1.pageNumber.compareTo(page2.pageNumber));
     currentPageIndex = book.bookData!.bookPages.indexOf(event.page);
     emit(LoadingState());
     try {

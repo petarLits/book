@@ -244,31 +244,36 @@ class _NewBookPageState extends State<NewBookPage> {
   }
 
   Future<bool> _onBackPressed() async {
-    final result = await showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text(AppLocalizations.of(context)!.leaveDialog),
-        content: Text(AppLocalizations.of(context)!.changesWillBeDiscarded),
-        actions: [
-          TextButton(
-            onPressed: () {
-              Navigator.pop(context, true);
-            },
-            child: Text(AppLocalizations.of(context)!.yes),
-          ),
-          TextButton(
-            onPressed: () {
-              Navigator.pop(context, false);
-            },
-            child: Text(AppLocalizations.of(context)!.no),
-          ),
-        ],
-      ),
-    );
-    if (result == true) {
-      context.read<BookPageBloc>().add(BackToPageViewEvent());
+    if (textValue != widget.newPage.text || image != widget.newPage.pageImage?.image) {
+      final result = await showDialog(
+        context: context,
+        builder: (context) =>
+            AlertDialog(
+              title: Text(AppLocalizations.of(context)!.leaveDialog),
+              content: Text(
+                  AppLocalizations.of(context)!.changesWillBeDiscarded),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.pop(context, true);
+                  },
+                  child: Text(AppLocalizations.of(context)!.yes),
+                ),
+                TextButton(
+                  onPressed: () {
+                    Navigator.pop(context, false);
+                  },
+                  child: Text(AppLocalizations.of(context)!.no),
+                ),
+              ],
+            ),
+      );
+      if (result == true) {
+        context.read<BookPageBloc>().add(BackToPageViewEvent());
+      }
+      return result;
     }
-    return result;
+    return true;
   }
 
   List<DropdownMenuItem<BookChapter>> _buildItems() {

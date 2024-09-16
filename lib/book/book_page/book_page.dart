@@ -11,14 +11,12 @@ class BookPage extends Equatable {
     required this.text,
     required this.pageNumber,
     this.pageImage,
-    this.imageUrl,
     this.chapter,
   });
 
   String text;
   int pageNumber;
   BookPageImage? pageImage;
-  String? imageUrl;
   BookChapter? chapter;
 
   @override
@@ -26,7 +24,6 @@ class BookPage extends Equatable {
         text,
         pageNumber,
         pageImage,
-        imageUrl,
         chapter,
       ];
 

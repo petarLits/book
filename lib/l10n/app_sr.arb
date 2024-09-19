@@ -58,6 +58,6 @@
   "deleteDialogTitle": "Da li ste sigurni da zelite da izbrisete ovu stranicu?",
   "noChapters": "Nema poglavlja",
   "leavingBook": "Da li ste sigurni da zelite da napustite knjigu?",
-  "leaveBook": "Napustite knjigu"
-
+  "leaveBook": "Napustite knjigu",
+  "swipeError": "Nema vise stranica"
 }

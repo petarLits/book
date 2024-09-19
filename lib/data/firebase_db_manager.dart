@@ -176,4 +176,15 @@ class FirebaseDbManager {
         });
   }
 
+  Future<Book> downloadBook(String bookId) async {
+    final bookRef = db.collection(booksCollection).doc(bookId);
+    final snapshot = await bookRef.get().timeout(Duration(seconds: 3), onTimeout: () {
+      throw Exception(serverError);
+    });
+    final data = snapshot.data();
+
+    Book book = Book.fromJson(data!, bookId);
+    return Future.value(book);
+  }
+
 }

@@ -1,6 +1,8 @@
 import 'package:book/app_colors.dart';
 import 'package:book/app_routes.dart';
 import 'package:book/app_text_styles.dart';
+import 'package:book/app_user.dart';
+import 'package:book/app_user_singleton.dart';
 import 'package:book/book/book.dart';
 import 'package:book/book/book_chapter/book_chapter.dart';
 import 'package:book/book/book_chapter/chapter_list_view.dart';
@@ -20,9 +22,10 @@ import 'bloc/book_page_event.dart';
 import 'bloc/book_page_state.dart';
 
 class BookPageView extends StatefulWidget {
-  BookPageView({required this.book});
+  BookPageView({required this.book, this.pageIndex});
 
   final Book book;
+  int? pageIndex;
 
   @override
   State<BookPageView> createState() => _BookPageViewState();
@@ -33,12 +36,18 @@ class _BookPageViewState extends State<BookPageView> {
   late List<BookPage> pages;
   late List<BookChapter> chapters;
   GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
+  bool isMessageReceived = false;
+  late AppUser user;
 
   @override
   void initState() {
     context.read<BookPageBloc>().add(InitBookEvent(book: widget.book));
     pages = widget.book.bookData?.bookPages ?? [];
     chapters = widget.book.bookData?.bookChapters ?? [];
+    if (widget.pageIndex != null) {
+      isMessageReceived = true;
+    }
+    user = AppUserSingleton.instance.appUser!;
     super.initState();
   }
 
@@ -58,10 +67,15 @@ class _BookPageViewState extends State<BookPageView> {
         } else if (state is InitialState) {
           context.read<BookPageBloc>().add(InitBookEvent(book: widget.book));
         } else if (state is DisplayBookPageState) {
-          widget.book.bookData!.bookPages = state.bookData.bookPages;
+          widget.book.bookData = state.bookData;
           pages = widget.book.bookData!.bookPages;
-          currentPageIndex = state.pageIndex;
           chapters = widget.book.bookData!.bookChapters;
+          if (isMessageReceived) {
+            currentPageIndex = widget.pageIndex!;
+            isMessageReceived = false;
+          } else {
+            currentPageIndex = state.pageIndex;
+          }
         }
       },
       builder: (context, BookPageState state) {
@@ -78,87 +92,98 @@ class _BookPageViewState extends State<BookPageView> {
                     : Text(pages[currentPageIndex].chapter!.title),
                 actions: [
                   pages.isNotEmpty
-                      ? IconButton(
-                          onPressed: () async {
-                            final BookPage? result =
-                                await Navigator.pushNamed<dynamic>(
-                                    context, newPageRoute,
-                                    arguments: <String, dynamic>{
-                                  "newPage": pages[currentPageIndex],
-                                  "bookId": widget.book.docId,
-                                  "chapters":
-                                      widget.book.bookData!.bookChapters,
-                                  "pageMode": BookPageMode.edit,
-                                });
-                            if (result != null) {
-                              context
-                                  .read<BookPageBloc>()
-                                  .add(UpdateBookPagesEvent(page: result));
-                            }
-                          },
-                          icon: Icon(Icons.edit))
+                      ? Visibility(
+                          visible: user.isAdmin == true,
+                          child: IconButton(
+                              onPressed: () async {
+                                final BookPage? result =
+                                    await Navigator.pushNamed<dynamic>(
+                                        context, newPageRoute,
+                                        arguments: <String, dynamic>{
+                                      "newPage": pages[currentPageIndex],
+                                      "bookId": widget.book.docId,
+                                      "chapters":
+                                          widget.book.bookData!.bookChapters,
+                                      "pageMode": BookPageMode.edit,
+                                    });
+                                if (result != null) {
+                                  context
+                                      .read<BookPageBloc>()
+                                      .add(UpdateBookPagesEvent(page: result));
+                                }
+                              },
+                              icon: Icon(Icons.edit)),
+                        )
                       : Container(),
                   pages.isNotEmpty
-                      ? IconButton(
-                          onPressed: () async {
-                            final result = await showDialog(
-                              context: context,
-                              builder: (context) => AlertDialog(
-                                title: Text(AppLocalizations.of(context)!
-                                    .deleteDialogTitle),
-                                actions: [
-                                  TextButton(
-                                    onPressed: () {
-                                      Navigator.pop(context, true);
-                                    },
-                                    child:
-                                        Text(AppLocalizations.of(context)!.yes),
-                                  ),
-                                  TextButton(
-                                    onPressed: () {
-                                      Navigator.pop(context, false);
-                                    },
-                                    child:
-                                        Text(AppLocalizations.of(context)!.no),
-                                  )
-                                ],
-                              ),
-                            );
-                            if (result == true) {
-                              context
-                                  .read<BookPageBloc>()
-                                  .add(DeleteBookPageEvent());
-                            }
-                          },
-                          icon: Icon(
-                            Icons.delete,
-                            color: Colors.red,
-                          ))
+                      ? Visibility(
+                          visible: user.isAdmin == true,
+                          child: IconButton(
+                            onPressed: () async {
+                              final result = await showDialog(
+                                barrierDismissible: false,
+                                context: context,
+                                builder: (context) => AlertDialog(
+                                  title: Text(AppLocalizations.of(context)!
+                                      .deleteDialogTitle),
+                                  actions: [
+                                    TextButton(
+                                      onPressed: () {
+                                        Navigator.pop(context, true);
+                                      },
+                                      child: Text(
+                                          AppLocalizations.of(context)!.yes),
+                                    ),
+                                    TextButton(
+                                      onPressed: () {
+                                        Navigator.pop(context, false);
+                                      },
+                                      child: Text(
+                                          AppLocalizations.of(context)!.no),
+                                    )
+                                  ],
+                                ),
+                              );
+                              if (result == true) {
+                                context
+                                    .read<BookPageBloc>()
+                                    .add(DeleteBookPageEvent());
+                              }
+                            },
+                            icon: Icon(
+                              Icons.delete,
+                              color: Colors.red,
+                            ),
+                          ),
+                        )
                       : Container(),
                 ],
               ),
-              floatingActionButton: FloatingActionButton(
-                backgroundColor: AppColors.primaryColor,
-                onPressed: () async {
-                  BookPage newPage =
-                      BookPage(text: '', pageNumber: pages.length + 1);
-                  final BookPage? result = await Navigator.pushNamed<dynamic>(
-                    context,
-                    newPageRoute,
-                    arguments: <String, dynamic>{
-                      "newPage": newPage,
-                      "bookId": widget.book.docId,
-                      "chapters": widget.book.bookData!.bookChapters,
-                      "pageMode": BookPageMode.create,
-                    },
-                  );
-                  if (result != null) {
-                    context
-                        .read<BookPageBloc>()
-                        .add(AddBookPageEvent(page: result));
-                  }
-                },
-                child: Icon(Icons.add),
+              floatingActionButton: Visibility(
+                visible: user.isAdmin == true,
+                child: FloatingActionButton(
+                  backgroundColor: AppColors.primaryColor,
+                  onPressed: () async {
+                    BookPage newPage =
+                        BookPage(text: '', pageNumber: pages.length + 1);
+                    final BookPage? result = await Navigator.pushNamed<dynamic>(
+                      context,
+                      newPageRoute,
+                      arguments: <String, dynamic>{
+                        "newPage": newPage,
+                        "bookId": widget.book.docId,
+                        "chapters": widget.book.bookData!.bookChapters,
+                        "pageMode": BookPageMode.create,
+                      },
+                    );
+                    if (result != null) {
+                      context
+                          .read<BookPageBloc>()
+                          .add(AddBookPageEvent(page: result));
+                    }
+                  },
+                  child: Icon(Icons.add),
+                ),
               ),
               drawer: Drawer(
                 child: chapters.isNotEmpty
@@ -329,7 +354,27 @@ class _BookPageViewState extends State<BookPageView> {
 
   Widget pageBody(BuildContext context) {
     return pages.isNotEmpty
-        ? _buildPageView(pages[currentPageIndex])
+        ? GestureDetector(
+            onHorizontalDragEnd: (DragEndDetails details) {
+              if (details.primaryVelocity! < 0 &&
+                  currentPageIndex < pages.length - 1) {
+                context.read<BookPageBloc>().add(SwipeLeftEvent());
+              } else if (details.primaryVelocity! > 0 && currentPageIndex > 0) {
+                context.read<BookPageBloc>().add(SwipeRightEvent());
+              } else if (details.primaryVelocity == 0) {
+                return;
+              } else {
+                final snackBar = SnackBar(
+                  backgroundColor: AppColors.errorSnackBar,
+                  content: Text(AppLocalizations.of(context)!.swipeError),
+                  duration: Duration(seconds: 1),
+                );
+                ScaffoldMessenger.of(context).clearSnackBars();
+                ScaffoldMessenger.of(context).showSnackBar(snackBar);
+              }
+            },
+            child: _buildPageView(pages[currentPageIndex]),
+          )
         : Column(
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -395,6 +440,7 @@ class _BookPageViewState extends State<BookPageView> {
 
   Widget buildPageWithoutImage() {
     return Container(
+      color: AppColors.transparentBackground,
       margin: EdgeInsets.all(pageMargin),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,

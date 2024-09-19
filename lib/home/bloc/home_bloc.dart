@@ -1,8 +1,10 @@
 import 'dart:async';
 
 import 'package:book/app_user_singleton.dart';
+import 'package:book/core/constants.dart';
 import 'package:book/data/firebase_auth_manager.dart';
 import 'package:book/data/firebase_db_manager.dart';
+import 'package:book/data/firebase_message_manager.dart';
 import 'package:book/home/bloc/home_event.dart';
 import 'package:book/home/bloc/home_state.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -36,9 +38,17 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     emit(LoadingState());
 
     try {
-      FirebaseDbManager.instance.uploadBook(event.book);
+      await FirebaseDbManager.instance.uploadBook(event.book);
       emit(LoadedState());
-      emit(UploadedBookState(book: event.book));
+      final result = await FirebaseMessageManager.instance.sendPushMessage(
+          additionalData: {'action': messageBookAction},
+          topic: topic,
+          title: 'New book: ' + event.book.title,
+          body: 'Author ' + event.book.author + ' has just published new book',
+          imageUrl: event.book.imageUrl);
+      if (result == true) {
+        emit(UploadedBookState(book: event.book));
+      }
     } on Exception catch (e) {
       emit(ErrorState(error: e));
       emit(LoadedState());
@@ -77,7 +87,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
   Future<void> _onDownloadBooks(
       DownloadBooksEvent event, Emitter<HomeState> emit) async {
     emit(LoadingState());
-    try{
+    try {
       final result = await FirebaseDbManager.instance.downloadBooks();
       emit(LoadedState());
       emit(DownloadBooksState(books: result));

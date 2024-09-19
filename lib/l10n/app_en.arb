@@ -58,6 +58,6 @@
   "deleteDialogTitle": "Are you sure you want to delete this page?",
   "noChapters": "There are no chapters",
   "leavingBook": "Are you sure you want to leave this book?",
-  "leaveBook": "Leave book"
-
+  "leaveBook": "Leave book",
+  "swipeError": "No more pages to swipe"
 }

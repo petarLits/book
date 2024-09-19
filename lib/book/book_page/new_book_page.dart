@@ -244,8 +244,8 @@ class _NewBookPageState extends State<NewBookPage> {
   }
 
   Future<bool> _onBackPressed() async {
-    if (textValue != widget.newPage.text || image != widget.newPage.pageImage?.image) {
       final result = await showDialog(
+        barrierDismissible: false,
         context: context,
         builder: (context) =>
             AlertDialog(
@@ -272,8 +272,7 @@ class _NewBookPageState extends State<NewBookPage> {
         context.read<BookPageBloc>().add(BackToPageViewEvent());
       }
       return result;
-    }
-    return true;
+
   }
 
   List<DropdownMenuItem<BookChapter>> _buildItems() {

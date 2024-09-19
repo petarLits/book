@@ -4,6 +4,7 @@ import 'dart:ui' as ui;
 import 'package:book/book/book.dart';
 import 'package:book/core/constants.dart';
 import 'package:book/data/firebase_db_manager.dart';
+import 'package:book/data/firebase_message_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -26,6 +27,8 @@ class BookPageBloc extends Bloc<BookPageEvent, BookPageState> {
     on<UpdateBookPagesEvent>(_onUpdateBookPages);
     on<DeleteBookPageEvent>(_onDeleteBookPage);
     on<NavigateToPageEvent>(_onNavigateToPage);
+    on<SwipeLeftEvent>(_onSwipeLeft);
+    on<SwipeRightEvent>(_onSwipeRight);
   }
 
   late Book book;
@@ -89,8 +92,21 @@ class BookPageBloc extends Bloc<BookPageEvent, BookPageState> {
       await FirebaseDbManager.instance
           .uploadPages(book.bookData!.bookPages, book.docId);
       emit(LoadedState());
-      emit(DisplayBookPageState(
-          bookData: book.bookData!, pageIndex: currentPageIndex));
+      Map<String, dynamic> additionalData = {
+        'action': messagePageAction,
+        'bookId': book.docId,
+        'index': currentPageIndex.toString()
+      };
+      final result = await FirebaseMessageManager.instance.sendPushMessage(
+          topic: topic,
+          title: book.title + ': New page has been added',
+          body:
+              'Author ' + book.author + ' has added new page at ' + book.title,
+          additionalData: additionalData);
+      if (result == true) {
+        emit(DisplayBookPageState(
+            bookData: book.bookData!, pageIndex: currentPageIndex));
+      }
     } on Exception catch (e) {
       emit(LoadedState());
       emit(ErrorState(
@@ -172,8 +188,23 @@ class BookPageBloc extends Bloc<BookPageEvent, BookPageState> {
       await FirebaseDbManager.instance
           .updateServerPages(book.bookData!.bookPages, book.docId);
       emit(LoadedState());
-      emit(DisplayBookPageState(
-          bookData: book.bookData!, pageIndex: currentPageIndex));
+      Map<String, dynamic> additionalData = {
+        'action': messagePageAction,
+        'bookId': book.docId,
+        'index': currentPageIndex.toString()
+      };
+      final result = await FirebaseMessageManager.instance.sendPushMessage(
+        additionalData: additionalData,
+        title: 'Author ' + book.author + ' has edited ' + book.title,
+        body: 'Page at number ' +
+            event.page.pageNumber.toString() +
+            ' has been edited',
+        topic: topic,
+      );
+      if (result == true) {
+        emit(DisplayBookPageState(
+            bookData: book.bookData!, pageIndex: currentPageIndex));
+      }
     } on Exception catch (e) {
       emit(LoadedState());
       emit(ErrorState(
@@ -187,17 +218,32 @@ class BookPageBloc extends Bloc<BookPageEvent, BookPageState> {
     try {
       await FirebaseDbManager.instance
           .removePage(book.bookData!.bookPages[currentPageIndex], book.docId);
-      book.bookData!.bookPages.removeAt(currentPageIndex);
-      for (int i = currentPageIndex; i < book.bookData!.bookPages.length; i++) {
-        book.bookData!.bookPages[i].pageNumber--;
-      }
-      if (currentPageIndex == book.bookData!.bookPages.length &&
-          currentPageIndex > 0) {
-        currentPageIndex--;
-      }
       emit(LoadedState());
-      emit(DisplayBookPageState(
-          bookData: book.bookData!, pageIndex: currentPageIndex));
+      Map<String, dynamic> additionalData = {
+        'action': messagePageAction,
+        'bookId': book.docId,
+      };
+      final result = await FirebaseMessageManager.instance.sendPushMessage(
+          additionalData: additionalData,
+          topic: topic,
+          title: book.author + ' at book ' + book.title + ' has deleted page',
+          body: ' Page at number ' +
+              book.bookData!.bookPages[currentPageIndex].pageNumber.toString() +
+              ' has been deleted');
+      if (result == true) {
+        book.bookData!.bookPages.removeAt(currentPageIndex);
+        for (int i = currentPageIndex;
+            i < book.bookData!.bookPages.length;
+            i++) {
+          book.bookData!.bookPages[i].pageNumber--;
+        }
+        if (currentPageIndex == book.bookData!.bookPages.length &&
+            currentPageIndex > 0) {
+          currentPageIndex--;
+        }
+        emit(DisplayBookPageState(
+            bookData: book.bookData!, pageIndex: currentPageIndex));
+      }
     } on Exception catch (e) {
       emit(LoadedState());
       emit(ErrorState(
@@ -209,5 +255,22 @@ class BookPageBloc extends Bloc<BookPageEvent, BookPageState> {
       NavigateToPageEvent event, Emitter<BookPageState> emit) async {
     emit(DisplayBookPageState(
         bookData: book.bookData!, pageIndex: event.pageNumber - 1));
+  }
+
+  Future<void> _onSwipeLeft(
+      SwipeLeftEvent event, Emitter<BookPageState> emit) async {
+    if (currentPageIndex < book.bookData!.bookPages.length - 1) {
+      currentPageIndex++;
+    }
+    emit(DisplayBookPageState(
+        bookData: book.bookData!, pageIndex: currentPageIndex));
+  }
+
+  Future<void> _onSwipeRight(
+      SwipeRightEvent event, Emitter<BookPageState> emit) async {
+    if(currentPageIndex > 0){
+      currentPageIndex--;
+    }
+    emit(DisplayBookPageState(bookData: book.bookData!, pageIndex: currentPageIndex));
   }
 }

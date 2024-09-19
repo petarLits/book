@@ -96,3 +96,11 @@ class NavigateToPageEvent extends BookPageEvent{
 
   final int pageNumber;
 }
+
+class SwipeLeftEvent extends BookPageEvent{
+  SwipeLeftEvent();
+}
+
+class SwipeRightEvent extends BookPageEvent{
+  SwipeRightEvent();
+}

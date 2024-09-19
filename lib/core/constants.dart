@@ -13,3 +13,6 @@ const String booksCollection = 'books';
 const String usersCollection = 'users';
 const String pagesCollection = 'pages';
 const String chaptersCollection = 'chapters';
+const String topic = 'book';
+const String messagePageAction = 'bookChanged';
+const String messageBookAction = 'bookAdded';

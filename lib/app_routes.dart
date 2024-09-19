@@ -33,7 +33,8 @@ class AppRoutes {
       case addNewBookRoute:
         return _materialRoute(AddNewBook(newBook: settings.arguments as Book));
       case bookPageRoute:
-        return _materialRoute(BookPageView(book: settings.arguments as Book));
+        return _materialRoute(BookPageView(book: (settings.arguments as Map<String, dynamic>) ['book'] as Book,
+        pageIndex: (settings.arguments as Map<String, dynamic>)['pageIndex'] as int?));
       case newPageRoute:
         return _materialRoute(NewBookPage(
             newPage: (settings.arguments as Map<String, dynamic>)['newPage']

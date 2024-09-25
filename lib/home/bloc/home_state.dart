@@ -35,7 +35,10 @@ class UploadedBookState extends HomeState {
   final Book book;
 
   @override
-  List<Object?> get props => [book];
+  List<Object?> get props => [
+        book,
+        Random().nextInt(10000),
+      ];
 }
 
 class SavedBookState extends HomeState {
@@ -54,6 +57,12 @@ class AddBookImageState extends HomeState {
   AddBookImageState({required this.image});
 
   final File image;
+
+  @override
+  List<Object?> get props => [
+        image,
+        Random().nextInt(10000),
+      ];
 }
 
 class UploadedBookImageAndUrlGotState extends HomeState {
@@ -62,7 +71,10 @@ class UploadedBookImageAndUrlGotState extends HomeState {
   final Book book;
 
   @override
-  List<Object?> get props => [book];
+  List<Object?> get props => [
+        book,
+        Random().nextInt(10000),
+      ];
 }
 
 class DeletedBookImage extends HomeState {
@@ -88,6 +100,18 @@ class LoadedState extends HomeState {
 
 class DownloadBooksState extends HomeState {
   DownloadBooksState({required this.books});
+
+  final List<Book> books;
+
+  @override
+  List<Object?> get props => [
+        books,
+        Random().nextInt(10000),
+      ];
+}
+
+class GetBooksState extends HomeState {
+  GetBooksState({required this.books});
 
   final List<Book> books;
 

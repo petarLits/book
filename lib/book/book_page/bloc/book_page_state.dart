@@ -34,14 +34,21 @@ class AddBookPageImageState extends BookPageState {
 
 class DeleteBookPageImageState extends BookPageState {
   DeleteBookPageImageState();
+  @override
+  List<Object?> get props => [Random().nextInt(10000)];
 }
 
 class LoadingState extends BookPageState {
   LoadingState();
+  @override
+  List<Object?> get props => [Random().nextInt(10000)];
 }
 
 class LoadedState extends BookPageState {
   LoadedState();
+
+  @override
+  List<Object?> get props => [Random().nextInt(10000)];
 }
 
 class ErrorState extends DisplayBookPageState {
@@ -124,4 +131,5 @@ class SaveBookChapterState extends BookPageState {
         Random().nextInt(10000),
       ];
 }
+
 

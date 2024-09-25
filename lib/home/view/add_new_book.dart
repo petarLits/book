@@ -185,6 +185,7 @@ class _AddNewBookState extends State<AddNewBook> {
 
   Future<bool> _onBackPressed() async {
     final result = await showDialog(
+      barrierDismissible: false,
       context: context,
       builder: (context) => AlertDialog(
         title: Text(AppLocalizations.of(context)!.leaveDialog),

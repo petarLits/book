@@ -58,6 +58,79 @@
   "deleteDialogTitle": "Are you sure you want to delete this page?",
   "noChapters": "There are no chapters",
   "leavingBook": "Are you sure you want to leave this book?",
-  "leaveBook": "Leave book"
-
+  "leaveBook": "Leave book",
+  "swipeError": "No more pages to swipe",
+  "newBookMessageBody": "Author: {bookAuthor} has just published new book",
+  "@newBookMessageBody": {
+    "placeholders": {
+      "bookAuthor": {
+        "type": "String"
+      }
+    }
+  },
+  "newBookMessageTitle": "New book: {bookTitle}",
+  "@newBookMessageTitle": {
+    "placeholders": {
+      "bookTitle": {
+        "type": "String"
+      }
+    }
+  },
+  "editPageMessageTitle": "Author {bookAuthor} has edited {bookTitle}",
+  "@editPageMessageTitle": {
+    "placeholders": {
+      "bookAuthor": {
+        "type": "String"
+      },
+      "bookTitle": {
+        "type": "String"
+      }
+    }
+  },
+  "editPageMessageBody": "Page at number {pageNumber} has been edited",
+  "@editPageMessageBody": {
+    "placeholders": {
+      "pageNumber": {
+        "type": "int"
+      }
+    }
+  },
+  "deletePageMessageTitle": "{bookTitle}: {bookAuthor} has deleted page",
+  "@deletePageMessageTitle": {
+    "placeholders": {
+      "bookAuthor": {
+        "type": "String"
+      },
+      "bookTitle": {
+        "type": "String"
+      }
+    }
+  },
+  "deletePageMessageBody": "Page at number {pageNumber} has been deleted",
+  "@deletePageMessageBody": {
+    "placeholders": {
+      "pageNumber": {
+        "type": "int"
+      }
+    }
+  },
+  "addNewPageMessageTitle": "{bookTitle}: New page has been added",
+  "@addNewPageMessageTitle": {
+    "placeholders": {
+      "bookTitle": {
+        "type": "String"
+      }
+    }
+  },
+  "addNewPageMessageBody": "{bookAuthor} has added new page with number {pageNumber}",
+  "@addNewPageMessageBody": {
+    "placeholders": {
+      "bookAuthor": {
+        "type": "String"
+      },
+      "pageNumber": {
+        "type": "int"
+      }
+    }
+  }
 }

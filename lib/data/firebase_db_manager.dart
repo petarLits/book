@@ -138,17 +138,16 @@ class FirebaseDbManager {
     return Future.value(bookData);
   }
 
-  Future<void> updateServerPages(
-      List<BookPage> pages, String bookId) async {
+  Future<void> updateServerPages(List<BookPage> pages, String bookId) async {
     final pagesRef = db.collection(pagesCollection).doc(bookId);
 
     await pagesRef
         .update({'items': pages.map((page) => page.toJson()).toList()}).timeout(
-        Duration(seconds: 3), onTimeout: () {
+            Duration(seconds: 3), onTimeout: () {
       throw Exception(serverError);
     });
-
   }
+
   Future<void> removePage(BookPage page, String bookId) async {
     int pageNumberToDelete = page.pageNumber;
     final docRef = db.collection(pagesCollection).doc(bookId);
@@ -172,8 +171,23 @@ class FirebaseDbManager {
     }
     await docRef.update({'items': items}).timeout(Duration(seconds: 3),
         onTimeout: () {
-          throw Exception(serverError);
-        });
+      throw Exception(serverError);
+    });
   }
 
+  Future<Book> downloadBook(String bookId) async {
+    final bookRef = db.collection(booksCollection).doc(bookId);
+    final snapshot =
+        await bookRef.get().timeout(Duration(seconds: 3), onTimeout: () {
+      throw Exception(serverError);
+    });
+    final data = snapshot.data();
+
+    Book book = Book.fromJson(data!, bookId);
+    return Future.value(book);
+  }
+
+  Stream<QuerySnapshot<Map<String, dynamic>>> downloadBooksStream() async* {
+    yield* db.collection("books").snapshots();
+  }
 }

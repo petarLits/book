@@ -1,12 +1,20 @@
+import 'dart:convert';
+
 import 'package:book/app_colors.dart';
 import 'package:book/app_routes.dart';
 import 'package:book/app_text_styles.dart';
+import 'package:book/app_user.dart';
+import 'package:book/app_user_singleton.dart';
 import 'package:book/book/book.dart';
 import 'package:book/core/constants.dart';
+import 'package:book/data/firebase_db_manager.dart';
+import 'package:book/data/firebase_message_manager.dart';
 import 'package:book/home/bloc/home_bloc.dart';
 import 'package:book/home/bloc/home_event.dart';
 import 'package:book/home/bloc/home_state.dart';
 import 'package:book/utils/dialog_utils.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -19,13 +27,27 @@ class HomePage extends StatefulWidget {
 class _HomePageSate extends State<HomePage> {
   late final _controller;
   List<Book> books = [];
-
+  late AppUser user;
 
   @override
   void initState() {
+    FirebaseMessageManager.instance.firebaseMessaging.subscribeToTopic(topic);
+    FirebaseMessageManager.instance.initializeLocalNotification();
+    FirebaseMessageManager.instance.onNotificationClick.stream
+        .listen(onNotificationListener);
+
+    FirebaseMessaging.onMessage.listen(
+      (RemoteMessage message) {
+        if (message.notification != null) {
+          FirebaseMessageManager.instance.showLocalNotification(message);
+        }
+      },
+    );
     _controller = PageController(viewportFraction: 0.9);
+    user = AppUserSingleton.instance.appUser!;
+
+
     super.initState();
-    context.read<HomeBloc>().add(DownloadBooksEvent());
   }
 
   @override
@@ -48,42 +70,72 @@ class _HomePageSate extends State<HomePage> {
           DialogUtils.showLoadingScreen(context);
         } else if (state is LoadedState) {
           Navigator.pop(context);
-        } else if(state is DownloadBooksState){
+        } else if (state is GetBooksState) {
           books = state.books;
         }
       },
       builder: (context, HomeState state) {
         return WillPopScope(
           onWillPop: _onBackPressed,
-          child: Scaffold(
-            appBar: AppBar(
-              automaticallyImplyLeading: false,
-              leading: IconButton(
-                onPressed: () {
-                  Navigator.maybePop(context);
-                },
-                icon: Icon(Icons.exit_to_app),
-              ),
-              title: Text(
-                AppLocalizations.of(context)!.pickBook,
-              ),
-            ),
-            body: _buildBody(context),
-            floatingActionButton: FloatingActionButton(
-              backgroundColor: AppColors.primaryColor,
-              onPressed: () async {
-                Book newBook =
-                    Book(title: '', author: '', imageUrl: '', docId: '');
-                final Book? result = await Navigator.pushNamed<dynamic>(
-                    context, addNewBookRoute,
-                    arguments: newBook);
-                if (result != null) {
-                  context.read<HomeBloc>().add(UploadBook(book: result));
+          child: StreamBuilder(
+              stream: context.read<HomeBloc>().getBooksStream(),
+              builder: (BuildContext context,
+                  AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>> snapshot) {
+                if (snapshot.hasData) {
+                  context
+                      .read<HomeBloc>()
+                      .add(GetBooksEvent(querySnapshot: snapshot.data!));
+                  return Scaffold(
+                    appBar: AppBar(
+                      automaticallyImplyLeading: false,
+                      leading: IconButton(
+                        onPressed: () {
+                          Navigator.maybePop(context);
+                        },
+                        icon: Icon(Icons.exit_to_app),
+                      ),
+                      title: Text(
+                        AppLocalizations.of(context)!.pickBook,
+                      ),
+                    ),
+                    body: _buildBody(context),
+                    floatingActionButton: Visibility(
+                      visible: user.isAdmin == true,
+                      child: FloatingActionButton(
+                        backgroundColor: AppColors.primaryColor,
+                        onPressed: () async {
+                          Book newBook = Book(
+                              title: '', author: '', imageUrl: '', docId: '');
+                          final Book? result =
+                              await Navigator.pushNamed<dynamic>(
+                                  context, addNewBookRoute,
+                                  arguments: newBook);
+                          if (result != null) {
+                            context.read<HomeBloc>().add(UploadBook(
+                                  book: result,
+                                  messageTitle: AppLocalizations.of(context)!
+                                      .newBookMessageTitle(result.title),
+                                  messageBody: AppLocalizations.of(context)!
+                                      .newBookMessageBody(result.author),
+                                ));
+                          }
+                        },
+                        child: Icon(Icons.add),
+                      ),
+                    ),
+                  );
+                } else if (snapshot.data == null) {
+                  return Scaffold(
+                    appBar: AppBar(
+
+                    ),
+                  );
+                } else {
+                  return Center(
+                    child: CircularProgressIndicator(),
+                  );
                 }
-              },
-              child: Icon(Icons.add),
-            ),
-          ),
+              }),
         );
       },
     );
@@ -117,7 +169,8 @@ class _HomePageSate extends State<HomePage> {
       ),
       child: GestureDetector(
         onTap: () {
-          Navigator.pushNamed(context, bookPageRoute, arguments: book);
+          Navigator.pushNamed<dynamic>(context, bookPageRoute,
+              arguments: <String, dynamic>{"book": book});
         },
         child: Stack(
           children: [
@@ -204,9 +257,45 @@ class _HomePageSate extends State<HomePage> {
     return result;
   }
 
+  void onNotificationListener(String? payload) async {
+    if (payload != null) {
+      final data = jsonDecode(payload);
+      if (data['action'] == messagePageAction) {
+        final iD = data['bookId'];
+
+        Book book = await FirebaseDbManager.instance.downloadBook(iD);
+        final pageIndex = data['index'];
+        if (data['index'] != null) {
+          final currentPageIndex = int.parse(pageIndex);
+          Navigator.pushNamedAndRemoveUntil(
+              context,
+              bookPageRoute,
+              arguments: <String, dynamic>{
+                "book": book,
+                "pageIndex": currentPageIndex,
+              },
+              (route) => route.isFirst);
+        } else {
+          Navigator.pushNamedAndRemoveUntil(
+              context,
+              bookPageRoute,
+              arguments: <String, dynamic>{
+                "book": book,
+              },
+              (route) => route.isFirst);
+        }
+      }
+      if (data['action'] == messageBookAction) {
+        Navigator.popUntil(context, (route) => route.isFirst);
+      }
+    }
+  }
+
   @override
   void dispose() {
     super.dispose();
+    FirebaseMessageManager.instance.firebaseMessaging
+        .unsubscribeFromTopic(topic);
     _controller.dispose();
   }
 }

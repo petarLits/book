@@ -109,7 +109,17 @@ class _BookPageViewState extends State<BookPageView> {
                                 if (result != null) {
                                   context
                                       .read<BookPageBloc>()
-                                      .add(UpdateBookPagesEvent(page: result));
+                                      .add(UpdateBookPagesEvent(
+                                        page: result,
+                                        messageTitle:
+                                            AppLocalizations.of(context)!
+                                                .editPageMessageTitle(
+                                                    widget.book.author, widget.book.title ),
+                                        messageBody:
+                                            AppLocalizations.of(context)!
+                                                .editPageMessageBody(
+                                                    result.pageNumber),
+                                      ));
                                 }
                               },
                               icon: Icon(Icons.edit)),
@@ -147,7 +157,17 @@ class _BookPageViewState extends State<BookPageView> {
                               if (result == true) {
                                 context
                                     .read<BookPageBloc>()
-                                    .add(DeleteBookPageEvent());
+                                    .add(DeleteBookPageEvent(
+                                      messageTitle:
+                                          AppLocalizations.of(context)!
+                                              .deletePageMessageTitle(
+                                                  widget.book.author,
+                                                  widget.book.title),
+                                      messageBody: AppLocalizations.of(context)!
+                                          .deletePageMessageBody(
+                                              pages[currentPageIndex]
+                                                  .pageNumber),
+                                    ));
                               }
                             },
                             icon: Icon(
@@ -177,9 +197,14 @@ class _BookPageViewState extends State<BookPageView> {
                       },
                     );
                     if (result != null) {
-                      context
-                          .read<BookPageBloc>()
-                          .add(AddBookPageEvent(page: result));
+                      context.read<BookPageBloc>().add(AddBookPageEvent(
+                            page: result,
+                            messageTitle: AppLocalizations.of(context)!
+                                .addNewPageMessageTitle(widget.book.title),
+                            messageBody: AppLocalizations.of(context)!
+                                .addNewPageMessageBody(
+                                    widget.book.author, result.pageNumber),
+                          ));
                     }
                   },
                   child: Icon(Icons.add),

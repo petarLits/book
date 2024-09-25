@@ -99,9 +99,8 @@ class BookPageBloc extends Bloc<BookPageEvent, BookPageState> {
       };
       final result = await FirebaseMessageManager.instance.sendPushMessage(
           topic: topic,
-          title: book.title + ': New page has been added',
-          body:
-              'Author ' + book.author + ' has added new page at ' + book.title,
+          title: event.messageTitle,
+          body:event.messageBody,
           additionalData: additionalData);
       if (result == true) {
         emit(DisplayBookPageState(
@@ -195,10 +194,8 @@ class BookPageBloc extends Bloc<BookPageEvent, BookPageState> {
       };
       final result = await FirebaseMessageManager.instance.sendPushMessage(
         additionalData: additionalData,
-        title: 'Author ' + book.author + ' has edited ' + book.title,
-        body: 'Page at number ' +
-            event.page.pageNumber.toString() +
-            ' has been edited',
+        title: event.messageTitle,
+        body: event.messageBody,
         topic: topic,
       );
       if (result == true) {
@@ -224,12 +221,11 @@ class BookPageBloc extends Bloc<BookPageEvent, BookPageState> {
         'bookId': book.docId,
       };
       final result = await FirebaseMessageManager.instance.sendPushMessage(
-          additionalData: additionalData,
-          topic: topic,
-          title: book.author + ' at book ' + book.title + ' has deleted page',
-          body: ' Page at number ' +
-              book.bookData!.bookPages[currentPageIndex].pageNumber.toString() +
-              ' has been deleted');
+        additionalData: additionalData,
+        topic: topic,
+        title: event.messageTitle,
+        body: event.messageBody,
+      );
       if (result == true) {
         book.bookData!.bookPages.removeAt(currentPageIndex);
         for (int i = currentPageIndex;
@@ -268,9 +264,10 @@ class BookPageBloc extends Bloc<BookPageEvent, BookPageState> {
 
   Future<void> _onSwipeRight(
       SwipeRightEvent event, Emitter<BookPageState> emit) async {
-    if(currentPageIndex > 0){
+    if (currentPageIndex > 0) {
       currentPageIndex--;
     }
-    emit(DisplayBookPageState(bookData: book.bookData!, pageIndex: currentPageIndex));
+    emit(DisplayBookPageState(
+        bookData: book.bookData!, pageIndex: currentPageIndex));
   }
 }

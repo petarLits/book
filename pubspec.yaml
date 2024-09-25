@@ -96,7 +96,7 @@ flutter:
   assets:
     - assets/bookIcon.jpg
     - assets/bookSplashScreen.png
-    - assets/book-bloc-d23e82330a4d.json
+    - assets/book-bloc-c83676f5d8dd.json
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

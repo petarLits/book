@@ -45,7 +45,7 @@ class FirebaseMessageManager {
     Map<String, dynamic>? additionalData,
   }) async {
     final jsonCredentials = await rootBundle
-        .loadString('assets/book-bloc-d23e82330a4d.json')
+        .loadString('assets/book-bloc-c83676f5d8dd.json')
         .timeout(Duration(seconds: 3), onTimeout: () {
       throw Exception(serverError);
     });

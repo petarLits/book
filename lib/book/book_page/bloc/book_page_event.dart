@@ -33,12 +33,22 @@ class SaveNewBookPageEvent extends BookPageEvent {
 }
 
 class AddBookPageEvent extends BookPageEvent {
-  AddBookPageEvent({required this.page});
+  AddBookPageEvent({
+    required this.page,
+    required this.messageTitle,
+    required this.messageBody,
+  });
 
   final BookPage page;
+  final String messageTitle;
+  final String messageBody;
 
   @override
-  List<Object?> get props => [page];
+  List<Object?> get props => [
+        page,
+        messageTitle,
+        messageBody,
+      ];
 }
 
 class InitBookEvent extends BookPageEvent {
@@ -82,25 +92,37 @@ class SaveBookChapterEvent extends BookPageEvent {
 }
 
 class UpdateBookPagesEvent extends BookPageEvent {
-  UpdateBookPagesEvent({required this.page});
+  UpdateBookPagesEvent({
+    required this.page,
+    required this.messageTitle,
+    required this.messageBody,
+  });
 
   final BookPage page;
+  final String messageTitle;
+  final String messageBody;
 }
 
-class DeleteBookPageEvent extends BookPageEvent{
-  DeleteBookPageEvent();
+class DeleteBookPageEvent extends BookPageEvent {
+  DeleteBookPageEvent({
+    required this.messageTitle,
+    required this.messageBody,
+  });
+
+  final String messageTitle;
+  final String messageBody;
 }
 
-class NavigateToPageEvent extends BookPageEvent{
+class NavigateToPageEvent extends BookPageEvent {
   NavigateToPageEvent({required this.pageNumber});
 
   final int pageNumber;
 }
 
-class SwipeLeftEvent extends BookPageEvent{
+class SwipeLeftEvent extends BookPageEvent {
   SwipeLeftEvent();
 }
 
-class SwipeRightEvent extends BookPageEvent{
+class SwipeRightEvent extends BookPageEvent {
   SwipeRightEvent();
 }

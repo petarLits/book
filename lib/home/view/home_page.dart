@@ -13,6 +13,7 @@ import 'package:book/home/bloc/home_bloc.dart';
 import 'package:book/home/bloc/home_event.dart';
 import 'package:book/home/bloc/home_state.dart';
 import 'package:book/utils/dialog_utils.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -43,8 +44,8 @@ class _HomePageSate extends State<HomePage> {
       },
     );
     _controller = PageController(viewportFraction: 0.9);
-    context.read<HomeBloc>().add(DownloadBooksEvent());
     user = AppUserSingleton.instance.appUser!;
+
 
     super.initState();
   }
@@ -69,45 +70,72 @@ class _HomePageSate extends State<HomePage> {
           DialogUtils.showLoadingScreen(context);
         } else if (state is LoadedState) {
           Navigator.pop(context);
-        } else if (state is DownloadBooksState) {
+        } else if (state is GetBooksState) {
           books = state.books;
         }
       },
       builder: (context, HomeState state) {
         return WillPopScope(
           onWillPop: _onBackPressed,
-          child: Scaffold(
-            appBar: AppBar(
-              automaticallyImplyLeading: false,
-              leading: IconButton(
-                onPressed: () {
-                  Navigator.maybePop(context);
-                },
-                icon: Icon(Icons.exit_to_app),
-              ),
-              title: Text(
-                AppLocalizations.of(context)!.pickBook,
-              ),
-            ),
-            body: _buildBody(context),
-            floatingActionButton: Visibility(
-              visible: user.isAdmin == true,
-              child: FloatingActionButton(
-                backgroundColor: AppColors.primaryColor,
-                onPressed: () async {
-                  Book newBook =
-                      Book(title: '', author: '', imageUrl: '', docId: '');
-                  final Book? result = await Navigator.pushNamed<dynamic>(
-                      context, addNewBookRoute,
-                      arguments: newBook);
-                  if (result != null) {
-                    context.read<HomeBloc>().add(UploadBook(book: result));
-                  }
-                },
-                child: Icon(Icons.add),
-              ),
-            ),
-          ),
+          child: StreamBuilder(
+              stream: context.read<HomeBloc>().getBooksStream(),
+              builder: (BuildContext context,
+                  AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>> snapshot) {
+                if (snapshot.hasData) {
+                  context
+                      .read<HomeBloc>()
+                      .add(GetBooksEvent(querySnapshot: snapshot.data!));
+                  return Scaffold(
+                    appBar: AppBar(
+                      automaticallyImplyLeading: false,
+                      leading: IconButton(
+                        onPressed: () {
+                          Navigator.maybePop(context);
+                        },
+                        icon: Icon(Icons.exit_to_app),
+                      ),
+                      title: Text(
+                        AppLocalizations.of(context)!.pickBook,
+                      ),
+                    ),
+                    body: _buildBody(context),
+                    floatingActionButton: Visibility(
+                      visible: user.isAdmin == true,
+                      child: FloatingActionButton(
+                        backgroundColor: AppColors.primaryColor,
+                        onPressed: () async {
+                          Book newBook = Book(
+                              title: '', author: '', imageUrl: '', docId: '');
+                          final Book? result =
+                              await Navigator.pushNamed<dynamic>(
+                                  context, addNewBookRoute,
+                                  arguments: newBook);
+                          if (result != null) {
+                            context.read<HomeBloc>().add(UploadBook(
+                                  book: result,
+                                  messageTitle: AppLocalizations.of(context)!
+                                      .newBookMessageTitle(result.title),
+                                  messageBody: AppLocalizations.of(context)!
+                                      .newBookMessageBody(result.author),
+                                ));
+                          }
+                        },
+                        child: Icon(Icons.add),
+                      ),
+                    ),
+                  );
+                } else if (snapshot.data == null) {
+                  return Scaffold(
+                    appBar: AppBar(
+
+                    ),
+                  );
+                } else {
+                  return Center(
+                    child: CircularProgressIndicator(),
+                  );
+                }
+              }),
         );
       },
     );
@@ -232,7 +260,7 @@ class _HomePageSate extends State<HomePage> {
   void onNotificationListener(String? payload) async {
     if (payload != null) {
       final data = jsonDecode(payload);
-      if (data['action'] == 'bookChanged') {
+      if (data['action'] == messagePageAction) {
         final iD = data['bookId'];
 
         Book book = await FirebaseDbManager.instance.downloadBook(iD);
@@ -257,7 +285,7 @@ class _HomePageSate extends State<HomePage> {
               (route) => route.isFirst);
         }
       }
-      if (data['action'] == 'bookAdded') {
+      if (data['action'] == messageBookAction) {
         Navigator.popUntil(context, (route) => route.isFirst);
       }
     }

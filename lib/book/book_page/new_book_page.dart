@@ -79,11 +79,9 @@ class _NewBookPageState extends State<NewBookPage> {
           decodedImage = state.decodedImage;
         } else if (state is DeleteBookPageImageState) {
           image = null;
-          if(widget.newPage.pageImage != null){
+          if (widget.newPage.pageImage != null) {
             widget.newPage.pageImage = null;
           }
-
-
         } else if (state is SaveNewBookPageState) {
           Navigator.pop(context, state.page);
         } else if (state is AddNewBookChapterState) {
@@ -122,21 +120,21 @@ class _NewBookPageState extends State<NewBookPage> {
                         Expanded(
                           child: widget.chapters.isNotEmpty
                               ? DropdownButton(
-                            isExpanded: true,
-                            value: selectedChapter,
-                            items: _buildItems(),
-                            onChanged:
-                            widget.pageMode == BookPageMode.create
-                                ? (chapterSelected) {
-                              context.read<BookPageBloc>().add(
-                                  ChangeSelectedChapterEvent(
-                                      chapter: chapterSelected
-                                      as BookChapter));
-                            }
-                                : null,
-                          )
+                                  isExpanded: true,
+                                  value: selectedChapter,
+                                  items: _buildItems(),
+                                  onChanged:
+                                      widget.pageMode == BookPageMode.create
+                                          ? (chapterSelected) {
+                                              context.read<BookPageBloc>().add(
+                                                  ChangeSelectedChapterEvent(
+                                                      chapter: chapterSelected
+                                                          as BookChapter));
+                                            }
+                                          : null,
+                                )
                               : Text(AppLocalizations.of(context)!
-                              .addFirstChapter),
+                                  .addFirstChapter),
                         ),
                         Visibility(
                           visible: widget.pageMode == BookPageMode.create,
@@ -146,9 +144,9 @@ class _NewBookPageState extends State<NewBookPage> {
                                     number: widget.chapters.length + 1,
                                     title: '');
                                 final result =
-                                await Navigator.pushNamed<dynamic>(
-                                    context, newBookChapterRoute,
-                                    arguments: newChapter);
+                                    await Navigator.pushNamed<dynamic>(
+                                        context, newBookChapterRoute,
+                                        arguments: newChapter);
                                 if (result != null) {
                                   context.read<BookPageBloc>().add(
                                       AddNewBookChapterEvent(chapter: result));
@@ -185,10 +183,10 @@ class _NewBookPageState extends State<NewBookPage> {
                                 source: ImageSource.gallery);
                             if (pickedImage != null) {
                               context.read<BookPageBloc>().add(
-                                AddBookPageImageEvent(
-                                  image: File(pickedImage.path),
-                                ),
-                              );
+                                    AddBookPageImageEvent(
+                                      image: File(pickedImage.path),
+                                    ),
+                                  );
                             }
                           },
                           icon: Icon(Icons.add_a_photo),
@@ -196,16 +194,19 @@ class _NewBookPageState extends State<NewBookPage> {
                       ],
                     ),
                     SizedBox(height: 20),
-                    if(image != null || widget.newPage.pageImage != null)
+                    if (image != null || widget.newPage.pageImage != null)
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           SizedBox(
                             width: 50,
                             height: 50,
-                            child: image != null ? Image.file(image!) : widget
-                                .newPage.pageImage != null ? Image.network(
-                                widget.newPage.pageImage!.imageUrl!) : null,
+                            child: image != null
+                                ? Image.file(image!)
+                                : widget.newPage.pageImage != null
+                                    ? Image.network(
+                                        widget.newPage.pageImage!.imageUrl!)
+                                    : null,
                           ),
                           IconButton(
                             onPressed: () {
@@ -229,7 +230,11 @@ class _NewBookPageState extends State<NewBookPage> {
                                 height: decodedImage!.height,
                                 image: image);
                             widget.newPage.pageImage = pageImage;
-                          } else if (image == null) {
+                          }
+
+                          if ((widget.pageMode == BookPageMode.edit &&
+                                  widget.newPage.pageImage == null) &&
+                              image == null) {
                             widget.newPage.pageImage = null;
                           }
 
@@ -251,34 +256,36 @@ class _NewBookPageState extends State<NewBookPage> {
   }
 
   Future<bool> _onBackPressed() async {
-    final result = await showDialog(
-      barrierDismissible: false,
-      context: context,
-      builder: (context) =>
-          AlertDialog(
-            title: Text(AppLocalizations.of(context)!.leaveDialog),
-            content: Text(
-                AppLocalizations.of(context)!.changesWillBeDiscarded),
-            actions: [
-              TextButton(
-                onPressed: () {
-                  Navigator.pop(context, true);
-                },
-                child: Text(AppLocalizations.of(context)!.yes),
-              ),
-              TextButton(
-                onPressed: () {
-                  Navigator.pop(context, false);
-                },
-                child: Text(AppLocalizations.of(context)!.no),
-              ),
-            ],
-          ),
-    );
-    if (result == true) {
-      context.read<BookPageBloc>().add(BackToPageViewEvent());
+    if ((textValue != widget.newPage.text || image != null) ||
+        ((widget.pageMode == BookPageMode.edit) && image == null)) {
+      final result = await showDialog(
+        barrierDismissible: false,
+        context: context,
+        builder: (context) => AlertDialog(
+          title: Text(AppLocalizations.of(context)!.leaveDialog),
+          content: Text(AppLocalizations.of(context)!.changesWillBeDiscarded),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context, true);
+              },
+              child: Text(AppLocalizations.of(context)!.yes),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context, false);
+              },
+              child: Text(AppLocalizations.of(context)!.no),
+            ),
+          ],
+        ),
+      );
+      if (result == true) {
+        Navigator.pop(context);
+      }
+      return result;
     }
-    return result;
+    return true;
   }
 
   List<DropdownMenuItem<BookChapter>> _buildItems() {

@@ -16,3 +16,5 @@ const String chaptersCollection = 'chapters';
 const String topic = 'book';
 const String messagePageAction = 'bookChanged';
 const String messageBookAction = 'bookAdded';
+const double floatingButtonPadding = 48;
+const int authorMaxLines = 1;

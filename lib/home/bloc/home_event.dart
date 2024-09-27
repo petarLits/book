@@ -23,7 +23,11 @@ class UploadBook extends HomeEvent {
   final String messageBody;
 
   @override
-  List<Object?> get props => [book, messageTitle, messageBody];
+  List<Object?> get props => [
+        book,
+        messageTitle,
+        messageBody,
+      ];
 }
 
 class SaveNewBook extends HomeEvent {

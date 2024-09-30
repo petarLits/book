@@ -114,12 +114,17 @@ class _BookPageViewState extends State<BookPageView> {
                                         messageTitle:
                                             AppLocalizations.of(context)!
                                                 .editPageMessageTitle(
-                                                    widget.book.author, widget.book.title ),
+                                                    widget.book.author,
+                                                    widget.book.title),
                                         messageBody:
                                             AppLocalizations.of(context)!
                                                 .editPageMessageBody(
                                                     result.pageNumber),
                                       ));
+                                } else {
+                                  context
+                                      .read<BookPageBloc>()
+                                      .add(InitBookEvent(book: widget.book));
                                 }
                               },
                               icon: Icon(Icons.edit)),
@@ -181,33 +186,41 @@ class _BookPageViewState extends State<BookPageView> {
               ),
               floatingActionButton: Visibility(
                 visible: user.isAdmin == true,
-                child: FloatingActionButton(
-                  backgroundColor: AppColors.primaryColor,
-                  onPressed: () async {
-                    BookPage newPage =
-                        BookPage(text: '', pageNumber: pages.length + 1);
-                    final BookPage? result = await Navigator.pushNamed<dynamic>(
-                      context,
-                      newPageRoute,
-                      arguments: <String, dynamic>{
-                        "newPage": newPage,
-                        "bookId": widget.book.docId,
-                        "chapters": widget.book.bookData!.bookChapters,
-                        "pageMode": BookPageMode.create,
-                      },
-                    );
-                    if (result != null) {
-                      context.read<BookPageBloc>().add(AddBookPageEvent(
-                            page: result,
-                            messageTitle: AppLocalizations.of(context)!
-                                .addNewPageMessageTitle(widget.book.title),
-                            messageBody: AppLocalizations.of(context)!
-                                .addNewPageMessageBody(
-                                    widget.book.author, result.pageNumber),
-                          ));
-                    }
-                  },
-                  child: Icon(Icons.add),
+                child: Padding(
+                  padding: EdgeInsets.only(bottom: floatingButtonPadding),
+                  child: FloatingActionButton(
+                    backgroundColor: AppColors.primaryColor,
+                    onPressed: () async {
+                      BookPage newPage =
+                          BookPage(text: '', pageNumber: pages.length + 1);
+                      final BookPage? result =
+                          await Navigator.pushNamed<dynamic>(
+                        context,
+                        newPageRoute,
+                        arguments: <String, dynamic>{
+                          "newPage": newPage,
+                          "bookId": widget.book.docId,
+                          "chapters": widget.book.bookData!.bookChapters,
+                          "pageMode": BookPageMode.create,
+                        },
+                      );
+                      if (result != null) {
+                        context.read<BookPageBloc>().add(AddBookPageEvent(
+                              page: result,
+                              messageTitle: AppLocalizations.of(context)!
+                                  .addNewPageMessageTitle(widget.book.title),
+                              messageBody: AppLocalizations.of(context)!
+                                  .addNewPageMessageBody(
+                                      widget.book.author, result.pageNumber),
+                            ));
+                      } else {
+                        context
+                            .read<BookPageBloc>()
+                            .add(InitBookEvent(book: widget.book));
+                      }
+                    },
+                    child: Icon(Icons.add),
+                  ),
                 ),
               ),
               drawer: Drawer(

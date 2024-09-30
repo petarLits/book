@@ -19,14 +19,20 @@ class NewBookChapter extends StatefulWidget {
 }
 
 class _NewBookChapterState extends State<NewBookChapter> {
-  String titleValue = '';
+  late String titleValue;
   final _formKey = GlobalKey<FormState>();
+
+  @override
+  void initState() {
+    titleValue = widget.chapter.title;
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<BookPageBloc, BookPageState>(
       listener: (context, state) {
-        if(state is SaveBookChapterState){
+        if (state is SaveBookChapterState) {
           Navigator.pop(context, state.chapter);
         }
       },
@@ -91,31 +97,36 @@ class _NewBookChapterState extends State<NewBookChapter> {
   }
 
   Future<bool> _onBackPressed() async {
-    final result = await showDialog(
-      barrierDismissible: false,
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text(AppLocalizations.of(context)!.leaveDialog),
-        content: Text(AppLocalizations.of(context)!.changesWillBeDiscarded),
-        actions: [
-          TextButton(
-            onPressed: () {
-              Navigator.pop(context, true);
-            },
-            child: Text(AppLocalizations.of(context)!.yes),
-          ),
-          TextButton(
-            onPressed: () {
-              Navigator.pop(context, false);
-            },
-            child: Text(AppLocalizations.of(context)!.no),
-          )
-        ],
-      ),
-    );
-    if (result == true) {
-      Navigator.pop(context);
+    if (titleValue != '') {
+      final result = await showDialog(
+        barrierDismissible: false,
+        context: context,
+        builder: (context) =>
+            AlertDialog(
+              title: Text(AppLocalizations.of(context)!.leaveDialog),
+              content: Text(
+                  AppLocalizations.of(context)!.changesWillBeDiscarded),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.pop(context, true);
+                  },
+                  child: Text(AppLocalizations.of(context)!.yes),
+                ),
+                TextButton(
+                  onPressed: () {
+                    Navigator.pop(context, false);
+                  },
+                  child: Text(AppLocalizations.of(context)!.no),
+                )
+              ],
+            ),
+      );
+      if (result == true) {
+        Navigator.pop(context);
+      }
+      return result;
     }
-    return result;
+    return true;
   }
 }

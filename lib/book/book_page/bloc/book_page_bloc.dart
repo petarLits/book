@@ -21,7 +21,6 @@ class BookPageBloc extends Bloc<BookPageEvent, BookPageState> {
     on<PreviousPageEvent>(_onPreviousPage);
     on<NextPageEvent>(_onNextPage);
     on<AddNewBookChapterEvent>(_onAddNewBookChapter);
-    on<BackToPageViewEvent>(_onBackToPageView);
     on<ChangeSelectedChapterEvent>(_onChangeSelectedChapter);
     on<SaveBookChapterEvent>(_onSaveBookChapter);
     on<UpdateBookPagesEvent>(_onUpdateBookPages);
@@ -47,9 +46,9 @@ class BookPageBloc extends Bloc<BookPageEvent, BookPageState> {
       emit(AddBookPageImageState(
           image: event.image, decodedImage: decodedImage));
     } on Exception catch (e) {
+      emit(LoadedState());
       emit(ErrorState(
           error: e, bookData: book.bookData!, pageIndex: currentPageIndex));
-      emit(LoadedState());
     }
   }
 
@@ -62,15 +61,15 @@ class BookPageBloc extends Bloc<BookPageEvent, BookPageState> {
       SaveNewBookPageEvent event, Emitter<BookPageState> emit) async {
     emit(LoadingState());
     try {
-      if (event.page.pageImage != null) {
+      if (event.page.pageImage?.image != null) {
         await FirebaseDbManager.instance.uploadPageImageGetUrl(event.page);
       }
       emit(LoadedState());
       emit(SaveNewBookPageState(page: event.page));
     } on Exception catch (e) {
+      emit(LoadedState());
       emit(ErrorState(
           error: e, bookData: book.bookData!, pageIndex: currentPageIndex));
-      emit(LoadedState());
     }
   }
 
@@ -100,11 +99,13 @@ class BookPageBloc extends Bloc<BookPageEvent, BookPageState> {
       final result = await FirebaseMessageManager.instance.sendPushMessage(
           topic: topic,
           title: event.messageTitle,
-          body:event.messageBody,
+          body: event.messageBody,
           additionalData: additionalData);
       if (result == true) {
         emit(DisplayBookPageState(
             bookData: book.bookData!, pageIndex: currentPageIndex));
+      } else {
+        throw Exception();
       }
     } on Exception catch (e) {
       emit(LoadedState());
@@ -116,18 +117,13 @@ class BookPageBloc extends Bloc<BookPageEvent, BookPageState> {
   Future<void> _onInitBookPage(
       InitBookEvent event, Emitter<BookPageState> emit) async {
     this.book = event.book;
-    this.currentPageIndex = 0;
-    emit(LoadingState());
     try {
       final result =
           await FirebaseDbManager.instance.downloadFromServer(book.docId);
-      emit(LoadedState());
       book.bookData = result;
-
       emit(DisplayBookPageState(
           bookData: book.bookData!, pageIndex: currentPageIndex));
     } on Exception catch (e) {
-      emit(LoadedState());
       emit(ErrorState(
           error: e, bookData: book.bookData!, pageIndex: currentPageIndex));
     }
@@ -163,12 +159,6 @@ class BookPageBloc extends Bloc<BookPageEvent, BookPageState> {
     }
   }
 
-  Future<void> _onBackToPageView(
-      BackToPageViewEvent event, Emitter<BookPageState> emit) async {
-    emit(DisplayBookPageState(
-        bookData: book.bookData!, pageIndex: currentPageIndex));
-  }
-
   Future<void> _onChangeSelectedChapter(
       ChangeSelectedChapterEvent event, Emitter<BookPageState> emit) async {
     emit(ChangeSelectedChapterState(chapter: event.chapter));
@@ -201,6 +191,8 @@ class BookPageBloc extends Bloc<BookPageEvent, BookPageState> {
       if (result == true) {
         emit(DisplayBookPageState(
             bookData: book.bookData!, pageIndex: currentPageIndex));
+      } else {
+        throw Exception();
       }
     } on Exception catch (e) {
       emit(LoadedState());
@@ -239,6 +231,8 @@ class BookPageBloc extends Bloc<BookPageEvent, BookPageState> {
         }
         emit(DisplayBookPageState(
             bookData: book.bookData!, pageIndex: currentPageIndex));
+      } else {
+        throw Exception();
       }
     } on Exception catch (e) {
       emit(LoadedState());

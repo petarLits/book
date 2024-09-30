@@ -46,7 +46,6 @@ class _HomePageSate extends State<HomePage> {
     _controller = PageController(viewportFraction: 0.9);
     user = AppUserSingleton.instance.appUser!;
 
-
     super.initState();
   }
 
@@ -88,15 +87,18 @@ class _HomePageSate extends State<HomePage> {
                   return Scaffold(
                     appBar: AppBar(
                       automaticallyImplyLeading: false,
-                      leading: IconButton(
-                        onPressed: () {
-                          Navigator.maybePop(context);
-                        },
-                        icon: Icon(Icons.exit_to_app),
-                      ),
+                      actions: [
+                        IconButton(
+                          onPressed: () {
+                            Navigator.maybePop(context);
+                          },
+                          icon: Icon(Icons.exit_to_app),
+                        ),
+                      ],
                       title: Text(
                         AppLocalizations.of(context)!.pickBook,
                       ),
+                      centerTitle: true,
                     ),
                     body: _buildBody(context),
                     floatingActionButton: Visibility(
@@ -122,12 +124,6 @@ class _HomePageSate extends State<HomePage> {
                         },
                         child: Icon(Icons.add),
                       ),
-                    ),
-                  );
-                } else if (snapshot.data == null) {
-                  return Scaffold(
-                    appBar: AppBar(
-
                     ),
                   );
                 } else {
@@ -209,12 +205,16 @@ class _HomePageSate extends State<HomePage> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
-                        Padding(
-                          padding: EdgeInsets.only(right: 24),
-                          child: Text(
-                            AppLocalizations.of(context)!
-                                .authorWithName(book.author),
-                            style: AppTextStyles.text1(),
+                        Flexible(
+                          child: Padding(
+                            padding: EdgeInsets.only(right: pageMargin, left: pageMargin),
+                            child: Text(
+                              AppLocalizations.of(context)!
+                                  .authorWithName(book.author),
+                              overflow: TextOverflow.ellipsis,
+                              maxLines: authorMaxLines,
+                              style: AppTextStyles.text1(),
+                            ),
                           ),
                         ),
                       ],

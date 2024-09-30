@@ -29,6 +29,13 @@ class _AddNewBookState extends State<AddNewBook> {
   File? image;
 
   @override
+  void initState() {
+
+    titleValue = widget.newBook.title;
+    authorValue = widget.newBook.author;
+    super.initState();
+  }
+  @override
   Widget build(BuildContext context) {
     return BlocConsumer<HomeBloc, HomeState>(listener: (context, state) {
       if (state is SavedBookState) {
@@ -184,31 +191,36 @@ class _AddNewBookState extends State<AddNewBook> {
   }
 
   Future<bool> _onBackPressed() async {
-    final result = await showDialog(
-      barrierDismissible: false,
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text(AppLocalizations.of(context)!.leaveDialog),
-        content: Text(AppLocalizations.of(context)!.changesWillBeDiscarded),
-        actions: [
-          TextButton(
-            onPressed: () {
-              Navigator.pop(context, true);
-            },
-            child: Text(AppLocalizations.of(context)!.yes),
-          ),
-          TextButton(
-            onPressed: () {
-              Navigator.pop(context, false);
-            },
-            child: Text(AppLocalizations.of(context)!.no),
-          ),
-        ],
-      ),
-    );
-    if (result == true) {
-      Navigator.pop(context);
+    if (titleValue != '' || authorValue != '' || image != null) {
+      final result = await showDialog(
+        barrierDismissible: false,
+        context: context,
+        builder: (context) =>
+            AlertDialog(
+              title: Text(AppLocalizations.of(context)!.leaveDialog),
+              content: Text(
+                  AppLocalizations.of(context)!.changesWillBeDiscarded),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.pop(context, true);
+                  },
+                  child: Text(AppLocalizations.of(context)!.yes),
+                ),
+                TextButton(
+                  onPressed: () {
+                    Navigator.pop(context, false);
+                  },
+                  child: Text(AppLocalizations.of(context)!.no),
+                ),
+              ],
+            ),
+      );
+      if (result == true) {
+        Navigator.pop(context);
+      }
+      return result;
     }
-    return result;
+    return true;
   }
 }

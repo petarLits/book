@@ -6,6 +6,7 @@ import 'package:book/login/bloc/login_bloc.dart';
 import 'package:book/login/bloc/login_state.dart';
 import 'package:book/login/widgets/custom_text_form_field.dart';
 import 'package:book/utils/dialog_utils.dart';
+import 'package:book/utils/snackbar_utils.dart';
 import 'package:book/utils/validation_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -50,17 +51,15 @@ class _LoginPageState extends State<LoginPage> {
       if (state is SuccessfulLogin) {
         Navigator.pushReplacementNamed(context, homeRoute);
       } else if (state is ErrorAuthState) {
-        final snackBar = SnackBar(
-          backgroundColor: AppColors.errorSnackBar,
-          content: Text(AppLocalizations.of(context)!.invalidCredentials),
-        );
-        ScaffoldMessenger.of(context).showSnackBar(snackBar);
+        SnackBarUtils.showSnackBar(
+            color: AppColors.errorSnackBar,
+            content: AppLocalizations.of(context)!.invalidCredentials,
+            context: context);
       } else if (state is ErrorState) {
-        final snackBar = SnackBar(
-          backgroundColor: AppColors.errorSnackBar,
-          content: Text(AppLocalizations.of(context)!.serverError),
-        );
-        ScaffoldMessenger.of(context).showSnackBar(snackBar);
+        SnackBarUtils.showSnackBar(
+            color: AppColors.errorSnackBar,
+            content: AppLocalizations.of(context)!.serverError,
+            context: context);
       } else if (state is LoadingState) {
         DialogUtils.showLoadingScreen(context);
       } else if (state is LoadedState) {

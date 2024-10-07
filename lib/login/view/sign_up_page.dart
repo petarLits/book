@@ -5,6 +5,7 @@ import 'package:book/login/bloc/login_bloc.dart';
 import 'package:book/login/bloc/login_event.dart';
 import 'package:book/login/bloc/login_state.dart';
 import 'package:book/login/widgets/custom_text_form_field.dart';
+import 'package:book/utils/snackbar_utils.dart';
 import 'package:book/utils/validation_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -43,23 +44,20 @@ class _SignUpState extends State<SignUp> {
     }, listener: (context, state) {
       if (state is SuccessfulSignUp) {
         Navigator.pop(context);
-        final snackBar = SnackBar(
-          backgroundColor: AppColors.successfulSnackBar,
-          content: Text(AppLocalizations.of(context)!.successfullyRegistered),
-        );
-        ScaffoldMessenger.of(context).showSnackBar(snackBar);
+        SnackBarUtils.showSnackBar(
+            color: AppColors.successfulSnackBar,
+            content: AppLocalizations.of(context)!.successfullyRegistered,
+            context: context);
       } else if (state is SignUpErrorAuth) {
-        final snackBarErrorAuth = SnackBar(
-          backgroundColor: AppColors.errorSnackBar,
-          content: Text(AppLocalizations.of(context)!.invalidEmail),
-        );
-        ScaffoldMessenger.of(context).showSnackBar(snackBarErrorAuth);
+        SnackBarUtils.showSnackBar(
+            color: AppColors.errorSnackBar,
+            content: AppLocalizations.of(context)!.invalidEmail,
+            context: context);
       } else if (state is ErrorState) {
-        final snackBarError = SnackBar(
-          backgroundColor: AppColors.errorSnackBar,
-          content: Text(AppLocalizations.of(context)!.serverError),
-        );
-        ScaffoldMessenger.of(context).showSnackBar(snackBarError);
+        SnackBarUtils.showSnackBar(
+            color: AppColors.errorSnackBar,
+            content: AppLocalizations.of(context)!.serverError,
+            context: context);
       }
     });
   }

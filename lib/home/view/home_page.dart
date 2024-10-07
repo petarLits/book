@@ -13,6 +13,7 @@ import 'package:book/home/bloc/home_bloc.dart';
 import 'package:book/home/bloc/home_event.dart';
 import 'package:book/home/bloc/home_state.dart';
 import 'package:book/utils/dialog_utils.dart';
+import 'package:book/utils/snackbar_utils.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
@@ -56,13 +57,10 @@ class _HomePageSate extends State<HomePage> {
         if (state is SuccessfulSignOut) {
           Navigator.pushReplacementNamed(context, loginRoute);
         } else if (state is ErrorState) {
-          final snackBar = SnackBar(
-            backgroundColor: AppColors.errorSnackBar,
-            content: Text(
-              AppLocalizations.of(context)!.serverError,
-            ),
-          );
-          ScaffoldMessenger.of(context).showSnackBar(snackBar);
+          SnackBarUtils.showSnackBar(
+              color: AppColors.errorSnackBar,
+              content: AppLocalizations.of(context)!.serverError,
+              context: context);
         } else if (state is UploadedBookState) {
           books.add(state.book);
         } else if (state is LoadingState) {
@@ -106,12 +104,11 @@ class _HomePageSate extends State<HomePage> {
                       child: FloatingActionButton(
                         backgroundColor: AppColors.primaryColor,
                         onPressed: () async {
-                          Book newBook = Book(
-                              title: '', author: '', imageUrl: '', docId: '');
                           final Book? result =
                               await Navigator.pushNamed<dynamic>(
-                                  context, addNewBookRoute,
-                                  arguments: newBook);
+                            context,
+                            addNewBookRoute,
+                          );
                           if (result != null) {
                             context.read<HomeBloc>().add(UploadBook(
                                   book: result,
@@ -207,7 +204,8 @@ class _HomePageSate extends State<HomePage> {
                       children: [
                         Flexible(
                           child: Padding(
-                            padding: EdgeInsets.only(right: pageMargin, left: pageMargin),
+                            padding: EdgeInsets.only(
+                                right: pageMargin, left: pageMargin),
                             child: Text(
                               AppLocalizations.of(context)!
                                   .authorWithName(book.author),
@@ -284,8 +282,7 @@ class _HomePageSate extends State<HomePage> {
               },
               (route) => route.isFirst);
         }
-      }
-      if (data['action'] == messageBookAction) {
+      } else if (data['action'] == messageBookAction) {
         Navigator.popUntil(context, (route) => route.isFirst);
       }
     }

@@ -13,20 +13,19 @@ sealed class BookPageEvent extends Equatable {
 class AddBookPageImageEvent extends BookPageEvent {
   AddBookPageImageEvent({required this.image});
 
-  final File? image;
+  final File image;
 
   @override
   List<Object?> get props => [image];
 }
 
-class DeleteBookPageImageEvent extends BookPageEvent {
-  DeleteBookPageImageEvent();
-}
+class DeleteBookPageImageEvent extends BookPageEvent {}
 
 class SaveNewBookPageEvent extends BookPageEvent {
-  SaveNewBookPageEvent({required this.page});
+  SaveNewBookPageEvent({required this.page, this.image});
 
   final BookPage page;
+  final File? image;
 
   @override
   List<Object?> get props => [page];
@@ -75,9 +74,7 @@ class AddNewBookChapterEvent extends BookPageEvent {
   final BookChapter chapter;
 }
 
-class BackToPageViewEvent extends BookPageEvent {
-  BackToPageViewEvent();
-}
+class BackToPageViewEvent extends BookPageEvent {}
 
 class ChangeSelectedChapterEvent extends BookPageEvent {
   ChangeSelectedChapterEvent({required this.chapter});
@@ -119,10 +116,6 @@ class NavigateToPageEvent extends BookPageEvent {
   final int pageNumber;
 }
 
-class SwipeLeftEvent extends BookPageEvent {
-  SwipeLeftEvent();
-}
+class SwipeLeftEvent extends BookPageEvent {}
 
-class SwipeRightEvent extends BookPageEvent {
-  SwipeRightEvent();
-}
+class SwipeRightEvent extends BookPageEvent {}

@@ -10,11 +10,9 @@ sealed class HomeState extends Equatable {
 }
 
 class InitialState extends HomeState {
-  InitialState();
 }
 
 class SuccessfulSignOut extends HomeState {
-  SuccessfulSignOut();
 }
 
 class ErrorState extends HomeState {
@@ -78,15 +76,11 @@ class UploadedBookImageAndUrlGotState extends HomeState {
 }
 
 class DeletedBookImage extends HomeState {
-  DeletedBookImage();
-
   @override
   List<Object?> get props => [Random().nextInt(10000)];
 }
 
 class LoadingState extends HomeState {
-  LoadingState();
-
   @override
   List<Object?> get props => [Random().nextInt(10000)];
 }

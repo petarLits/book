@@ -1,5 +1,6 @@
 import 'package:book/app_routes.dart';
 import 'package:book/app_user_singleton.dart';
+import 'package:book/core/constants.dart';
 import 'package:book/home/bloc/home_bloc.dart';
 import 'package:book/login/bloc/login_bloc.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -31,55 +32,63 @@ void main() async {
   await Permission.notification.request();
   await AppUserSingleton.instance.fetchCurrentUser();
   FirebaseMessaging.instance.getInitialMessage().then((message) async {
-    if (message != null) {
-      Map<String, dynamic> data = message.data;
-
-      int index = 0;
-      if (data['action'] == 'bookChanged') {
-        if (data['index'] != null) {
-          index = int.parse(data['index']);
-        }
-
-        final iD = data['bookId'];
-
-        Book book = await FirebaseDbManager.instance.downloadBook(iD);
-        Navigator.pushNamed<dynamic>(
-          navigatorKey.currentState!.context,
-          bookPageRoute,
-          arguments: <String, dynamic>{
-            "book": book,
-            "pageIndex": index,
-          },
-        );
-      }
-    }
+    await _onInitialMessage(message);
   });
   FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) async {
-    if (message.notification != null) {
-      Map<String, dynamic> data = message.data;
-
-      int index = 0;
-      if (data['action'] == 'bookChanged') {
-        if (data['index'] != null) {
-          index = int.parse(data['index']);
-        }
-
-        final iD = data['bookId'];
-
-        Book book = await FirebaseDbManager.instance.downloadBook(iD);
-        Navigator.pushNamedAndRemoveUntil<dynamic>(
-          navigatorKey.currentState!.context,
-          bookPageRoute,
-          arguments: <String, dynamic>{
-            "book": book,
-            "pageIndex": index,
-          },
-          (route) => route.isFirst,
-        );
-      }
-    }
+    await _onMessageOpenedApp(message);
   });
   runApp(const MyApp());
+}
+
+Future<void> _onMessageOpenedApp(RemoteMessage message) async {
+  if (message.notification != null) {
+    Map<String, dynamic> data = message.data;
+
+    int index = 0;
+    if (data['action'] == messagePageAction) {
+      if (data['index'] != null) {
+        index = int.parse(data['index']);
+      }
+
+      final iD = data['bookId'];
+
+      Book book = await FirebaseDbManager.instance.downloadBook(iD);
+      Navigator.pushNamedAndRemoveUntil<dynamic>(
+        navigatorKey.currentState!.context,
+        bookPageRoute,
+        arguments: <String, dynamic>{
+          "book": book,
+          "pageIndex": index,
+        },
+        (route) => route.isFirst,
+      );
+    }
+  }
+}
+
+Future<void> _onInitialMessage(RemoteMessage? message) async {
+  if (message != null) {
+    Map<String, dynamic> data = message.data;
+
+    int index = 0;
+    if (data['action'] == messagePageAction) {
+      if (data['index'] != null) {
+        index = int.parse(data['index']);
+      }
+
+      final iD = data['bookId'];
+
+      Book book = await FirebaseDbManager.instance.downloadBook(iD);
+      Navigator.pushNamed<dynamic>(
+        navigatorKey.currentState!.context,
+        bookPageRoute,
+        arguments: <String, dynamic>{
+          "book": book,
+          "pageIndex": index,
+        },
+      );
+    }
+  }
 }
 
 class MyApp extends StatelessWidget {

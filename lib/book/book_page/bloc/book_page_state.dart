@@ -1,6 +1,5 @@
 import 'dart:io';
 import 'dart:math';
-import 'dart:ui' as ui;
 
 import 'package:book/book/book_chapter/book_chapter.dart';
 import 'package:book/book/book_data.dart';
@@ -10,20 +9,16 @@ import 'package:equatable/equatable.dart';
 sealed class BookPageState extends Equatable {
   @override
   List<Object?> get props => [];
+
+  const BookPageState();
 }
 
-class InitialState extends BookPageState {
-  InitialState();
-}
+class InitialState extends BookPageState {}
 
 class AddBookPageImageState extends BookPageState {
-  AddBookPageImageState({
-    required this.image,
-    required this.decodedImage,
-  });
+  AddBookPageImageState({required this.image});
 
-  final File? image;
-  final ui.Image decodedImage;
+  final File image;
 
   @override
   List<Object?> get props => [
@@ -33,22 +28,13 @@ class AddBookPageImageState extends BookPageState {
 }
 
 class DeleteBookPageImageState extends BookPageState {
-  DeleteBookPageImageState();
   @override
   List<Object?> get props => [Random().nextInt(10000)];
 }
 
 class LoadingState extends BookPageState {
-  LoadingState();
   @override
-  List<Object?> get props => [Random().nextInt(10000)];
-}
-
-class LoadedState extends BookPageState {
-  LoadedState();
-
-  @override
-  List<Object?> get props => [Random().nextInt(10000)];
+  List<Object?> get props => [100];
 }
 
 class ErrorState extends DisplayBookPageState {
@@ -68,7 +54,9 @@ class ErrorState extends DisplayBookPageState {
 }
 
 class SaveNewBookPageState extends BookPageState {
-  SaveNewBookPageState({required this.page});
+  SaveNewBookPageState({
+    required this.page,
+  });
 
   final BookPage page;
 
@@ -97,7 +85,9 @@ class DisplayBookPageState extends BookPageState {
 }
 
 class AddNewBookChapterState extends BookPageState {
-  AddNewBookChapterState({required this.chapters});
+  AddNewBookChapterState({
+    required this.chapters,
+  });
 
   final List<BookChapter> chapters;
 
@@ -131,5 +121,3 @@ class SaveBookChapterState extends BookPageState {
         Random().nextInt(10000),
       ];
 }
-
-

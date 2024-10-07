@@ -57,13 +57,9 @@ class UploadBookImageAndGetUrl extends HomeEvent {
   List<Object?> get props => [book];
 }
 
-class DeleteBookImage extends HomeEvent {
-  DeleteBookImage();
-}
+class DeleteBookImage extends HomeEvent {}
 
-class DownloadBooksEvent extends HomeEvent {
-  DownloadBooksEvent();
-}
+class DownloadBooksEvent extends HomeEvent {}
 
 class GetBooksEvent extends HomeEvent {
   GetBooksEvent({required this.querySnapshot});

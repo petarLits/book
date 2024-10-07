@@ -10,9 +10,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class NewBookChapter extends StatefulWidget {
-  NewBookChapter({required this.chapter});
+  const NewBookChapter({required this.chapterNumber});
 
-  BookChapter chapter;
+  final int chapterNumber;
 
   @override
   State<NewBookChapter> createState() => _NewBookChapterState();
@@ -24,7 +24,7 @@ class _NewBookChapterState extends State<NewBookChapter> {
 
   @override
   void initState() {
-    titleValue = widget.chapter.title;
+    titleValue = '';
     super.initState();
   }
 
@@ -79,9 +79,11 @@ class _NewBookChapterState extends State<NewBookChapter> {
                     ElevatedButton(
                       onPressed: () {
                         if (_formKey.currentState!.validate()) {
-                          widget.chapter.title = titleValue;
-                          context.read<BookPageBloc>().add(
-                              SaveBookChapterEvent(chapter: widget.chapter));
+                          BookChapter chapter = BookChapter(
+                              number: widget.chapterNumber, title: titleValue);
+                          context
+                              .read<BookPageBloc>()
+                              .add(SaveBookChapterEvent(chapter: chapter));
                         }
                       },
                       child: Text(AppLocalizations.of(context)!.saveButton),
@@ -97,34 +99,29 @@ class _NewBookChapterState extends State<NewBookChapter> {
   }
 
   Future<bool> _onBackPressed() async {
-    if (titleValue != '') {
+    if (titleValue.isNotEmpty) {
       final result = await showDialog(
         barrierDismissible: false,
         context: context,
-        builder: (context) =>
-            AlertDialog(
-              title: Text(AppLocalizations.of(context)!.leaveDialog),
-              content: Text(
-                  AppLocalizations.of(context)!.changesWillBeDiscarded),
-              actions: [
-                TextButton(
-                  onPressed: () {
-                    Navigator.pop(context, true);
-                  },
-                  child: Text(AppLocalizations.of(context)!.yes),
-                ),
-                TextButton(
-                  onPressed: () {
-                    Navigator.pop(context, false);
-                  },
-                  child: Text(AppLocalizations.of(context)!.no),
-                )
-              ],
+        builder: (context) => AlertDialog(
+          title: Text(AppLocalizations.of(context)!.leaveDialog),
+          content: Text(AppLocalizations.of(context)!.changesWillBeDiscarded),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context, true);
+              },
+              child: Text(AppLocalizations.of(context)!.yes),
             ),
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context, false);
+              },
+              child: Text(AppLocalizations.of(context)!.no),
+            )
+          ],
+        ),
       );
-      if (result == true) {
-        Navigator.pop(context);
-      }
       return result;
     }
     return true;

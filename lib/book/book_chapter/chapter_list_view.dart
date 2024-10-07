@@ -36,18 +36,18 @@ class ChaptersListViewState extends State<ChaptersListView> {
 
   List<BookPage> extractPagesForChapter(BookChapter chapter) {
     return widget.pages
-        .where((page) => page.chapter!.number == chapter.number)
+        .where((page) => page.chapter?.number == chapter.number)
         .toList();
   }
 
   ExpansionTile buildChapter(BuildContext context,
       {required BookChapter chapter, required List<BookPage> chapterPages}) {
     return ExpansionTile(
+      key: ValueKey(chapter),
       shape: Border(
         top: BorderSide(color: Colors.transparent),
         bottom: BorderSide(color: Colors.black),
       ),
-      key: UniqueKey(),
       initiallyExpanded: expandedChapterNumber == chapter.number,
       onExpansionChanged: (isExpanded) {
         if (isExpanded) {

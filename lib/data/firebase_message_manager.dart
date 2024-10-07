@@ -14,17 +14,22 @@ class FirebaseMessageManager {
   late FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
   late bool isFlutterLocalNotificationsInitialized;
   late BehaviorSubject<String?> onNotificationClick;
+  late String senderId;
+  late ServiceAccountCredentials serviceAccountCredentials;
 
   FirebaseMessageManager._internal() {
     firebaseMessaging = FirebaseMessaging.instance;
     channel = AndroidNotificationChannel(
-      'channelId',
-      'channelName',
+      channelId,
+      channelName,
       importance: Importance.max,
     );
     flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
     isFlutterLocalNotificationsInitialized = false;
     onNotificationClick = BehaviorSubject();
+    senderId = messageSenderId;
+
+    _initServiceAccountCredentials();
   }
 
   factory FirebaseMessageManager() {
@@ -44,20 +49,6 @@ class FirebaseMessageManager {
     required String body,
     Map<String, dynamic>? additionalData,
   }) async {
-    final jsonCredentials = await rootBundle
-        .loadString('assets/book-bloc-c83676f5d8dd.json')
-        .timeout(Duration(seconds: 3), onTimeout: () {
-      throw Exception(serverError);
-    });
-    final creds = ServiceAccountCredentials.fromJson(jsonCredentials);
-
-    final client = await clientViaServiceAccount(
-      creds,
-      ['https://www.googleapis.com/auth/cloud-platform'],
-    ).timeout(Duration(seconds: 3), onTimeout: () {
-      throw Exception(serverError);
-    });
-
     final notificationData = {
       'message': {
         'token': recipientToken,
@@ -67,7 +58,13 @@ class FirebaseMessageManager {
       },
     };
 
-    const String senderId = '592607300007';
+     final client = await clientViaServiceAccount(
+        serviceAccountCredentials,
+        ['https://www.googleapis.com/auth/cloud-platform'],
+      ).timeout(Duration(seconds: kTimeoutInSeconds), onTimeout: () {
+        throw Exception(serverError);
+      });
+
     final response = await client
         .post(
       Uri.parse(
@@ -77,11 +74,11 @@ class FirebaseMessageManager {
       },
       body: jsonEncode(notificationData),
     )
-        .timeout(Duration(seconds: 3), onTimeout: () {
+        .timeout(Duration(seconds: kTimeoutInSeconds), onTimeout: () {
       throw Exception(serverError);
     });
 
-    client.close();
+    client!.close();
     if (response.statusCode == 200) {
       return true;
     }
@@ -100,6 +97,7 @@ class FirebaseMessageManager {
       onNotificationClick.add(details.payload);
     }
   }
+
   Future<void> showLocalNotification(RemoteMessage message) async {
     final notificationDetails = await _notificationDetails();
     flutterLocalNotificationsPlugin.show(
@@ -109,18 +107,26 @@ class FirebaseMessageManager {
         notificationDetails,
         payload: jsonEncode(message.data));
   }
+
   Future<NotificationDetails> _notificationDetails() async {
     final AndroidNotificationDetails androidNotificationDetails =
-    AndroidNotificationDetails('channelID', 'channelName',
-        channelDescription: 'description',
-        importance: Importance.max,
-        priority: Priority.max,
-        playSound: true);
+        AndroidNotificationDetails(channelId, channelName,
+            channelDescription: channelDescription,
+            importance: Importance.max,
+            priority: Priority.max,
+            playSound: true);
 
     final DarwinNotificationDetails iosNotificationDetails =
-    DarwinNotificationDetails();
+        DarwinNotificationDetails();
 
     return NotificationDetails(
         android: androidNotificationDetails, iOS: iosNotificationDetails);
+  }
+
+  Future<void> _initServiceAccountCredentials() async {
+    final jsonCredentials = await rootBundle
+        .loadString(jsonMessagingKey);
+
+    serviceAccountCredentials = ServiceAccountCredentials.fromJson(jsonCredentials);
   }
 }

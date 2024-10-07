@@ -12,6 +12,13 @@ class Book extends Equatable {
     this.bookData,
   });
 
+  Book.emptyBook({
+    this.title = '',
+    this.author = '',
+    this.imageUrl = '',
+    this.docId = '',
+  });
+
   String title;
   String author;
   File? image;

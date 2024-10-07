@@ -13,15 +13,13 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:image_picker/image_picker.dart';
 
 class AddNewBook extends StatefulWidget {
-  AddNewBook({required this.newBook});
-
-  final Book newBook;
 
   @override
   State<AddNewBook> createState() => _AddNewBookState();
 }
 
 class _AddNewBookState extends State<AddNewBook> {
+  late Book newBook;
   final _formKey = GlobalKey<FormState>();
   late String titleValue;
   late String authorValue;
@@ -30,9 +28,9 @@ class _AddNewBookState extends State<AddNewBook> {
 
   @override
   void initState() {
-
-    titleValue = widget.newBook.title;
-    authorValue = widget.newBook.author;
+    newBook = Book.emptyBook();
+    titleValue = newBook.title;
+    authorValue = newBook.author;
     super.initState();
   }
   @override
@@ -165,12 +163,12 @@ class _AddNewBookState extends State<AddNewBook> {
                           onPressed: image != null
                               ? () async {
                                   if (_formKey.currentState!.validate()) {
-                                    widget.newBook.title = titleValue;
-                                    widget.newBook.author = authorValue;
-                                    widget.newBook.image = image;
+                                    newBook.title = titleValue;
+                                    newBook.author = authorValue;
+                                    newBook.image = image;
                                     context.read<HomeBloc>().add(
                                         UploadBookImageAndGetUrl(
-                                            book: widget.newBook));
+                                            book: newBook));
                                   }
                                 }
                               : null,
@@ -191,7 +189,7 @@ class _AddNewBookState extends State<AddNewBook> {
   }
 
   Future<bool> _onBackPressed() async {
-    if (titleValue != '' || authorValue != '' || image != null) {
+    if (titleValue.isNotEmpty || authorValue.isNotEmpty || image != null) {
       final result = await showDialog(
         barrierDismissible: false,
         context: context,
@@ -216,9 +214,6 @@ class _AddNewBookState extends State<AddNewBook> {
               ],
             ),
       );
-      if (result == true) {
-        Navigator.pop(context);
-      }
       return result;
     }
     return true;

@@ -1,5 +1,6 @@
 import 'package:book/app_user.dart';
 import 'package:book/core/constants.dart';
+import 'package:book/core/server_error_exception.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
@@ -27,27 +28,28 @@ class FirebaseAuthManager {
     await auth
         .createUserWithEmailAndPassword(
             email: user.email, password: user.password)
-        .timeout(Duration(seconds: 3), onTimeout: () {
-      throw Exception(serverError);
+        .timeout(Duration(seconds: kTimeoutInSeconds), onTimeout: () {
+      throw ServerErrorException();
     });
     ;
 
     final currentUser = auth.currentUser;
     if (currentUser != null) {
       uId = currentUser.uid;
+      await FirebaseAuthManager.instance.signOut();
     }
     final userRef = db.collection('users').doc(uId);
 
-    userRef.set(user.toJson()).timeout(Duration(seconds: 3), onTimeout: () {
-      throw Exception(serverError);
+    userRef.set(user.toJson()).timeout(Duration(seconds: kTimeoutInSeconds), onTimeout: () {
+      throw ServerErrorException();
     });
   }
 
   Future<void> loginUser(String email, String password) async {
     await auth
         .signInWithEmailAndPassword(email: email, password: password)
-        .timeout(Duration(seconds: 3), onTimeout: () {
-      throw Exception(serverError);
+        .timeout(Duration(seconds: kTimeoutInSeconds), onTimeout: () {
+      throw ServerErrorException();
     });
   }
 
@@ -57,8 +59,8 @@ class FirebaseAuthManager {
     if (currentUserId != null) {
       final userRef = db.collection('users').doc(currentUserId);
       final snapShot =
-          await userRef.get().timeout(Duration(seconds: 3), onTimeout: () {
-        throw Exception(serverError);
+          await userRef.get().timeout(Duration(seconds: kTimeoutInSeconds), onTimeout: () {
+        throw ServerErrorException();
       });
       if (snapShot.data() != null) {
         AppUser appUser = AppUser.fromJson(snapShot.data()!);
@@ -72,8 +74,8 @@ class FirebaseAuthManager {
   }
 
   Future<void> signOut() async {
-    await auth.signOut().timeout(Duration(seconds: 3), onTimeout: () {
-      throw Exception(serverError);
+    await auth.signOut().timeout(Duration(seconds: kTimeoutInSeconds), onTimeout: () {
+      throw ServerErrorException();
     });
   }
 }

@@ -1,0 +1,4 @@
+enum BookPageMode {
+  create,
+  edit,
+}

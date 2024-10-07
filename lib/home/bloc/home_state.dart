@@ -5,17 +5,14 @@ import 'package:book/book/book.dart';
 import 'package:equatable/equatable.dart';
 
 sealed class HomeState extends Equatable {
-
   @override
   List<Object?> get props => [];
 }
 
 class InitialState extends HomeState {
-  InitialState();
 }
 
 class SuccessfulSignOut extends HomeState {
-  SuccessfulSignOut();
 }
 
 class ErrorState extends HomeState {
@@ -36,7 +33,10 @@ class UploadedBookState extends HomeState {
   final Book book;
 
   @override
-  List<Object?> get props => [book];
+  List<Object?> get props => [
+        book,
+        Random().nextInt(10000),
+      ];
 }
 
 class SavedBookState extends HomeState {
@@ -55,6 +55,12 @@ class AddBookImageState extends HomeState {
   AddBookImageState({required this.image});
 
   final File image;
+
+  @override
+  List<Object?> get props => [
+        image,
+        Random().nextInt(10000),
+      ];
 }
 
 class UploadedBookImageAndUrlGotState extends HomeState {
@@ -63,19 +69,18 @@ class UploadedBookImageAndUrlGotState extends HomeState {
   final Book book;
 
   @override
-  List<Object?> get props => [book];
+  List<Object?> get props => [
+        book,
+        Random().nextInt(10000),
+      ];
 }
 
 class DeletedBookImage extends HomeState {
-  DeletedBookImage();
-
   @override
   List<Object?> get props => [Random().nextInt(10000)];
 }
 
 class LoadingState extends HomeState {
-  LoadingState();
-
   @override
   List<Object?> get props => [Random().nextInt(10000)];
 }
@@ -85,4 +90,28 @@ class LoadedState extends HomeState {
 
   @override
   List<Object?> get props => [Random().nextInt(10000)];
+}
+
+class DownloadBooksState extends HomeState {
+  DownloadBooksState({required this.books});
+
+  final List<Book> books;
+
+  @override
+  List<Object?> get props => [
+        books,
+        Random().nextInt(10000),
+      ];
+}
+
+class GetBooksState extends HomeState {
+  GetBooksState({required this.books});
+
+  final List<Book> books;
+
+  @override
+  List<Object?> get props => [
+        books,
+        Random().nextInt(10000),
+      ];
 }

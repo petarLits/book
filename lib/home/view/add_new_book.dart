@@ -7,26 +7,32 @@ import 'package:book/home/bloc/home_bloc.dart';
 import 'package:book/home/bloc/home_event.dart';
 import 'package:book/home/bloc/home_state.dart';
 import 'package:book/login/widgets/custom_text_form_field.dart';
+import 'package:book/utils/snackbar_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:image_picker/image_picker.dart';
 
 class AddNewBook extends StatefulWidget {
-  AddNewBook({required this.newBook});
-
-  final Book newBook;
-
   @override
   State<AddNewBook> createState() => _AddNewBookState();
 }
 
 class _AddNewBookState extends State<AddNewBook> {
+  late Book newBook;
   final _formKey = GlobalKey<FormState>();
   late String titleValue;
   late String authorValue;
   ImagePicker picker = ImagePicker();
   File? image;
+
+  @override
+  void initState() {
+    newBook = Book.emptyBook();
+    titleValue = newBook.title;
+    authorValue = newBook.author;
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -38,11 +44,11 @@ class _AddNewBookState extends State<AddNewBook> {
       } else if (state is UploadedBookImageAndUrlGotState) {
         context.read<HomeBloc>().add(SaveNewBook(book: state.book));
       } else if (state is ErrorState) {
-        final snackBar = SnackBar(
-          content: Text(AppLocalizations.of(context)!.serverError),
-          backgroundColor: AppColors.errorSnackBar,
+        SnackBarUtils.showSnackBar(
+          color: AppColors.errorSnackBar,
+          content: AppLocalizations.of(context)!.serverError,
+          context: context,
         );
-        ScaffoldMessenger.of(context).showSnackBar(snackBar);
       } else if (state is DeletedBookImage) {
         image = null;
       }
@@ -158,12 +164,12 @@ class _AddNewBookState extends State<AddNewBook> {
                           onPressed: image != null
                               ? () async {
                                   if (_formKey.currentState!.validate()) {
-                                    widget.newBook.title = titleValue;
-                                    widget.newBook.author = authorValue;
-                                    widget.newBook.image = image;
+                                    newBook.title = titleValue;
+                                    newBook.author = authorValue;
+                                    newBook.image = image;
                                     context.read<HomeBloc>().add(
                                         UploadBookImageAndGetUrl(
-                                            book: widget.newBook));
+                                            book: newBook));
                                   }
                                 }
                               : null,
@@ -184,30 +190,31 @@ class _AddNewBookState extends State<AddNewBook> {
   }
 
   Future<bool> _onBackPressed() async {
-    final result = await showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text(AppLocalizations.of(context)!.leaveDialog),
-        content: Text(AppLocalizations.of(context)!.changesWillBeDiscarded),
-        actions: [
-          TextButton(
-            onPressed: () {
-              Navigator.pop(context, true);
-            },
-            child: Text(AppLocalizations.of(context)!.yes),
-          ),
-          TextButton(
-            onPressed: () {
-              Navigator.pop(context, false);
-            },
-            child: Text(AppLocalizations.of(context)!.no),
-          ),
-        ],
-      ),
-    );
-    if (result == true) {
-      Navigator.pop(context);
+    if (titleValue.isNotEmpty || authorValue.isNotEmpty || image != null) {
+      final result = await showDialog(
+        barrierDismissible: false,
+        context: context,
+        builder: (context) => AlertDialog(
+          title: Text(AppLocalizations.of(context)!.leaveDialog),
+          content: Text(AppLocalizations.of(context)!.changesWillBeDiscarded),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context, true);
+              },
+              child: Text(AppLocalizations.of(context)!.yes),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context, false);
+              },
+              child: Text(AppLocalizations.of(context)!.no),
+            ),
+          ],
+        ),
+      );
+      return result;
     }
-    return result;
+    return true;
   }
 }

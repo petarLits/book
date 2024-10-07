@@ -1,5 +1,9 @@
 import 'package:book/book/book.dart';
+import 'package:book/book/book_chapter/book_chapter.dart';
+import 'package:book/book/book_data.dart';
+import 'package:book/book/book_page/book_page.dart';
 import 'package:book/core/constants.dart';
+import 'package:book/core/server_error_exception.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 
@@ -29,22 +33,162 @@ class FirebaseDbManager {
 
     final fileRef = folderRef.child(DateTime.now().toString());
 
-    await fileRef.putFile(book.image!).timeout(Duration(seconds: 3),
+    await fileRef.putFile(book.image!).timeout(Duration(seconds: kTimeoutInSeconds),
         onTimeout: () {
-      throw Exception(serverError);
+      throw ServerErrorException();
     });
-    final url = await fileRef.getDownloadURL().timeout(Duration(seconds: 3),
+    final url = await fileRef.getDownloadURL().timeout(Duration(seconds: kTimeoutInSeconds),
         onTimeout: () {
-      throw Exception(serverError);
+      throw ServerErrorException();
     });
     book.imageUrl = url;
   }
 
   Future<void> uploadBook(Book book) async {
-    final bookRef = db.collection('books').doc();
-    await bookRef.set(book.toJson()).timeout(Duration(seconds: 3),
+    final bookRef = db.collection(booksCollection).doc();
+    await bookRef.set(book.toJson()).timeout(Duration(seconds: kTimeoutInSeconds),
         onTimeout: () {
-      throw Exception(serverError);
+      throw ServerErrorException();
     });
+  }
+
+  Future<void> uploadPageImageGetUrl(BookPage page) async {
+    final folderRef = storageRef.child('book');
+
+    final fileRef = folderRef.child('${page.pageNumber}/' +
+            DateTime.now().toString() +
+            page.pageImage!.getFileName() ??
+        '');
+
+    await fileRef.putFile(page.pageImage!.image!).timeout(Duration(seconds: kTimeoutInSeconds),
+        onTimeout: () {
+      throw ServerErrorException();
+    });
+
+    final url = await fileRef.getDownloadURL().timeout(Duration(seconds: kTimeoutInSeconds),
+        onTimeout: () {
+      throw ServerErrorException();
+    });
+    page.pageImage!.imagePath = fileRef.fullPath;
+    page.pageImage!.imageUrl = url;
+  }
+
+  Future<List<Book>> downloadBooks() async {
+    final querySnapshots = await db
+        .collection(booksCollection)
+        .get()
+        .timeout(Duration(seconds: kTimeoutInSeconds), onTimeout: () {
+      throw ServerErrorException();
+    });
+    ;
+    final List<Book> books = [];
+    for (final item in querySnapshots.docs) {
+      books.add(Book.fromJson(item.data(), item.id));
+    }
+
+    return Future.value(books);
+  }
+
+  Future<void> uploadPages(List<BookPage> pages, String bookId) async {
+    final booksRef = db.collection(pagesCollection).doc(bookId);
+    await booksRef
+        .set({'items': pages.map((page) => page.toJson()).toList()}).timeout(
+            Duration(seconds: kTimeoutInSeconds), onTimeout: () {
+      throw ServerErrorException();
+    });
+  }
+
+  Future<void> uploadChapters(List<BookChapter> chapters, String bookId) async {
+    final chaptersRef = db.collection(chaptersCollection).doc(bookId);
+    await chaptersRef.set({
+      'items': chapters.map((chapter) => chapter.toJson()).toList()
+    }).timeout(Duration(seconds: kTimeoutInSeconds), onTimeout: () {
+      throw ServerErrorException();
+    });
+  }
+
+  Future<BookData> downloadFromServer(String bookId) async {
+    List<BookPage> bookPages = [];
+    List<BookChapter> bookChapters = [];
+
+    final booksRef = db.collection(pagesCollection).doc(bookId);
+
+    final snapShoot =
+        await booksRef.get().timeout(Duration(seconds: kTimeoutInSeconds), onTimeout: () {
+      throw ServerErrorException();
+    });
+    final data = snapShoot.data();
+    final List<dynamic> items = data?['items'] ?? [];
+    for (final item in items) {
+      bookPages.add(BookPage.fromJson(item));
+    }
+
+    final chaptersRef = db.collection(chaptersCollection).doc(bookId);
+    final snapShootChapters =
+        await chaptersRef.get().timeout(Duration(seconds: kTimeoutInSeconds), onTimeout: () {
+      throw ServerErrorException();
+    });
+    final dataChapters = snapShootChapters.data();
+    final List<dynamic> chaptersItems = dataChapters?['items'] ?? [];
+    for (final chapterItem in chaptersItems) {
+      bookChapters.add(BookChapter.fromJson(chapterItem));
+    }
+    BookData bookData =
+        BookData(bookPages: bookPages, bookChapters: bookChapters);
+
+    return Future.value(bookData);
+  }
+
+  Future<void> updateServerPages(List<BookPage> pages, String bookId) async {
+    final pagesRef = db.collection(pagesCollection).doc(bookId);
+
+    await pagesRef
+        .update({'items': pages.map((page) => page.toJson()).toList()}).timeout(
+            Duration(seconds: kTimeoutInSeconds), onTimeout: () {
+      throw ServerErrorException();
+    });
+  }
+
+  Future<void> removePage(BookPage page, String bookId) async {
+    int pageNumberToDelete = page.pageNumber;
+    final docRef = db.collection(pagesCollection).doc(bookId);
+    final snapShoot = await docRef.get();
+
+    final List<dynamic>? items = snapShoot.data()?['items'];
+    items?.removeWhere((item) => item['pageNumber'] == pageNumberToDelete);
+
+    if (items != null) {
+      for (final item in items) {
+        if (item['pageNumber'] > pageNumberToDelete) {
+          item['pageNumber'] = item['pageNumber'] - 1;
+        }
+      }
+    }
+    if (page.pageImage?.imagePath != null) {
+      final deleteRef = storageRef.child(page.pageImage!.imagePath!);
+      await deleteRef.delete().timeout(Duration(seconds: kTimeoutInSeconds), onTimeout: () {
+        throw ServerErrorException();
+      });
+    }
+    await docRef.update({'items': items}).timeout(Duration(seconds: kTimeoutInSeconds),
+        onTimeout: () {
+      throw ServerErrorException();
+    });
+  }
+
+  Future<Book> downloadBook(String bookId) async {
+    final bookRef = db.collection(booksCollection).doc(bookId);
+    final snapshot =
+        await bookRef.get().timeout(Duration(seconds: kTimeoutInSeconds), onTimeout: () {
+      throw ServerErrorException();
+    });
+    final data = snapshot.data();
+
+    Book book = Book.fromJson(data!, bookId);
+    return Future.value(book);
+  }
+
+  Stream<QuerySnapshot<Map<String, dynamic>>> downloadBooksStream() async* {
+    yield* db.collection(booksCollection).snapshots();
   }
 }

@@ -6,6 +6,7 @@ import 'package:book/login/bloc/login_bloc.dart';
 import 'package:book/login/bloc/login_state.dart';
 import 'package:book/login/widgets/custom_text_form_field.dart';
 import 'package:book/utils/dialog_utils.dart';
+import 'package:book/utils/snackbar_utils.dart';
 import 'package:book/utils/validation_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -14,7 +15,6 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../bloc/login_event.dart';
 
 class LoginPage extends StatefulWidget {
-
   @override
   State<LoginPage> createState() => _LoginPageState();
 }
@@ -35,6 +35,7 @@ class _LoginPageState extends State<LoginPage> {
     return BlocConsumer<LoginBloc, LoginState>(
         builder: (context, LoginState state) {
       return Scaffold(
+        resizeToAvoidBottomInset: false,
         appBar: AppBar(
           centerTitle: true,
           automaticallyImplyLeading: false,
@@ -50,17 +51,17 @@ class _LoginPageState extends State<LoginPage> {
       if (state is SuccessfulLogin) {
         Navigator.pushReplacementNamed(context, homeRoute);
       } else if (state is ErrorAuthState) {
-        final snackBar = SnackBar(
-          backgroundColor: AppColors.errorSnackBar,
-          content: Text(AppLocalizations.of(context)!.invalidCredentials),
+        SnackBarUtils.showSnackBar(
+          color: AppColors.errorSnackBar,
+          content: AppLocalizations.of(context)!.invalidCredentials,
+          context: context,
         );
-        ScaffoldMessenger.of(context).showSnackBar(snackBar);
       } else if (state is ErrorState) {
-        final snackBar = SnackBar(
-          backgroundColor: AppColors.errorSnackBar,
-          content: Text(AppLocalizations.of(context)!.serverError),
+        SnackBarUtils.showSnackBar(
+          color: AppColors.errorSnackBar,
+          content: AppLocalizations.of(context)!.serverError,
+          context: context,
         );
-        ScaffoldMessenger.of(context).showSnackBar(snackBar);
       } else if (state is LoadingState) {
         DialogUtils.showLoadingScreen(context);
       } else if (state is LoadedState) {

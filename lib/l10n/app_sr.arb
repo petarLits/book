@@ -46,5 +46,92 @@
   "yes": "Da",
   "no": "Ne",
   "leaveDialog": "Da li ste sigurni da zelite da napustite stranicu?",
-  "changesWillBeDiscarded": "Sve promene ce biti ponistene"
+  "changesWillBeDiscarded": "Sve promene ce biti ponistene",
+  "textLabel": "Tekst",
+  "textError": "Unesite tekst",
+  "firstPage": "Dodajte prvu stranicu",
+  "addNewChapterTitle": "Dodajte novo poglavlje",
+  "titleLabel": "Naslov",
+  "chapterTitleError": "Unesite naslov",
+  "addFirstChapter": "Dodajte prvo poglavlje",
+  "addNewPage": "Dodajte novu stranicu",
+  "deleteDialogTitle": "Da li ste sigurni da zelite da izbrisete ovu stranicu?",
+  "noChapters": "Nema poglavlja",
+  "leavingBook": "Da li ste sigurni da zelite da napustite knjigu?",
+  "leaveBook": "Napustite knjigu",
+  "swipeError": "Nema vise stranica",
+  "newBookMessageBody": "Autor: {bookAuthor} jer upravo dodao novu knjigu",
+  "@newBookMessageBody": {
+    "placeholders": {
+      "bookAuthor": {
+        "type": "String"
+      }
+    }
+  },
+  "newBookMessageTitle": "Nova knjiga: {bookTitle}",
+  "@newBookMessageTitle": {
+    "placeholders": {
+      "bookTitle": {
+        "type": "String"
+      }
+    }
+  },
+  "editPageMessageTitle": "Autor {bookAuthor} je promenio {bookTitle}",
+  "@editPageMessageTitle": {
+    "placeholders": {
+      "bookAuthor": {
+        "type": "String"
+      },
+      "bookTitle": {
+        "type": "String"
+      }
+    }
+  },
+  "editPageMessageBody": "Stranica sa brojem {pageNumber} je promenjena",
+  "@editPageMessageBody": {
+    "placeholders": {
+      "pageNumber": {
+        "type": "int"
+      }
+    }
+  },
+  "deletePageMessageTitle": "{bookTitle}: {bookAuthor} je obrisao stranicu",
+  "@deletePageMessageTitle": {
+    "placeholders": {
+      "bookAuthor": {
+        "type": "String"
+      },
+      "bookTitle": {
+        "type": "String"
+      }
+    }
+  },
+  "deletePageMessageBody": "Stranica sa brojem {pageNumber} je obrisana",
+  "@deletePageMessageBody": {
+    "placeholders": {
+      "pageNumber": {
+        "type": "int"
+      }
+    }
+  },
+  "addNewPageMessageTitle": "{bookTitle}: Nova stranica je dodata",
+  "@addNewPageMessageTitle": {
+    "placeholders": {
+      "bookTitle": {
+        "type": "String"
+      }
+    }
+  },
+  "addNewPageMessageBody": "{bookAuthor} je dodao novu stranicu sa brojem {pageNumber}",
+  "@addNewPageMessageBody": {
+    "placeholders": {
+      "bookAuthor": {
+        "type": "String"
+      },
+      "pageNumber": {
+        "type": "int"
+      }
+    }
+  }
+
 }

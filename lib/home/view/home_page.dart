@@ -58,9 +58,10 @@ class _HomePageSate extends State<HomePage> {
           Navigator.pushReplacementNamed(context, loginRoute);
         } else if (state is ErrorState) {
           SnackBarUtils.showSnackBar(
-              color: AppColors.errorSnackBar,
-              content: AppLocalizations.of(context)!.serverError,
-              context: context);
+            color: AppColors.errorSnackBar,
+            content: AppLocalizations.of(context)!.serverError,
+            context: context,
+          );
         } else if (state is UploadedBookState) {
           books.add(state.book);
         } else if (state is LoadingState) {
@@ -76,8 +77,10 @@ class _HomePageSate extends State<HomePage> {
           onWillPop: _onBackPressed,
           child: StreamBuilder(
               stream: context.read<HomeBloc>().getBooksStream(),
-              builder: (BuildContext context,
-                  AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>> snapshot) {
+              builder: (
+                BuildContext context,
+                AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>> snapshot,
+              ) {
                 if (snapshot.hasData) {
                   context
                       .read<HomeBloc>()

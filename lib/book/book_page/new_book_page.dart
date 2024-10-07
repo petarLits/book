@@ -232,8 +232,12 @@ class _NewBookPageState extends State<NewBookPage> {
                           if (_formKey.currentState!.validate()) {
                             page.text = textValue;
                             page.chapter = selectedChapter;
-                            context.read<BookPageBloc>().add(
-                                SaveNewBookPageEvent(page: page, image: image));
+                            context
+                                .read<BookPageBloc>()
+                                .add(SaveNewBookPageEvent(
+                                  page: page,
+                                  image: image,
+                                ));
                           }
                         }
                       : null,

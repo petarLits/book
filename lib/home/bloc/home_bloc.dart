@@ -44,11 +44,12 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       await FirebaseDbManager.instance.uploadBook(event.book);
       emit(LoadedState());
       final result = await FirebaseMessageManager.instance.sendPushMessage(
-          additionalData: {'action': messageBookAction},
-          topic: topic,
-          title: event.messageTitle,
-          body: event.messageBody,
-          imageUrl: event.book.imageUrl);
+        additionalData: {'action': messageBookAction},
+        topic: topic,
+        title: event.messageTitle,
+        body: event.messageBody,
+        imageUrl: event.book.imageUrl,
+      );
       if (result == true) {
         emit(UploadedBookState(book: event.book));
       }
@@ -58,18 +59,18 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     }
   }
 
-  Future<void> _onSaveNewBook(SaveNewBook event,
-      Emitter<HomeState> emit) async {
+  Future<void> _onSaveNewBook(
+      SaveNewBook event, Emitter<HomeState> emit) async {
     emit(SavedBookState(book: event.book));
   }
 
-  Future<void> _onAddBookImage(AddBookImage event,
-      Emitter<HomeState> emit) async {
+  Future<void> _onAddBookImage(
+      AddBookImage event, Emitter<HomeState> emit) async {
     emit(AddBookImageState(image: event.image));
   }
 
-  Future<void> _onUploadBookImage(UploadBookImageAndGetUrl event,
-      Emitter<HomeState> emit) async {
+  Future<void> _onUploadBookImage(
+      UploadBookImageAndGetUrl event, Emitter<HomeState> emit) async {
     emit(LoadingState());
 
     try {
@@ -82,13 +83,13 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     }
   }
 
-  Future<void> _onDeleteBookImage(DeleteBookImage event,
-      Emitter<HomeState> emit) async {
+  Future<void> _onDeleteBookImage(
+      DeleteBookImage event, Emitter<HomeState> emit) async {
     emit(DeletedBookImage());
   }
 
-  Future<void> _onDownloadBooks(DownloadBooksEvent event,
-      Emitter<HomeState> emit) async {
+  Future<void> _onDownloadBooks(
+      DownloadBooksEvent event, Emitter<HomeState> emit) async {
     emit(LoadingState());
     try {
       final result = await FirebaseDbManager.instance.downloadBooks();
@@ -107,8 +108,11 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
   Future<void> _onGetBooks(GetBooksEvent event, Emitter<HomeState> emit) async {
     List<Book> books = [];
     for (final item in event.querySnapshot.docs) {
-      books.add(Book.fromJson(item.data(), item.id));
+      books.add(Book.fromJson(
+        item.data(),
+        item.id,
+      ));
     }
-  emit(GetBooksState(books: books));
+    emit(GetBooksState(books: books));
   }
 }

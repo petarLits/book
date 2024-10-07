@@ -5,11 +5,14 @@ import 'package:equatable/equatable.dart';
 class BookData extends Equatable {
   BookData({required this.bookPages, required this.bookChapters});
 
+  BookData.emptyData({
+    this.bookPages = const [],
+    this.bookChapters = const [],
+  });
+
   List<BookPage> bookPages;
   List<BookChapter> bookChapters;
 
   @override
   List<Object?> get props => [bookPages];
-
-
 }

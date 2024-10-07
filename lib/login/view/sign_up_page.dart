@@ -45,19 +45,22 @@ class _SignUpState extends State<SignUp> {
       if (state is SuccessfulSignUp) {
         Navigator.pop(context);
         SnackBarUtils.showSnackBar(
-            color: AppColors.successfulSnackBar,
-            content: AppLocalizations.of(context)!.successfullyRegistered,
-            context: context);
+          color: AppColors.successfulSnackBar,
+          content: AppLocalizations.of(context)!.successfullyRegistered,
+          context: context,
+        );
       } else if (state is SignUpErrorAuth) {
         SnackBarUtils.showSnackBar(
-            color: AppColors.errorSnackBar,
-            content: AppLocalizations.of(context)!.invalidEmail,
-            context: context);
+          color: AppColors.errorSnackBar,
+          content: AppLocalizations.of(context)!.invalidEmail,
+          context: context,
+        );
       } else if (state is ErrorState) {
         SnackBarUtils.showSnackBar(
-            color: AppColors.errorSnackBar,
-            content: AppLocalizations.of(context)!.serverError,
-            context: context);
+          color: AppColors.errorSnackBar,
+          content: AppLocalizations.of(context)!.serverError,
+          context: context,
+        );
       }
     });
   }

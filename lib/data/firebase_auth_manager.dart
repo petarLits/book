@@ -38,7 +38,7 @@ class FirebaseAuthManager {
       uId = currentUser.uid;
       await FirebaseAuthManager.instance.signOut();
     }
-    final userRef = db.collection('users').doc(uId);
+    final userRef = db.collection(usersCollection).doc(uId);
 
     userRef.set(user.toJson()).timeout(Duration(seconds: kTimeoutInSeconds), onTimeout: () {
       throw ServerErrorException();
@@ -57,7 +57,7 @@ class FirebaseAuthManager {
 
   Future<AppUser?> downloadCurrentUser() async {
     if (currentUserId != null) {
-      final userRef = db.collection('users').doc(currentUserId);
+      final userRef = db.collection(usersCollection).doc(currentUserId);
       final snapShot =
           await userRef.get().timeout(Duration(seconds: kTimeoutInSeconds), onTimeout: () {
         throw ServerErrorException();

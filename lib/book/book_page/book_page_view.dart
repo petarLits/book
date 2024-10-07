@@ -57,9 +57,10 @@ class _BookPageViewState extends State<BookPageView> {
       listener: (context, state) {
         if (state is ErrorState) {
           SnackBarUtils.showSnackBar(
-              color: AppColors.errorSnackBar,
-              content: AppLocalizations.of(context)!.serverError,
-              context: context);
+            color: AppColors.errorSnackBar,
+            content: AppLocalizations.of(context)!.serverError,
+            context: context,
+          );
         } else if (state is InitialState) {
           context.read<BookPageBloc>().add(InitBookEvent(book: widget.book));
         } else if (state is DisplayBookPageState) {
@@ -243,9 +244,11 @@ class _BookPageViewState extends State<BookPageView> {
                           height: 200,
                           width: double.infinity,
                           decoration: BoxDecoration(
-                              image: DecorationImage(
-                                  fit: BoxFit.cover,
-                                  image: NetworkImage(widget.book.imageUrl))),
+                            image: DecorationImage(
+                              fit: BoxFit.cover,
+                              image: NetworkImage(widget.book.imageUrl),
+                            ),
+                          ),
                         ),
                         Flexible(
                           child: ChaptersListView(

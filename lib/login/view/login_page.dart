@@ -52,14 +52,16 @@ class _LoginPageState extends State<LoginPage> {
         Navigator.pushReplacementNamed(context, homeRoute);
       } else if (state is ErrorAuthState) {
         SnackBarUtils.showSnackBar(
-            color: AppColors.errorSnackBar,
-            content: AppLocalizations.of(context)!.invalidCredentials,
-            context: context);
+          color: AppColors.errorSnackBar,
+          content: AppLocalizations.of(context)!.invalidCredentials,
+          context: context,
+        );
       } else if (state is ErrorState) {
         SnackBarUtils.showSnackBar(
-            color: AppColors.errorSnackBar,
-            content: AppLocalizations.of(context)!.serverError,
-            context: context);
+          color: AppColors.errorSnackBar,
+          content: AppLocalizations.of(context)!.serverError,
+          context: context,
+        );
       } else if (state is LoadingState) {
         DialogUtils.showLoadingScreen(context);
       } else if (state is LoadedState) {

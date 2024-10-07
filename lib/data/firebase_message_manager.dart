@@ -60,7 +60,7 @@ class FirebaseMessageManager {
 
      final client = await clientViaServiceAccount(
         serviceAccountCredentials,
-        ['https://www.googleapis.com/auth/cloud-platform'],
+        [authCloudPlatformApi],
       ).timeout(Duration(seconds: kTimeoutInSeconds), onTimeout: () {
         throw Exception(serverError);
       });

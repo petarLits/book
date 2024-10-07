@@ -16,10 +16,11 @@ class BookPage extends Equatable {
 
   factory BookPage.copy({required BookPage page}) {
     return BookPage(
-        text: page.text,
-        pageNumber: page.pageNumber,
-        pageImage: page.pageImage,
-        chapter: page.chapter);
+      text: page.text,
+      pageNumber: page.pageNumber,
+      pageImage: page.pageImage,
+      chapter: page.chapter,
+    );
   }
 
   String text;

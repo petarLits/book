@@ -7,13 +7,13 @@ import 'package:book/home/bloc/home_bloc.dart';
 import 'package:book/home/bloc/home_event.dart';
 import 'package:book/home/bloc/home_state.dart';
 import 'package:book/login/widgets/custom_text_form_field.dart';
+import 'package:book/utils/snackbar_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:image_picker/image_picker.dart';
 
 class AddNewBook extends StatefulWidget {
-
   @override
   State<AddNewBook> createState() => _AddNewBookState();
 }
@@ -33,6 +33,7 @@ class _AddNewBookState extends State<AddNewBook> {
     authorValue = newBook.author;
     super.initState();
   }
+
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<HomeBloc, HomeState>(listener: (context, state) {
@@ -43,11 +44,11 @@ class _AddNewBookState extends State<AddNewBook> {
       } else if (state is UploadedBookImageAndUrlGotState) {
         context.read<HomeBloc>().add(SaveNewBook(book: state.book));
       } else if (state is ErrorState) {
-        final snackBar = SnackBar(
-          content: Text(AppLocalizations.of(context)!.serverError),
-          backgroundColor: AppColors.errorSnackBar,
+        SnackBarUtils.showSnackBar(
+          color: AppColors.errorSnackBar,
+          content: AppLocalizations.of(context)!.serverError,
+          context: context,
         );
-        ScaffoldMessenger.of(context).showSnackBar(snackBar);
       } else if (state is DeletedBookImage) {
         image = null;
       }
@@ -193,26 +194,24 @@ class _AddNewBookState extends State<AddNewBook> {
       final result = await showDialog(
         barrierDismissible: false,
         context: context,
-        builder: (context) =>
-            AlertDialog(
-              title: Text(AppLocalizations.of(context)!.leaveDialog),
-              content: Text(
-                  AppLocalizations.of(context)!.changesWillBeDiscarded),
-              actions: [
-                TextButton(
-                  onPressed: () {
-                    Navigator.pop(context, true);
-                  },
-                  child: Text(AppLocalizations.of(context)!.yes),
-                ),
-                TextButton(
-                  onPressed: () {
-                    Navigator.pop(context, false);
-                  },
-                  child: Text(AppLocalizations.of(context)!.no),
-                ),
-              ],
+        builder: (context) => AlertDialog(
+          title: Text(AppLocalizations.of(context)!.leaveDialog),
+          content: Text(AppLocalizations.of(context)!.changesWillBeDiscarded),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context, true);
+              },
+              child: Text(AppLocalizations.of(context)!.yes),
             ),
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context, false);
+              },
+              child: Text(AppLocalizations.of(context)!.no),
+            ),
+          ],
+        ),
       );
       return result;
     }

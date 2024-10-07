@@ -189,6 +189,6 @@ class FirebaseDbManager {
   }
 
   Stream<QuerySnapshot<Map<String, dynamic>>> downloadBooksStream() async* {
-    yield* db.collection("books").snapshots();
+    yield* db.collection(booksCollection).snapshots();
   }
 }

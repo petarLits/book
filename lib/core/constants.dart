@@ -25,3 +25,4 @@ const String channelDescription = 'messaging';
 const int kTimeoutInSeconds = 20;
 const double indicatorBottomPosition = 100;
 const String jsonMessagingKey = 'assets/book-bloc-c83676f5d8dd.json';
+const String authCloudPlatformApi = 'https://www.googleapis.com/auth/cloud-platform';

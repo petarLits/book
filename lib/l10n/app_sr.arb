@@ -132,6 +132,10 @@
         "type": "int"
       }
     }
-  }
+  },
+  "accountExist": "Vec imate kreiran nalog sa istom email adresom. Pokusajte da se ulogujete sa njom, ili sa nekim drugim provajderom",
+  "verifyEmail": "Verifikacioni email je poslat. Molim vas verifikujte ga.",
+  "goToEmail": "Idite na email",
+  "canNotOpenMail": "Nije moguce pristupiti emailu"
 
 }

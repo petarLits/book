@@ -51,9 +51,10 @@ class AddBookPageEvent extends BookPageEvent {
 }
 
 class InitBookEvent extends BookPageEvent {
-  InitBookEvent({required this.book});
+  InitBookEvent({required this.book, this.pageIndex});
 
   final Book book;
+  final int? pageIndex;
 }
 
 class NextPageEvent extends BookPageEvent {
@@ -119,3 +120,9 @@ class NavigateToPageEvent extends BookPageEvent {
 class SwipeLeftEvent extends BookPageEvent {}
 
 class SwipeRightEvent extends BookPageEvent {}
+
+class DisplayCurrentPageEvent extends BookPageEvent {
+  DisplayCurrentPageEvent({required this.pageIndex});
+
+  final int pageIndex;
+}

@@ -106,9 +106,6 @@ class MyApp extends StatelessWidget {
         child: MaterialApp(
           navigatorKey: navigatorKey,
           onGenerateRoute: AppRoutes.onGenerateRoutes,
-          initialRoute: AppUserSingleton.instance.appUser != null
-              ? homeRoute
-              : loginRoute,
           localizationsDelegates: AppLocalizations.localizationsDelegates,
           supportedLocales: AppLocalizations.supportedLocales,
           theme: ThemeData(

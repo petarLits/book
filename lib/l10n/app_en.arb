@@ -132,5 +132,9 @@
         "type": "int"
       }
     }
-  }
+  },
+  "accountExist": "You have already have account with this email. Try to sign in with email and password, or some other provider",
+  "verifyEmail": "Email verification was sent. Please verify it.",
+  "goToEmail": "Go to email",
+  "canNotOpenMail": "Can't open mail app"
 }

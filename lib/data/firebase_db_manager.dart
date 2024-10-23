@@ -1,3 +1,4 @@
+import 'package:book/app_user.dart';
 import 'package:book/book/book.dart';
 import 'package:book/book/book_chapter/book_chapter.dart';
 import 'package:book/book/book_data.dart';
@@ -5,6 +6,7 @@ import 'package:book/book/book_page/book_page.dart';
 import 'package:book/core/constants.dart';
 import 'package:book/core/server_error_exception.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 
 class FirebaseDbManager {
@@ -33,12 +35,14 @@ class FirebaseDbManager {
 
     final fileRef = folderRef.child(DateTime.now().toString());
 
-    await fileRef.putFile(book.image!).timeout(Duration(seconds: kTimeoutInSeconds),
-        onTimeout: () {
+    await fileRef
+        .putFile(book.image!)
+        .timeout(Duration(seconds: kTimeoutInSeconds), onTimeout: () {
       throw ServerErrorException();
     });
-    final url = await fileRef.getDownloadURL().timeout(Duration(seconds: kTimeoutInSeconds),
-        onTimeout: () {
+    final url = await fileRef
+        .getDownloadURL()
+        .timeout(Duration(seconds: kTimeoutInSeconds), onTimeout: () {
       throw ServerErrorException();
     });
     book.imageUrl = url;
@@ -46,8 +50,9 @@ class FirebaseDbManager {
 
   Future<void> uploadBook(Book book) async {
     final bookRef = db.collection(booksCollection).doc();
-    await bookRef.set(book.toJson()).timeout(Duration(seconds: kTimeoutInSeconds),
-        onTimeout: () {
+    await bookRef
+        .set(book.toJson())
+        .timeout(Duration(seconds: kTimeoutInSeconds), onTimeout: () {
       throw ServerErrorException();
     });
   }
@@ -60,13 +65,15 @@ class FirebaseDbManager {
             page.pageImage!.getFileName() ??
         '');
 
-    await fileRef.putFile(page.pageImage!.image!).timeout(Duration(seconds: kTimeoutInSeconds),
-        onTimeout: () {
+    await fileRef
+        .putFile(page.pageImage!.image!)
+        .timeout(Duration(seconds: kTimeoutInSeconds), onTimeout: () {
       throw ServerErrorException();
     });
 
-    final url = await fileRef.getDownloadURL().timeout(Duration(seconds: kTimeoutInSeconds),
-        onTimeout: () {
+    final url = await fileRef
+        .getDownloadURL()
+        .timeout(Duration(seconds: kTimeoutInSeconds), onTimeout: () {
       throw ServerErrorException();
     });
     page.pageImage!.imagePath = fileRef.fullPath;
@@ -113,8 +120,9 @@ class FirebaseDbManager {
 
     final booksRef = db.collection(pagesCollection).doc(bookId);
 
-    final snapShoot =
-        await booksRef.get().timeout(Duration(seconds: kTimeoutInSeconds), onTimeout: () {
+    final snapShoot = await booksRef
+        .get()
+        .timeout(Duration(seconds: kTimeoutInSeconds), onTimeout: () {
       throw ServerErrorException();
     });
     final data = snapShoot.data();
@@ -124,8 +132,9 @@ class FirebaseDbManager {
     }
 
     final chaptersRef = db.collection(chaptersCollection).doc(bookId);
-    final snapShootChapters =
-        await chaptersRef.get().timeout(Duration(seconds: kTimeoutInSeconds), onTimeout: () {
+    final snapShootChapters = await chaptersRef
+        .get()
+        .timeout(Duration(seconds: kTimeoutInSeconds), onTimeout: () {
       throw ServerErrorException();
     });
     final dataChapters = snapShootChapters.data();
@@ -166,20 +175,22 @@ class FirebaseDbManager {
     }
     if (page.pageImage?.imagePath != null) {
       final deleteRef = storageRef.child(page.pageImage!.imagePath!);
-      await deleteRef.delete().timeout(Duration(seconds: kTimeoutInSeconds), onTimeout: () {
+      await deleteRef.delete().timeout(Duration(seconds: kTimeoutInSeconds),
+          onTimeout: () {
         throw ServerErrorException();
       });
     }
-    await docRef.update({'items': items}).timeout(Duration(seconds: kTimeoutInSeconds),
-        onTimeout: () {
+    await docRef.update({'items': items}).timeout(
+        Duration(seconds: kTimeoutInSeconds), onTimeout: () {
       throw ServerErrorException();
     });
   }
 
   Future<Book> downloadBook(String bookId) async {
     final bookRef = db.collection(booksCollection).doc(bookId);
-    final snapshot =
-        await bookRef.get().timeout(Duration(seconds: kTimeoutInSeconds), onTimeout: () {
+    final snapshot = await bookRef
+        .get()
+        .timeout(Duration(seconds: kTimeoutInSeconds), onTimeout: () {
       throw ServerErrorException();
     });
     final data = snapshot.data();
@@ -191,4 +202,19 @@ class FirebaseDbManager {
   Stream<QuerySnapshot<Map<String, dynamic>>> downloadBooksStream() async* {
     yield* db.collection(booksCollection).snapshots();
   }
+
+  Future<AppUser?> loginExistingUser(UserCredential userCredential) async {
+    final userDoc = await db
+        .collection(usersCollection)
+        .doc(userCredential.user?.uid)
+        .get();
+
+    if (userDoc.exists) {
+      final user = AppUser.fromJson(userDoc.data()!);
+      return Future.value(user);
+    } else {
+      return null;
+    }
+  }
+
 }

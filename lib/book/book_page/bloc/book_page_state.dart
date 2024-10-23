@@ -121,3 +121,4 @@ class SaveBookChapterState extends BookPageState {
         Random().nextInt(10000),
       ];
 }
+

@@ -1,5 +1,6 @@
 import 'package:book/app_user.dart';
 import 'package:equatable/equatable.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 sealed class LoginEvent extends Equatable {
   @override
@@ -24,3 +25,27 @@ class Login extends LoginEvent {
   final String email;
   final String password;
 }
+
+class SignInWithGoogleEvent extends LoginEvent {}
+
+class CreateUserWithGoogleEvent extends LoginEvent {
+  CreateUserWithGoogleEvent({required this.credential});
+
+  final UserCredential credential;
+}
+
+class SignUpWithProviderEvent extends LoginEvent {
+  SignUpWithProviderEvent({required this.user});
+
+  final AppUser user;
+}
+
+class SignInWithFacebookEvent extends LoginEvent{}
+
+class CreateUserWithFacebookEvent extends LoginEvent{
+CreateUserWithFacebookEvent({required this.credential});
+
+  final UserCredential credential;
+}
+
+class OpenMailAppEvent extends LoginEvent{}

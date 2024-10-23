@@ -1,6 +1,8 @@
 import 'dart:math';
 
 import 'package:equatable/equatable.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:open_mail_app/open_mail_app.dart';
 
 sealed class LoginState extends Equatable {
   @override
@@ -64,4 +66,52 @@ class LoadedState extends LoginState {
 
   @override
   List<Object?> get props => [Random().nextInt(10000)];
+}
+
+class SignInWithGoogleState extends LoginState {
+  SignInWithGoogleState({required this.credential});
+
+  final UserCredential credential;
+
+  @override
+  List<Object?> get props => [credential];
+}
+
+class CreateUserWithGoogleState extends LoginState {
+  CreateUserWithGoogleState({required this.credential});
+
+  final UserCredential credential;
+
+  @override
+  List<Object?> get props => [credential];
+}
+
+class SignInWithFacebookState extends LoginState {
+  SignInWithFacebookState({required this.credential});
+
+  final UserCredential credential;
+
+  @override
+  List<Object?> get props => [credential];
+}
+
+class CreateUserWithFacebookState extends LoginState {
+  CreateUserWithFacebookState({required this.credential});
+
+  final UserCredential credential;
+
+  @override
+  List<Object?> get props => [this.credential];
+}
+
+class SignInWithDifferentProviderState extends LoginState {}
+
+class VerifyEmailState extends LoginState {}
+
+class CanNotOpenMailState extends LoginState {}
+
+class MailAppDidNotOpenState extends LoginState {
+  MailAppDidNotOpenState({required this.mailApps});
+
+  final OpenMailAppResult mailApps;
 }

@@ -41,7 +41,7 @@ class _BookPageViewState extends State<BookPageView> {
 
   @override
   void initState() {
-    context.read<BookPageBloc>().add(InitBookEvent(book: widget.book));
+    context.read<BookPageBloc>().add(InitBookEvent(book: widget.book, pageIndex: widget.pageIndex));
     pages = widget.book.bookData?.bookPages ?? [];
     chapters = widget.book.bookData?.bookChapters ?? [];
     if (widget.pageIndex != null) {
@@ -134,7 +134,7 @@ class _BookPageViewState extends State<BookPageView> {
                           } else {
                             context
                                 .read<BookPageBloc>()
-                                .add(InitBookEvent(book: widget.book));
+                                .add(DisplayCurrentPageEvent(pageIndex: currentPageIndex));
                           }
                         },
                         icon: Icon(Icons.edit)),
@@ -218,7 +218,7 @@ class _BookPageViewState extends State<BookPageView> {
                 } else {
                   context
                       .read<BookPageBloc>()
-                      .add(InitBookEvent(book: widget.book));
+                      .add(DisplayCurrentPageEvent(pageIndex: currentPageIndex));
                 }
               },
               child: Icon(Icons.add),

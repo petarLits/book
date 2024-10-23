@@ -2,7 +2,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class FutureUtils {
-
   static Future<dynamic> executeFutureWithLoader(
       BuildContext context, Future<dynamic> task) async {
     showDialog(

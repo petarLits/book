@@ -2,10 +2,31 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 	<dict>
+	     <key>CFBundleURLTypes</key>
+         <array>
+    	        <dict>
+    		            <key>CFBundleTypeRole</key>
+    		             <string>Editor</string>
+    		            <key>CFBundleURLSchemes</key>
+    		            <array>
+    			                <string>com.googleusercontent.apps.592607300007-vpraspr2uf092k8cgvms4krumilu4k22</string>
+    			                <string>fb908495961136601</string>
+
+    		            </array>
+    	        </dict>
+        </array>
+        <key>FacebookAppID</key>
+        <string>908495961136601</string>
+        <key>FacebookClientToken</key>
+        <string>b6778be1cc3ed2892a8f34403d48ddf7</string>
+        <key>FacebookDisplayName</key>
+        <string>ReadingPages</string>
+	    <key>GIDClientID</key>
+        <string>[592607300007-vpraspr2uf092k8cgvms4krumilu4k22.apps.googleusercontent.com]</string>
 		<key>CFBundleDevelopmentRegion</key>
 		<string>$(DEVELOPMENT_LANGUAGE)</string>
 		<key>CFBundleDisplayName</key>
-		<string>Book</string>
+		<string>BookBloc</string>
 		<key>CFBundleExecutable</key>
 		<string>$(EXECUTABLE_NAME)</string>
 		<key>CFBundleIdentifier</key>
@@ -13,7 +34,7 @@
 		<key>CFBundleInfoDictionaryVersion</key>
 		<string>6.0</string>
 		<key>CFBundleName</key>
-		<string>book</string>
+		<string>BookBloc</string>
 		<key>CFBundlePackageType</key>
 		<string>APPL</string>
 		<key>CFBundleShortVersionString</key>
@@ -51,5 +72,17 @@
         <string>Your app needs access to the camera to take photos and videos.</string>
         <key>NSPhotoLibraryUsageDescription</key>
         <string>Your app needs access to the photo library to select photos and videos.</string>
+        <key>LSApplicationQueriesSchemes</key>
+        <array>
+            <string>googlegmail</string>
+            <string>x-dispatch</string>
+            <string>readdle-spark</string>
+            <string>airmail</string>
+            <string>ms-outlook</string>
+            <string>ymail</string>
+            <string>fastmail</string>
+            <string>superhuman</string>
+            <string>protonmail</string>
+        </array>
 	</dict>
 </plist>

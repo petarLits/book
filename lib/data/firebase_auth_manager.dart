@@ -1,7 +1,12 @@
+import 'dart:io';
+
 import 'package:book/app_user.dart';
 import 'package:book/core/constants.dart';
+import 'package:book/core/server_error_exception.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 class FirebaseAuthManager {
   static FirebaseAuthManager? _instance;
@@ -27,8 +32,8 @@ class FirebaseAuthManager {
     await auth
         .createUserWithEmailAndPassword(
             email: user.email, password: user.password)
-        .timeout(Duration(seconds: 3), onTimeout: () {
-      throw Exception(serverError);
+        .timeout(Duration(seconds: kTimeoutInSeconds), onTimeout: () {
+      throw ServerErrorException();
     });
     ;
 
@@ -36,18 +41,21 @@ class FirebaseAuthManager {
     if (currentUser != null) {
       uId = currentUser.uid;
     }
-    final userRef = db.collection('users').doc(uId);
+    final userRef = db.collection(usersCollection).doc(uId);
 
-    userRef.set(user.toJson()).timeout(Duration(seconds: 3), onTimeout: () {
-      throw Exception(serverError);
+    await userRef
+        .set(user.toJson())
+        .timeout(Duration(seconds: kTimeoutInSeconds), onTimeout: () {
+      throw ServerErrorException();
     });
+    await signOut();
   }
 
   Future<void> loginUser(String email, String password) async {
     await auth
         .signInWithEmailAndPassword(email: email, password: password)
-        .timeout(Duration(seconds: 3), onTimeout: () {
-      throw Exception(serverError);
+        .timeout(Duration(seconds: kTimeoutInSeconds), onTimeout: () {
+      throw ServerErrorException();
     });
   }
 
@@ -55,10 +63,11 @@ class FirebaseAuthManager {
 
   Future<AppUser?> downloadCurrentUser() async {
     if (currentUserId != null) {
-      final userRef = db.collection('users').doc(currentUserId);
-      final snapShot =
-          await userRef.get().timeout(Duration(seconds: 3), onTimeout: () {
-        throw Exception(serverError);
+      final userRef = db.collection(usersCollection).doc(currentUserId);
+      final snapShot = await userRef
+          .get()
+          .timeout(Duration(seconds: kTimeoutInSeconds), onTimeout: () {
+        throw ServerErrorException();
       });
       if (snapShot.data() != null) {
         AppUser appUser = AppUser.fromJson(snapShot.data()!);
@@ -72,8 +81,85 @@ class FirebaseAuthManager {
   }
 
   Future<void> signOut() async {
-    await auth.signOut().timeout(Duration(seconds: 3), onTimeout: () {
-      throw Exception(serverError);
+    await auth.signOut().timeout(Duration(seconds: kTimeoutInSeconds),
+        onTimeout: () {
+      throw ServerErrorException();
     });
+  }
+
+  Future<UserCredential> signInWithGoogle() async {
+    final GoogleSignInAccount? googleUser;
+    if (Platform.isIOS) {
+      await GoogleSignIn().signOut();
+      googleUser = await GoogleSignIn(
+        clientId: signInClientId,
+        scopes: [email],
+      ).signIn().timeout(Duration(seconds: kTimeoutInSeconds), onTimeout: () {
+        throw ServerErrorException();
+      });
+    } else {
+      await GoogleSignIn().signOut();
+      googleUser = await GoogleSignIn()
+          .signIn()
+          .timeout(Duration(seconds: kTimeoutInSeconds), onTimeout: () {
+        throw ServerErrorException();
+      });
+    }
+
+    final GoogleSignInAuthentication? googleAuth = await googleUser
+        ?.authentication
+        .timeout(Duration(seconds: kTimeoutInSeconds), onTimeout: () {
+      throw ServerErrorException();
+    });
+
+    final credential = GoogleAuthProvider.credential(
+      accessToken: googleAuth?.accessToken,
+      idToken: googleAuth?.idToken,
+    );
+
+    final userCredential = await auth
+        .signInWithCredential(credential)
+        .timeout(Duration(seconds: kTimeoutInSeconds), onTimeout: () {
+      throw ServerErrorException();
+    });
+
+    if(credential.providerId == googleProvider){
+     await auth.currentUser!.unlink(googleProvider);
+    }
+    await auth.currentUser!.linkWithCredential(credential);
+
+    return userCredential;
+  }
+
+  Future<void> addUserToDatabase(AppUser appUser) async {
+    String? uId;
+    final User? checkUser = auth.currentUser;
+    if (checkUser != null) {
+      uId = checkUser.uid;
+      final credential = EmailAuthProvider.credential(
+          email: appUser.email, password: appUser.password);
+     await checkUser.linkWithCredential(credential);
+    }
+    final userRef = db.collection(usersCollection).doc(uId);
+    await userRef
+        .set(appUser.toJson())
+        .timeout(Duration(seconds: kTimeoutInSeconds), onTimeout: () {
+      throw ServerErrorException();
+    });
+    await signOut();
+  }
+
+  Future<UserCredential> signInWithFacebook() async {
+    final LoginResult loginResult = await FacebookAuth.instance.login();
+    final OAuthCredential facebookAuthCredential =
+        FacebookAuthProvider.credential(loginResult.accessToken!.token);
+    return await auth.signInWithCredential(facebookAuthCredential);
+  }
+
+  Future<void> sendEmailVerification() async {
+    User? user = auth.currentUser;
+    if (!user!.emailVerified) {
+      await auth.currentUser?.sendEmailVerification();
+    }
   }
 }

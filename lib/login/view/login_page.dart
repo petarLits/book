@@ -6,15 +6,16 @@ import 'package:book/login/bloc/login_bloc.dart';
 import 'package:book/login/bloc/login_state.dart';
 import 'package:book/login/widgets/custom_text_form_field.dart';
 import 'package:book/utils/dialog_utils.dart';
+import 'package:book/utils/snackbar_utils.dart';
 import 'package:book/utils/validation_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:open_mail_app/open_mail_app.dart';
 
 import '../bloc/login_event.dart';
 
 class LoginPage extends StatefulWidget {
-
   @override
   State<LoginPage> createState() => _LoginPageState();
 }
@@ -33,8 +34,77 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<LoginBloc, LoginState>(
-        builder: (context, LoginState state) {
+        listener: (context, state) async {
+      if (state is SuccessfulLogin) {
+        Navigator.pushReplacementNamed(context, homeRoute);
+      } else if (state is ErrorAuthState) {
+        SnackBarUtils.showSnackBar(
+          color: AppColors.errorSnackBar,
+          content: AppLocalizations.of(context)!.invalidCredentials,
+          context: context,
+        );
+      } else if (state is ErrorState) {
+        SnackBarUtils.showSnackBar(
+          color: AppColors.errorSnackBar,
+          content: AppLocalizations.of(context)!.serverError,
+          context: context,
+        );
+      } else if (state is LoadingState) {
+        DialogUtils.showLoadingScreen(context);
+      } else if (state is LoadedState) {
+        Navigator.pop(context);
+      } else if (state is SignInWithGoogleState) {
+        context
+            .read<LoginBloc>()
+            .add(CreateUserWithGoogleEvent(credential: state.credential));
+      } else if (state is CreateUserWithGoogleState) {
+        Navigator.pushNamed(context, signUpWithProvider,
+            arguments: state.credential);
+      } else if (state is SignInWithFacebookState) {
+        context
+            .read<LoginBloc>()
+            .add(CreateUserWithFacebookEvent(credential: state.credential));
+      } else if (state is CreateUserWithFacebookState) {
+        Navigator.pushNamed(context, signUpWithProvider,
+            arguments: state.credential);
+      } else if (state is SignInWithDifferentProviderState) {
+        SnackBarUtils.showSnackBar(
+            color: Colors.orangeAccent,
+            content: AppLocalizations.of(context)!.accountExist,
+            context: context);
+      } else if (state is VerifyEmailState) {
+        final result = await showDialog(
+          barrierDismissible: false,
+          context: context,
+          builder: (context) => AlertDialog(
+            content: Text(AppLocalizations.of(context)!.verifyEmail),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.pop(context, true);
+                },
+                child: Text(AppLocalizations.of(context)!.goToEmail),
+              ),
+            ],
+          ),
+        );
+        if (result) {
+          context.read<LoginBloc>().add(OpenMailAppEvent());
+        }
+      } else if (state is CanNotOpenMailState) {
+        SnackBarUtils.showSnackBar(
+            color: AppColors.errorSnackBar,
+            content: AppLocalizations.of(context)!.canNotOpenMail,
+            context: context);
+      } else if (state is MailAppDidNotOpenState) {
+        showDialog(
+            context: context,
+            builder: (context) =>
+                MailAppPickerDialog(mailApps: state.mailApps.options));
+      }
+    }, builder: (context, LoginState state) {
       return Scaffold(
+        resizeToAvoidBottomInset: false,
         appBar: AppBar(
           centerTitle: true,
           automaticallyImplyLeading: false,
@@ -46,26 +116,6 @@ class _LoginPageState extends State<LoginPage> {
         ),
         body: _buildBody(),
       );
-    }, listener: (context, state) async {
-      if (state is SuccessfulLogin) {
-        Navigator.pushReplacementNamed(context, homeRoute);
-      } else if (state is ErrorAuthState) {
-        final snackBar = SnackBar(
-          backgroundColor: AppColors.errorSnackBar,
-          content: Text(AppLocalizations.of(context)!.invalidCredentials),
-        );
-        ScaffoldMessenger.of(context).showSnackBar(snackBar);
-      } else if (state is ErrorState) {
-        final snackBar = SnackBar(
-          backgroundColor: AppColors.errorSnackBar,
-          content: Text(AppLocalizations.of(context)!.serverError),
-        );
-        ScaffoldMessenger.of(context).showSnackBar(snackBar);
-      } else if (state is LoadingState) {
-        DialogUtils.showLoadingScreen(context);
-      } else if (state is LoadedState) {
-        Navigator.pop(context);
-      }
     });
   }
 
@@ -186,6 +236,27 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                   ],
                 ),
+                Row(
+                  children: [
+                    IconButton(
+                      onPressed: () {
+                        context.read<LoginBloc>().add(SignInWithGoogleEvent());
+                      },
+                      icon: Image.asset(
+                        'assets/googleLogo.webp',
+                        height: iconSize,
+                        width: iconSize,
+                      ),
+                    ),
+                    IconButton(
+                        onPressed: () async {
+                          context
+                              .read<LoginBloc>()
+                              .add(SignInWithFacebookEvent());
+                        },
+                        icon: Icon(Icons.facebook)),
+                  ],
+                )
               ],
             ),
           ),
